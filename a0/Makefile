@@ -1,9 +1,12 @@
-EXES = ant
+EXES = main
+OBJS = langton327.o
+DEPS = encode.h
 
-all: $(EXES)
+main: $(OBJS)
+	gcc -o langton327 $^ -g -Wall
 
-ant: langton327.c
-	gcc -o langton.o langton327.c -g -Wall
+%.0: %.c $(DEPS)
+	gcc -o $@ -c $<
 
 clean:
 	rm -rf *.o
