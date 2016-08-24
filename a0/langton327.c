@@ -101,18 +101,65 @@ int finish_encode(void)
   return 0;
 }
 
-char buffer[128][128];
+#define X 128
+#define Y 128
+
+char buffer[X][Y];
+
+int move(int *x, int *y, int dir)
+{
+  switch(dir)
+  {
+     case 0:
+       (*y)++;
+       break;
+     case 1:
+       (*x)++;
+       break;
+     case 2:
+       (*y)--;
+       break;
+     case 3:
+       (*x)--;
+       break;
+  }
+  printf("x: %d y: %d\n", *x, *y);
+  if(*x >= X || *x < 0)
+    return 0;
+  if(*y >= Y || *y < 0)
+    return 0;
+
+  return 1;
+}
 
 int main(int argc, char *argv[])
 {
-  int i;
+  unsigned int dir = 0;
+  int x_pos = X/2;
+  int y_pos = Y/2;
+  int quit = 1;
 
-  start_encode(128, 128, 1);
-  for (i = 0; i < 128; i++) {
-    buffer[i][i] = 1;
-    next_frame((char *) buffer);
+  start_encode(X, Y, 10);
+
+  while(quit)
+  {
+     if(buffer[x_pos][y_pos])
+     {
+        dir = (dir-1)%4;
+        buffer[x_pos][y_pos] = 0;
+	quit = move(&x_pos, &y_pos, dir);
+        next_frame((char *) buffer);
+     }
+     else
+     {
+        dir = (dir+1)%4;
+        buffer[x_pos][y_pos] = 1;
+        quit = move(&x_pos, &y_pos, dir);
+        next_frame((char *) buffer);
+     }
   }
-  finish_encode();
+ 
+  finish_encode(); 
 
   return 0;
 }
