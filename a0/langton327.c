@@ -123,7 +123,6 @@ int move(int *x, int *y, int dir)
        (*x)--;
        break;
   }
-  printf("x: %d y: %d\n", *x, *y);
   if(*x >= X || *x < 0)
     return 0;
   if(*y >= Y || *y < 0)
