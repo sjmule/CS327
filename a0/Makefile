@@ -1,12 +1,15 @@
 EXES = main
-OBJS = langton327.o
+OBJS = langton327.o encode.o
+CFLAGS = -g -Wall
+
 DEPS = encode.h
 
 main: $(OBJS)
-	gcc -o langton327 $^ -g -Wall
+	gcc -o $@ $^ $(CFLAGS)
 
-%.0: %.c $(DEPS)
+%.o: %.c $(DEPS)
 	gcc -o $@ -c $<
 
 clean:
+	rm -rf $(EXES)
 	rm -rf *.o
