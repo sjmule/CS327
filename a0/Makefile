@@ -1,6 +1,6 @@
 EXES = main
 OBJS = langton327.o encode.o
-CFLAGS = -g -Werror
+CFLAGS = -g -Wall -Werror
 
 DEPS = encode.h
 
