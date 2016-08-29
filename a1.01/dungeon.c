@@ -3,6 +3,8 @@
 #include <time.h>
 #include "generate.h"
 
+dungeon_t aincrad;
+
 void printDungeon(int debug)
 {
 	int i = 0;
