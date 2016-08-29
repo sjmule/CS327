@@ -5,10 +5,6 @@
 #define X 81
 #define Y 21
 
-char dungeon[Y][X];
-int hardness[Y][X];
-int numRooms;
-
 typedef struct room
 {
 	int number;
@@ -18,23 +14,31 @@ typedef struct room
 	int width;
 }room;
 
-room rooms[8];
+typedef struct dungeon
+{
+	char map[Y][X];
+	int hardness[Y][X];
+	int numRooms;
+	room rooms[8];
+}dungeon;
+
+dungeon aincrad;
 
 void setImmutable()
 {
 	int i = 0;
 	for(; i < X - 1; ++i)
 	{
-		hardness[0][i] = -1;
+		aincrad.hardness[0][i] = -1;
 	}
 	for(i = 0; i < X - 1; ++i)
 	{
-		hardness[Y-1][i] = -1;
+		aincrad.hardness[Y-1][i] = -1;
 	}
 	for(i = 1; i < Y - 1; ++i)
 	{
-		hardness[i][0] = -1;
-		hardness[i][X-2] = -1;
+		aincrad.hardness[i][0] = -1;
+		aincrad.hardness[i][X-2] = -1;
 	}
 } 
 
@@ -46,7 +50,7 @@ void setHardness()
 		int j = 1;
 		for(; j < X - 2; ++j)
 		{
-			hardness[i][j] = (rand() % 5) + 1;
+			aincrad.hardness[i][j] = (rand() % 5) + 1;
 		}
 	}	
 }
@@ -56,16 +60,16 @@ void setBoundary()
 	int i = 0;
 	for(; i < X - 1; ++i)
 	{
-		dungeon[0][i] = '-';
+		aincrad.map[0][i] = '-';
 	}
 	for(i = 0; i < X - 1; ++i)
 	{
-		dungeon[Y-1][i] = '-';
+		aincrad.map[Y-1][i] = '-';
 	}
 	for(i = 1; i < Y - 1; ++i)
 	{
-		dungeon[i][0] = '|';
-		dungeon[i][X-2] = '|';
+		aincrad.map[i][0] = '|';
+		aincrad.map[i][X-2] = '|';
 	}
 }
 
@@ -80,33 +84,36 @@ void initializeDungeon()
 		int j = 0;
 		for(; j < X; ++j)
 		{
-			dungeon[i][j] = ' ';
+			aincrad.map[i][j] = ' ';
 		}
-		dungeon[i][X-1] = 0;
+		aincrad.map[i][X-1] = 0;
 	}
 	
 	setBoundary();
 
-	numRooms = 0;
+	aincrad.numRooms = 0;
 }
 
-void printDungeon()
+void printDungeon(int debug)
 {
 	int i = 0;
 	for(; i < Y; ++i)
 	{
-		printf("%s\n", dungeon[i]);
+		printf("%s\n", aincrad.map[i]);
 	}
-	for(i = 0; i < Y; ++i)
+	if(debug)
 	{
-		int j = 0;
-		for(; j < X; ++j)
+		for(i = 0; i < Y; ++i)
 		{
-			printf("%d", hardness[i][j]);
+			int j = 0;
+			for(; j < X; ++j)
+			{
+				printf("%d", aincrad.hardness[i][j]);
+			}
+			printf("\n");
 		}
-		printf("\n");
+		getchar();
 	}
-	getchar();
 }
 
 room generateRoom()
@@ -127,7 +134,7 @@ int verifyValidity(room room, int x, int y)
 		int j = x;
 		for(; j < x + room.width + 1; ++j)
 		{
-			if(hardness[i][j] == 0)
+			if(aincrad.hardness[i][j] == 0)
 				++error;
 		}
 	}
@@ -136,7 +143,7 @@ int verifyValidity(room room, int x, int y)
 	{
 		for(i = x; i < x + room.width + 1; ++i)
 		{
-			if(hardness[y-1][i] == 0)
+			if(aincrad.hardness[y-1][i] == 0)
 				++error;
 		}
 	}
@@ -145,7 +152,7 @@ int verifyValidity(room room, int x, int y)
 		int next = y + room.height + 1;
 		for(i = x; i < x + room.width + 1; ++i)
 		{
-			if(hardness[next][i] == 0)
+			if(aincrad.hardness[next][i] == 0)
 				++error;
 		}
 	}
@@ -153,7 +160,7 @@ int verifyValidity(room room, int x, int y)
 	{
 		for(i = y; i < y + room.height + 1; ++i)
 		{
-			if(hardness[i][x-1] == 0)
+			if(aincrad.hardness[i][x-1] == 0)
 				++error;
 		}
 	}
@@ -162,7 +169,7 @@ int verifyValidity(room room, int x, int y)
 		int next = x + room.width + 1; 
 		for(i = y; i < y + room.height + 1; ++i)
 		{
-			if(hardness[i][next] == 0)
+			if(aincrad.hardness[i][next] == 0)
 				++error;
 		}
 	}
@@ -177,28 +184,28 @@ void placeRoom(room room, int x, int y)
 		int j = x;
 		for(; j < x + room.width; ++j)
 		{
-			hardness[i][j] = 0;
-			dungeon[i][j] = '.';
+			aincrad.hardness[i][j] = 0;
+			aincrad.map[i][j] = '.';
 		}
 	}
-	room.number = numRooms;
+	room.number = aincrad.numRooms;
 	room.x = x;
 	room.y = y;
-	rooms[numRooms] = room;
-	numRooms++;
+	aincrad.rooms[aincrad.numRooms] = room;
+	aincrad.numRooms++;
 }
 
 void createRooms()
 {
 	int attempts = 0;
-	while(attempts < 2000 && numRooms < 8)
+	while(attempts < 2000 && aincrad.numRooms < 8)
 	{
 		room room = generateRoom();
 
 		int x = (rand() % (X-3)) + 1;
 		int y = (rand() % (Y-2)) + 1;
 
-		if(hardness[y][x] != 0 && hardness[y][x] != -1)
+		if(aincrad.hardness[y][x] != 0 && aincrad.hardness[y][x] != -1)
 		{
 			if(y + room.height >= Y - 1)
 			{	
@@ -231,7 +238,7 @@ int main(int argc, char** argv)
 	srand((unsigned) time(0));
 	initializeDungeon();
 	createRooms();
-	printDungeon();
+	printDungeon(0);
 	
 	return 0;
 }
