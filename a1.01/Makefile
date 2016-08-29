@@ -1,6 +1,6 @@
 EXES = main
 OBJS = dungeon.o
-CFLAGS = -g -Werror
+CFLAGS = -g -Wall -Werror
 
 main: $(OBJS)
 	gcc -o $@ $^ $(CFLAGS)
