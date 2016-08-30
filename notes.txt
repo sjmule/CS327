@@ -1,0 +1,15 @@
+8/30
+Stages of Compliation
+* Preprocessing
+ Precompiler retrieves files in includes and slaps it in before our code
+ Runs before compiler
+ gcc -E or cpp
+* Compilation
+ Converts the high-level language code to assembly
+ gcc -S
+* Assemby
+ Converts assembly code to machine language (object code)
+ gcc -c
+* Linking
+ Creates an executable from the assemby
+ gcc (no arguments)

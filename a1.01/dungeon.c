@@ -3,7 +3,30 @@
 #include <time.h>
 #include "generate.h"
 
+// Look up "Bresenham's Line Drawing Algorithm" Jeremy says it's not easy and it's ugly
+// Fuck it, Dijkstra's, go through lowest hardness
+
 dungeon_t aincrad;
+
+void dijkstra(int x1, int y1, int x2, int y2)
+{
+
+}
+
+void connectRooms()
+{
+	int i = 0;
+	for(; i < 7; ++i)
+	{
+		room_t first = aincrad.rooms[i];
+		room_t second = aincrad.rooms[i+1];
+		int x1 = first.x + first.width;
+		int y1 = first.y + first.height;
+		int x2 = second.x + second.width;
+		int y2 = second.y + second.height;
+		dijkstra(x1, y1, x2, y2);
+	}
+}
 
 void printDungeon(int debug)
 {
