@@ -1,16 +1,16 @@
-Changelog
+Changelog Assignment 0
 
-1/23
+8/23
 Modified provided template to perform full Langton's Ant functionality and
 created basic Makefile.
 
-1/24
+8/24
 Moved code controlling movement into separate "move" function for clarity.
 
-1/25
+8/25
 Moved functions in charge of video encoding into separate encode.c file and
 created encode.h header file.  Updated Makefile to compile files together into
 one executable.
 
-1/26
+8/26
 Wrote README and Changelog.
