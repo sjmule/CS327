@@ -1,6 +1,7 @@
 Changelog Assignment 0
 
 8/23
+Started work on assignment.
 Modified provided template to perform full Langton's Ant functionality and
 created basic Makefile.
 
