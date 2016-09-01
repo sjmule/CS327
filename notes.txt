@@ -13,3 +13,6 @@ Stages of Compliation
 * Linking
  Creates an executable from the assemby
  gcc (no arguments)
+
+9/1
+
