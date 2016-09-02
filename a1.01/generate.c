@@ -70,15 +70,15 @@ void initializeDungeon()
 	aincrad.numRooms = 0;
 }
 
-room_t generateRoom()
+room generateRoom()
 {
-	room_t temp;
+	room temp;
 	temp.height = (rand() % 6) + 3;
 	temp.width = (rand() % 5) + 4;
 	return temp;
 }
 
-int verifyValidity(room_t room, int x, int y)
+int verifyValidity(room room, int x, int y)
 {
 	int error = 0;
 	int i = y;
@@ -130,7 +130,7 @@ int verifyValidity(room_t room, int x, int y)
 	return error;
 }
 
-void placeRoom(room_t room, int x, int y)
+void placeRoom(room room, int x, int y)
 {
 	int i = y;
 	for(; i < y + room.height; ++i)
@@ -154,7 +154,7 @@ void createRooms()
 	int attempts = 0;
 	while(attempts < 2000 && aincrad.numRooms < 8)
 	{
-		room_t room = generateRoom();
+		room room = generateRoom();
 
 		int x = (rand() % (X-3)) + 1;
 		int y = (rand() % (Y-2)) + 1;

@@ -4,7 +4,7 @@
 #define X 81
 #define Y 21
 
-typedef struct ROOM room_t;
+typedef struct ROOM room;
 
 struct ROOM
 {
@@ -15,7 +15,7 @@ struct ROOM
 	int width;
 };
 
-typedef struct DUNGEON dungeon_t;
+typedef struct DUNGEON dungeon;
 
 struct DUNGEON
 {
@@ -25,7 +25,7 @@ struct DUNGEON
 	room_t rooms[8];
 };
 
-extern dungeon_t aincrad;
+extern dungeon aincrad;
 
 void setImmutable();
 
@@ -35,11 +35,11 @@ void setBoundary();
 
 void initializeDungeon();
 
-room_t generateRoom();
+room generateRoom();
 
-int verifyValidity(room_t room, int x, int y);
+int verifyValidity(room room, int x, int y);
 
-void placeRoom(room_t room, int x, int y);
+void placeRoom(room room, int x, int y);
 
 void createRooms();
 
