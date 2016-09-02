@@ -8,9 +8,20 @@ include <stdio.h>
 
 dungeon aincrad;
 
-void dijkstra(int x1, int y1, int x2, int y2)
-{
+typedef struct VERTEX vertex;
 
+struct VERTEX
+{
+	int x;
+	int y;
+};
+
+vertex* dijkstra(int x1, int y1, int x2, int y2)
+{
+	vertex path[50];
+	
+
+	return path;
 }
 
 void connectRooms()
@@ -24,7 +35,7 @@ void connectRooms()
 		int y1 = first.y + first.height;
 		int x2 = second.x + second.width;
 		int y2 = second.y + second.height;
-		dijkstra(x1, y1, x2, y2);
+		vertex* path = dijkstra(x1, y1, x2, y2);
 	}
 }
 
