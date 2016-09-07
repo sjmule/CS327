@@ -1,28 +1,11 @@
-include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "generate.h"
 
 // Look up "Bresenham's Line Drawing Algorithm" Jeremy says it's not easy and it's ugly
-// Fuck it, Dijkstra's, go through lowest hardness
 
 dungeon aincrad;
-
-typedef struct VERTEX vertex;
-
-struct VERTEX
-{
-	int x;
-	int y;
-};
-
-vertex* dijkstra(int x1, int y1, int x2, int y2)
-{
-	vertex path[50];
-	
-
-	return path;
-}
 
 void connectRooms()
 {
@@ -31,11 +14,86 @@ void connectRooms()
 	{
 		room first = aincrad.rooms[i];
 		room second = aincrad.rooms[i+1];
-		int x1 = first.x + first.width;
-		int y1 = first.y + first.height;
-		int x2 = second.x + second.width;
-		int y2 = second.y + second.height;
-		vertex* path = dijkstra(x1, y1, x2, y2);
+		if(first.x >= second.x && first.y >= second.y)
+		{
+			int i = first.x;
+			for(; i < second.x; ++i)
+			{
+				if(aincrad.hardness[first.y][i] !=0)
+				{
+					aincrad.hardness[first.y][i] = 0;
+					aincrad.map[first.y][i] = '#';
+				}
+			}
+			for(i = first.y; i < second.y; ++i)
+			{
+				if(aincrad.hardness[i][second.x] != 0)
+				{
+					aincrad.hardness[i][second.x] = 0;
+					aincrad.map[i][second.x] = '#';
+				}
+			}
+		}
+		else if(first.x >= second.x && first.y <= second.y)
+		{
+			int i = first.x;
+			for(; i < second.x; ++i)
+			{
+				if(aincrad.hardness[first.y][i] !=0)
+				{
+					aincrad.hardness[first.y][i] = 0;
+					aincrad.map[first.y][i] = '#';
+				}
+			}
+			for(i = second.y; i < first.y; ++i)
+			{
+				if(aincrad.hardness[i][second.x] != 0)
+				{
+					aincrad.hardness[i][second.x] = 0;
+					aincrad.map[i][second.x] = '#';
+				}
+			}
+		}
+		else if(first.x <= second.x && first.y >= second.y)
+		{
+			int i = second.x;
+			for(; i < first.x; ++i)
+			{
+				if(aincrad.hardness[second.y][i] !=0)
+				{
+					aincrad.hardness[second.y][i] = 0;
+					aincrad.map[second.y][i] = '#';
+				}
+			}
+			for(i = first.y; i < second.y; ++i)
+			{
+				if(aincrad.hardness[i][first.x] != 0)
+				{
+					aincrad.hardness[i][first.x] = 0;
+					aincrad.map[i][first.x] = '#';
+				}
+			}
+		}
+		else if(first.x <= second.x && first.y <= second.y)
+		{
+			int i = second.x;
+			for(; i < first.x; ++i)
+			{
+				if(aincrad.hardness[second.y][i] !=0)
+				{
+					aincrad.hardness[second.y][i] = 0;
+					aincrad.map[second.y][i] = '#';
+				}
+			}
+			for(i = second.y; i < first.y; ++i)
+			{
+				if(aincrad.hardness[i][first.x] != 0)
+				{
+					aincrad.hardness[i][first.x] = 0;
+					aincrad.map[i][first.x] = '#';
+				}
+			}
+		}
 	}
 }
 
@@ -66,7 +124,8 @@ int main(int argc, char** argv)
 	srand((unsigned) time(0));
 	initializeDungeon();
 	createRooms();
-	printDungeon(0);
+	connectRooms();
+	printDungeon(1);
 	
 	return 0;
 }

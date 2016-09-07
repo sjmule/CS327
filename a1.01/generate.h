@@ -22,7 +22,7 @@ struct DUNGEON
 	char map[Y][X];
 	int hardness[Y][X];
 	int numRooms;
-	room_t rooms[8];
+	room rooms[8];
 };
 
 extern dungeon aincrad;
