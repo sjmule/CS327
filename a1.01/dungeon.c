@@ -14,7 +14,6 @@ void connectRooms()
 		room second = aincrad.rooms[i+1];
 		if(first.x <= second.x && first.y <= second.y)
 		{
-			printf("first x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = first.x;
 			for(; i < second.x; ++i)
 			{
@@ -35,7 +34,6 @@ void connectRooms()
 		}
 		else if(first.x <= second.x && first.y >= second.y)
 		{
-			printf("second x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = first.x;
 			for(; i < second.x; ++i)
 			{
@@ -56,7 +54,6 @@ void connectRooms()
 		}
 		else if(first.x >= second.x && first.y <= second.y)
 		{
-			printf("third x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = second.x;
 			for(; i < first.x; ++i)
 			{
@@ -77,7 +74,6 @@ void connectRooms()
 		}
 		else if(first.x >= second.x && first.y >= second.y)
 		{
-			printf("fourth x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = second.x;
 			for(; i < first.x; ++i)
 			{
