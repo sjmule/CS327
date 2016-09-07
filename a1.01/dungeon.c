@@ -5,6 +5,27 @@
 
 dungeon aincrad;
 
+void printDungeon(int debug)
+{
+	int i = 0;
+	for(; i < Y; ++i)
+	{
+		printf("%s\n", aincrad.map[i]);
+	}
+	if(debug)
+	{
+		for(i = 0; i < Y; ++i)
+		{
+			int j = 0;
+			for(; j < X; ++j)
+			{
+				printf("%d", aincrad.hardness[i][j]);
+			}
+			printf("\n");
+		}
+	}
+}
+
 void connectRooms()
 {
 	int i = 0;
@@ -12,6 +33,7 @@ void connectRooms()
 	{
 		room first = aincrad.rooms[i];
 		room second = aincrad.rooms[i+1];
+		// first room left and above second
 		if(first.x <= second.x && first.y <= second.y)
 		{
 			int i = first.x;
@@ -32,10 +54,11 @@ void connectRooms()
 				}
 			}
 		}
+		// first room left and below second
 		else if(first.x <= second.x && first.y >= second.y)
 		{
 			int i = first.x;
-			for(; i < second.x; ++i)
+			for(; i <= second.x; ++i)
 			{
 				if(aincrad.hardness[first.y][i] !=0)
 				{
@@ -52,10 +75,11 @@ void connectRooms()
 				}
 			}
 		}
+		// first room right and above second
 		else if(first.x >= second.x && first.y <= second.y)
 		{
 			int i = second.x;
-			for(; i < first.x; ++i)
+			for(; i <= first.x; ++i)
 			{
 				if(aincrad.hardness[second.y][i] !=0)
 				{
@@ -72,6 +96,7 @@ void connectRooms()
 				}
 			}
 		}
+		// first room right and below second
 		else if(first.x >= second.x && first.y >= second.y)
 		{
 			int i = second.x;
@@ -91,27 +116,6 @@ void connectRooms()
 					aincrad.map[i][first.x] = '#';
 				}
 			}
-		}
-	}
-}
-
-void printDungeon(int debug)
-{
-	int i = 0;
-	for(; i < Y; ++i)
-	{
-		printf("%s\n", aincrad.map[i]);
-	}
-	if(debug)
-	{
-		for(i = 0; i < Y; ++i)
-		{
-			int j = 0;
-			for(; j < X; ++j)
-			{
-				printf("%d", aincrad.hardness[i][j]);
-			}
-			printf("\n");
 		}
 	}
 }
