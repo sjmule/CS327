@@ -3,8 +3,6 @@
 #include <time.h>
 #include "generate.h"
 
-// Look up "Bresenham's Line Drawing Algorithm" Jeremy says it's not easy and it's ugly
-
 dungeon aincrad;
 
 void connectRooms()
@@ -14,8 +12,9 @@ void connectRooms()
 	{
 		room first = aincrad.rooms[i];
 		room second = aincrad.rooms[i+1];
-		if(first.x >= second.x && first.y >= second.y)
+		if(first.x <= second.x && first.y <= second.y)
 		{
+			printf("first x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = first.x;
 			for(; i < second.x; ++i)
 			{
@@ -34,8 +33,9 @@ void connectRooms()
 				}
 			}
 		}
-		else if(first.x >= second.x && first.y <= second.y)
+		else if(first.x <= second.x && first.y >= second.y)
 		{
+			printf("second x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = first.x;
 			for(; i < second.x; ++i)
 			{
@@ -54,8 +54,9 @@ void connectRooms()
 				}
 			}
 		}
-		else if(first.x <= second.x && first.y >= second.y)
+		else if(first.x >= second.x && first.y <= second.y)
 		{
+			printf("third x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = second.x;
 			for(; i < first.x; ++i)
 			{
@@ -74,8 +75,9 @@ void connectRooms()
 				}
 			}
 		}
-		else if(first.x <= second.x && first.y <= second.y)
+		else if(first.x >= second.x && first.y >= second.y)
 		{
+			printf("fourth x1: %d y1: %d x2: %d y2: %d\n", first.x, first.y, second.x, second.y);
 			int i = second.x;
 			for(; i < first.x; ++i)
 			{
@@ -115,7 +117,6 @@ void printDungeon(int debug)
 			}
 			printf("\n");
 		}
-		getchar();
 	}
 }
 
@@ -125,7 +126,7 @@ int main(int argc, char** argv)
 	initializeDungeon();
 	createRooms();
 	connectRooms();
-	printDungeon(1);
+	printDungeon(0);
 	
 	return 0;
 }
