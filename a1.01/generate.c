@@ -187,3 +187,100 @@ void createRooms()
 	}
 }
 
+void connectRooms()
+{
+	int i = 0;
+	for(; i < 7; ++i)
+	{
+		room first = aincrad.rooms[i];
+		room second = aincrad.rooms[i+1];
+		// first room left and above second
+		int x1 = first.x + (rand() % first.width);
+		int x2 = second.x + (rand() % second.width);
+		int y1 = first.y + (rand() % first.height);
+		int y2 = second.y + (rand() % second.height);
+		if(x1 <= x2 && y1 <= y2)
+		{
+			int i = x1;
+			for(; i < x2; ++i)
+			{
+				if(aincrad.hardness[y1][i] !=0)
+				{
+					aincrad.hardness[y1][i] = 0;
+					aincrad.map[y1][i] = '#';
+				}
+			}
+			for(i = y1; i < y2; ++i)
+			{
+				if(aincrad.hardness[i][x2] != 0)
+				{
+					aincrad.hardness[i][x2] = 0;
+					aincrad.map[i][x2] = '#';
+				}
+			}
+		}
+		// first room left and below second
+		else if(x1 <= x2 && y1 >= y2)
+		{
+			int i = x1;
+			for(; i <= x2; ++i)
+			{
+				if(aincrad.hardness[y1][i] !=0)
+				{
+					aincrad.hardness[y1][i] = 0;
+					aincrad.map[y1][i] = '#';
+				}
+			}
+			for(i = y2; i < y1; ++i)
+			{
+				if(aincrad.hardness[i][x2] != 0)
+				{
+					aincrad.hardness[i][x2] = 0;
+					aincrad.map[i][x2] = '#';
+				}
+			}
+		}
+		// first room right and above second
+		else if(x1 >= x2 && y1 <= y2)
+		{
+			int i = x2;
+			for(; i <= x1; ++i)
+			{
+				if(aincrad.hardness[y2][i] !=0)
+				{
+					aincrad.hardness[y2][i] = 0;
+					aincrad.map[y2][i] = '#';
+				}
+			}
+			for(i = y1; i < y2; ++i)
+			{
+				if(aincrad.hardness[i][x1] != 0)
+				{
+					aincrad.hardness[i][x1] = 0;
+					aincrad.map[i][x1] = '#';
+				}
+			}
+		}
+		// first room right and below second
+		else if(x1 >= x2 && y1 >= y2)
+		{
+			int i = x2;
+			for(; i < x1; ++i)
+			{
+				if(aincrad.hardness[y2][i] !=0)
+				{
+					aincrad.hardness[y2][i] = 0;
+					aincrad.map[y2][i] = '#';
+				}
+			}
+			for(i = y2; i < y1; ++i)
+			{
+				if(aincrad.hardness[i][x1] != 0)
+				{
+					aincrad.hardness[i][x1] = 0;
+					aincrad.map[i][x1] = '#';
+				}
+			}
+		}
+	}
+}

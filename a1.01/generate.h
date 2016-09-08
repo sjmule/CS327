@@ -43,4 +43,6 @@ void placeRoom(room room, int x, int y);
 
 void createRooms();
 
+void connectRooms();
+
 #endif
