@@ -1,0 +1,25 @@
+Changelog Assignment 1.01
+
+9/7
+Cleaned up code to remove debugging marks.
+Created README and Changelog.
+
+9/6
+Moved corridor generation code to file with room and dungeon generation code.
+
+9/5
+Started corridor generation.
+Created code to select random spot in one room and another random spot in another and attempt to connnect them.
+
+9/3
+Split dungeon and room generation code into separate file.
+Created header file. Created Makefile to compile all files together.
+
+9/2
+Started room generation.
+Created code to generate random rooms of random sizes and attempt to place them in a random place in the dungeon.
+
+9/1
+Started work on assignment.
+Created 2 arrays to hold the map and hardness of the dungeon.
+Created code to initialize the arrays to a raw state.
