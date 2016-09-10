@@ -8,7 +8,7 @@
 #include <time.h>
 #include <string.h>
 
-#define X 81
+#define X 80
 #define Y 21
 
 typedef struct ROOM room;

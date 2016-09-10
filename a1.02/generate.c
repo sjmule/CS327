@@ -3,18 +3,18 @@
 void setImmutable()
 {
 	int i = 0;
-	for(; i < X - 1; ++i)
+	for(; i < X; ++i)
 	{
-		aincrad.hardness[0][i] = -1;
+		aincrad.hardness[0][i] = 255;
 	}
-	for(i = 0; i < X - 1; ++i)
+	for(i = 0; i < X; ++i)
 	{
-		aincrad.hardness[Y-1][i] = -1;
+		aincrad.hardness[Y-1][i] = 255;
 	}
 	for(i = 1; i < Y - 1; ++i)
 	{
-		aincrad.hardness[i][0] = -1;
-		aincrad.hardness[i][X-2] = -1;
+		aincrad.hardness[i][0] = 255;
+		aincrad.hardness[i][X-1] = 255;
 	}
 } 
 
@@ -24,7 +24,7 @@ void setHardness()
 	for(; i < Y - 1; ++i)
 	{
 		int j = 1;
-		for(; j < X - 2; ++j)
+		for(; j < X - 1; ++j)
 		{
 			aincrad.hardness[i][j] = (rand() % 5) + 1;
 		}
@@ -34,18 +34,18 @@ void setHardness()
 void setBoundary()
 {
 	int i = 0;
-	for(; i < X - 1; ++i)
+	for(; i < X; ++i)
 	{
 		aincrad.map[0][i] = '-';
 	}
-	for(i = 0; i < X - 1; ++i)
+	for(i = 0; i < X; ++i)
 	{
 		aincrad.map[Y-1][i] = '-';
 	}
 	for(i = 1; i < Y - 1; ++i)
 	{
 		aincrad.map[i][0] = '|';
-		aincrad.map[i][X-2] = '|';
+		aincrad.map[i][X-1] = '|';
 	}
 }
 
@@ -62,7 +62,6 @@ void initializeDungeon()
 		{
 			aincrad.map[i][j] = ' ';
 		}
-		aincrad.map[i][X-1] = 0;
 	}
 	
 	setBoundary();
@@ -118,7 +117,7 @@ int verifyValidity(room room, int x, int y)
 				++error;
 		}
 	}
-	if(x + room.width + 1 != X - 3)
+	if(x + room.width + 1 != X - 2)
 	{
 		int next = x + room.width + 1; 
 		for(i = y; i < y + room.height + 1; ++i)
@@ -156,17 +155,17 @@ void createRooms()
 	{
 		room room = generateRoom();
 
-		int x = (rand() % (X-3)) + 1;
+		int x = (rand() % (X-2)) + 1;
 		int y = (rand() % (Y-2)) + 1;
 
-		if(aincrad.hardness[y][x] != 0 && aincrad.hardness[y][x] != -1)
+		if(aincrad.hardness[y][x] != 0 && aincrad.hardness[y][x] != 255)
 		{
 			if(y + room.height >= Y - 1)
 			{	
 				++attempts;
 				continue;
 			}
-			if(x + room.width >= X - 2)
+			if(x + room.width >= X - 1)
 			{
 				++attempts;
 				continue;
@@ -204,7 +203,7 @@ void connectRooms()
 			int i = x1;
 			for(; i < x2; ++i)
 			{
-				if(aincrad.hardness[y1][i] !=0)
+				if(aincrad.hardness[y1][i] != 0)
 				{
 					aincrad.hardness[y1][i] = 0;
 					aincrad.map[y1][i] = '#';
@@ -225,7 +224,7 @@ void connectRooms()
 			int i = x1;
 			for(; i <= x2; ++i)
 			{
-				if(aincrad.hardness[y1][i] !=0)
+				if(aincrad.hardness[y1][i] != 0)
 				{
 					aincrad.hardness[y1][i] = 0;
 					aincrad.map[y1][i] = '#';
@@ -246,7 +245,7 @@ void connectRooms()
 			int i = x2;
 			for(; i <= x1; ++i)
 			{
-				if(aincrad.hardness[y2][i] !=0)
+				if(aincrad.hardness[y2][i] != 0)
 				{
 					aincrad.hardness[y2][i] = 0;
 					aincrad.map[y2][i] = '#';
@@ -267,7 +266,7 @@ void connectRooms()
 			int i = x2;
 			for(; i < x1; ++i)
 			{
-				if(aincrad.hardness[y2][i] !=0)
+				if(aincrad.hardness[y2][i] != 0)
 				{
 					aincrad.hardness[y2][i] = 0;
 					aincrad.map[y2][i] = '#';
