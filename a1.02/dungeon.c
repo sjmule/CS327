@@ -42,7 +42,7 @@ void printDungeon(int debug)
 			int j = 0;
 			for(; j < X; ++j)
 			{
-				printf("%d", atoi(aincrad.hardness[i][j]));
+				printf("%d", aincrad.hardness[i][j]);
 			}
 			printf("\n");
 		}
@@ -71,17 +71,19 @@ int main(int argc, char** argv)
 	}
 
 	if(load == 1)
-		loadDungeon();
+		loadDungeon(path);
 	else
 	{
 		srand((unsigned) time(0));
+		aincrad.numRooms = 8;
+		aincrad.rooms = malloc(sizeof(room) * 8);
 		initializeDungeon();
 		createRooms();
 		connectRooms();
 	}
 
 	if(save == 1)
-		saveDungeon();
+		saveDungeon(path);
 
 	printDungeon(0);
 

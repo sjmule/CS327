@@ -141,7 +141,6 @@ void placeRoom(room room, int x, int y)
 			aincrad.map[i][j] = '.';
 		}
 	}
-	room.number = aincrad.numRooms;
 	room.x = x;
 	room.y = y;
 	aincrad.rooms[aincrad.numRooms] = room;

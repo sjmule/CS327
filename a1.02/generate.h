@@ -15,7 +15,6 @@ typedef struct ROOM room;
 
 struct ROOM
 {
-	int number;
 	int x;
 	int y;
 	int height;
@@ -26,10 +25,10 @@ typedef struct DUNGEON dungeon;
 
 struct DUNGEON
 {
-	char map[Y][X];
+	int map[Y][X];
 	int hardness[Y][X];
 	int numRooms;
-	room rooms[8];
+	room* rooms;
 };
 
 extern dungeon aincrad;
