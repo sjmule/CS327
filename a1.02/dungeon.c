@@ -1,5 +1,10 @@
 #include "generate.h"
 
+#define _itos(x,y) ((x >> y) & 0xFF)
+#define _stoi(x) (x[3] << 24) | (x[2] << 16) | (x[1] << 8) | (x[0])
+
+unsigned int version = 0;
+
 dungeon aincrad;
 
 int save = 0;
@@ -12,7 +17,7 @@ void saveDungeon(char* path)
 	char* name = strcat(path, "/dungeon");
 	file = fopen(name, "w");
 	
-	unsigned char* head = malloc(6);
+	unsigned char* head = malloc(14);
 	head[0] = 'R';
 	head[1] = 'L';
 	head[2] = 'G';
@@ -20,14 +25,16 @@ void saveDungeon(char* path)
 	head[4] = '2';
 	head[5] = '7';
 
-	unsigned int version = 0;
+	head[6] = _itos(htonl(version),0);
+	head[7] = _itos(htonl(version),8);
+	head[8] = _itos(htonl(version),16);
+	head[9] = _itos(htonl(version),24);
 	
 	char* matrix = malloc(1680);
 	int i = 0;
 	int j = 0;
 	for(; j < Y; ++j)
 	{
-		printf("encoding hardness\n");
 		int k = 0;
 		for(; k < X; ++k)
 		{
@@ -45,19 +52,14 @@ void saveDungeon(char* path)
 		locations[j++] = (unsigned char) aincrad.rooms[i].height;
 	}
 
-	unsigned int size = 6 + 1680 + (4 * aincrad.numRooms) + 8;
+	unsigned int size = 14 + 1680 + (4 * aincrad.numRooms);
 	
-	printf("size: %d\n", size);	
+	head[10] = _itos(htonl(size),0);
+	head[11] = _itos(htonl(size),8);
+	head[12] = _itos(htonl(size),16);
+	head[13] = _itos(htonl(size),24);
 
-	fwrite(head, 1, 6, file);
-
-	unsigned char v[5] = {0};
-	snprintf(v, 5, "%u", htonl(version));
-	unsigned char s[5] = {0};
-	snprintf(s, 5, "%u", htonl(size));
-
-	fwrite(v, 1, 4, file);
-	fwrite(s, 1, 4, file);
+	fwrite(head, 1, 14, file);
 	fwrite(matrix, 1, 1680, file);
 	fwrite(locations, 1, (4 * aincrad.numRooms), file);
 
@@ -72,6 +74,29 @@ void loadDungeon(char* path)
 	char* name = strcat(path, "/dungeon");
 	file = fopen(name, "r");
 
+	unsigned char* head = malloc(6);
+	fread(head, 1, 6, file);
+
+	if(strcmp(head, "RLG327") != 0)
+	{
+		printf("Incompatable file type\n");
+		exit(-1);
+	}
+
+	unsigned char* versionC = malloc(4);
+	fread(versionC, 1, 4, file);
+	unsigned int fileVersion = _stoi(versionC);
+	fileVersion = ntohl(fileVersion);
+	
+	unsigned char* sizeC = malloc(4);
+	fread(sizeC, 1, 4, file);
+	unsigned int size = _stoi(sizeC);
+	size = ntohl(size);
+
+	printf("size: %u\n", size);
+
+	free(head);
+	free(versionC);
 	fclose(file);
 }
 
