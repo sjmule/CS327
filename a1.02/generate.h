@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <string.h>
+#include <netinet/in.h>
 
 #define X 80
 #define Y 21
