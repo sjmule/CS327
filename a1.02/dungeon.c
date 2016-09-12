@@ -120,16 +120,26 @@ void loadDungeon(char* path)
 	fread(locations, 1, end, file);
 	int numRooms = end/4;
 	aincrad.rooms = malloc(sizeof(room) * numRooms);
-	room* rooms = malloc(sizeof(room) * numRooms);	
+	room room;	
 
 	i = 0;
 	for(j = 0; j < numRooms; ++j)
 	{
-		rooms[j].x = (int) locations[i++];
-		rooms[j].width = (int) locations[i++];
-		rooms[j].y = (int) locations[i++];
-		rooms[j].height = (int) locations[i++];
-		placeRoom(rooms[j], rooms[j].x, rooms[j].y);
+		room.x = (int) locations[i++];
+		room.width = (int) locations[i++];
+		room.y = (int) locations[i++];
+		room.height = (int) locations[i++];
+		placeRoom(room, room.x, room.y);
+	}
+
+	for(i = 0; i < Y; ++i)
+	{
+		for(j = 0; j < X; ++j)
+		{
+			if(aincrad.hardness[i][j] == 0)
+				if(aincrad.map[i][j] != '.')
+					aincrad.map[i][j] = '#';
+		}
 	}
 
 	free(head);
@@ -137,7 +147,6 @@ void loadDungeon(char* path)
 	free(sizeC);
 	free(matrix);
 	free(locations);
-	free(rooms);
 	fclose(file);
 }
 
@@ -203,7 +212,9 @@ int main(int argc, char** argv)
 	if(save == 1)
 		saveDungeon(path);
 
-	printDungeon(1);
+	printDungeon(0);
+
+	free(aincrad.rooms);
 
 	return 0;
 }
