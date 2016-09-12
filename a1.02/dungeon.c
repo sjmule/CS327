@@ -14,8 +14,7 @@ FILE *file;
 
 void saveDungeon(char* path)
 {
-	char* name = strcat(path, "/dungeon");
-	file = fopen(name, "w");
+	file = fopen(path, "w");
 	
 	unsigned char* head = malloc(14);
 	head[0] = 'R';
@@ -71,8 +70,7 @@ void saveDungeon(char* path)
 
 void loadDungeon(char* path)
 {
-	char* name = strcat(path, "/dungeon");
-	file = fopen(name, "r");
+	file = fopen(path, "r");
 
 	unsigned char* head = malloc(6);
 	fread(head, 1, 6, file);
@@ -198,7 +196,7 @@ int main(int argc, char** argv)
 	}
 
 	if(load == 1)
-		loadDungeon(path);
+		loadDungeon(strcat(path, "/dungeon"));
 	else
 	{
 		srand((unsigned) time(0));
@@ -210,7 +208,7 @@ int main(int argc, char** argv)
 	}
 
 	if(save == 1)
-		saveDungeon(path);
+		saveDungeon(strcat(path, "/dungeon"));
 
 	printDungeon(0);
 
