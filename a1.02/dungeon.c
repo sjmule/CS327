@@ -87,16 +87,57 @@ void loadDungeon(char* path)
 	fread(versionC, 1, 4, file);
 	unsigned int fileVersion = _stoi(versionC);
 	fileVersion = ntohl(fileVersion);
+
+	if(fileVersion != version)
+	{
+		printf("Incompatable version number\n");
+		exit(-1);
+	}
 	
 	unsigned char* sizeC = malloc(4);
 	fread(sizeC, 1, 4, file);
 	unsigned int size = _stoi(sizeC);
 	size = ntohl(size);
 
-	printf("size: %u\n", size);
+	initializeDungeon();
+
+	unsigned char* matrix = malloc(1680);
+	fread(matrix, 1, 1680, file);
+
+	int i = 0;
+	int j = 0;
+	for(; j < Y; ++j)
+	{
+		int k = 0;
+		for(; k < X; ++k)
+		{
+			aincrad.hardness[j][k] = (int) matrix[i++];
+		}
+	}
+
+	int end = size - 1680 - 14;
+	char* locations = malloc(end);
+	fread(locations, 1, end, file);
+	int numRooms = end/4;
+	aincrad.rooms = malloc(sizeof(room) * numRooms);
+	room* rooms = malloc(sizeof(room) * numRooms);	
+
+	i = 0;
+	for(j = 0; j < numRooms; ++j)
+	{
+		rooms[j].x = (int) locations[i++];
+		rooms[j].width = (int) locations[i++];
+		rooms[j].y = (int) locations[i++];
+		rooms[j].height = (int) locations[i++];
+		placeRoom(rooms[j], rooms[j].x, rooms[j].y);
+	}
 
 	free(head);
 	free(versionC);
+	free(sizeC);
+	free(matrix);
+	free(locations);
+	free(rooms);
 	fclose(file);
 }
 
@@ -162,7 +203,7 @@ int main(int argc, char** argv)
 	if(save == 1)
 		saveDungeon(path);
 
-	printDungeon(0);
+	printDungeon(1);
 
 	return 0;
 }
