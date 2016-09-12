@@ -178,6 +178,7 @@ int main(int argc, char** argv)
 {
 	char* home = getenv("HOME");
 	char* path = strcat(home, "/.rlg327");
+	char* filePath = strcat(path, "/dungeon");
 	mkdir(path, 0777);
 
 	if(argc > 1)
@@ -196,7 +197,7 @@ int main(int argc, char** argv)
 	}
 
 	if(load == 1)
-		loadDungeon(strcat(path, "/dungeon"));
+		loadDungeon(filePath);
 	else
 	{
 		srand((unsigned) time(0));
@@ -208,7 +209,7 @@ int main(int argc, char** argv)
 	}
 
 	if(save == 1)
-		saveDungeon(strcat(path, "/dungeon"));
+		saveDungeon(filePath);
 
 	printDungeon(0);
 
