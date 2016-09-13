@@ -13,7 +13,7 @@ static char doc[] = "A Rouge Like Game developed for ComS 327";
 // List of options supported
 static struct argp_option options[] =
 {
-	{"verbose", 'v', 0, 0, "Prints the hardness of the dungeon with the map"},
+	{"verbose", 'v', 0, 0, "Prints some extra information including cell hardness"},
 	{"load", 'l', 0, 0, "Load a dungeon from the default location"},
 	{"save", 's', 0, 0, "Save the dugeon to the default location"},
 	{"load-path", 'r', "PATH", 0, "Load the dungeon at the specified path"},
@@ -121,25 +121,12 @@ int main(int argc, char** argv)
 	arguments.savePath = filePath;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-/*	if(argc > 1)
-	{
-		if(strcmp(argv[1], "--save") == 0)
-			save = 1;
-		else if(strcmp(argv[1], "--load") == 0)
-			load = 1;
-		if(argc == 3)
-		{
-			if(strcmp(argv[2], "--save") == 0)
-				save = 1;
-			else if(strcmp(argv[2], "--load") == 0)
-				load = 1;
-		}
-	}
-*/
 	if(arguments.load == 1)
-		loadDungeon(arguments.loadPath);
+		loadDungeon(arguments.loadPath, arguments.verboseMode);
 	else
 	{
+		if(arguments.verboseMode == 1)
+			printf("Generating new dungeon\n");
 		srand((unsigned) time(0));
 		aincrad.numRooms = 8;
 		aincrad.rooms = malloc(sizeof(room) * 8);
@@ -149,9 +136,9 @@ int main(int argc, char** argv)
 	}
 
 	if(arguments.save == 1)
-		saveDungeon(arguments.savePath);
+		saveDungeon(arguments.savePath, arguments.verboseMode);
 
-	printDungeon(0);
+	printDungeon(arguments.verboseMode);
 
 	free(aincrad.rooms);
 

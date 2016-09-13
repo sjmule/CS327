@@ -1,6 +1,6 @@
 #include "save.h"
 
-void saveDungeon(char* path)
+void saveDungeon(char* path, int debug)
 {
 	file = fopen(path, "w");
 
@@ -9,6 +9,8 @@ void saveDungeon(char* path)
 		printf("Unable to open file for saving.\n");
 		exit(-1);
 	}
+	if(debug == 1)
+		printf("Saving dungeon to file located at %s\n", path);
 
 	unsigned char* head = malloc(14);
 	head[0] = 'R';
@@ -62,7 +64,7 @@ void saveDungeon(char* path)
 	fclose(file);
 }
 
-void loadDungeon(char* path)
+void loadDungeon(char* path, int debug)
 {
 	file = fopen(path, "r");
 
@@ -71,6 +73,8 @@ void loadDungeon(char* path)
 		printf("Unable to open file for loading\n");
 		exit(-1);
 	}
+	if(debug == 1)
+		printf("Loading dungeon from file located at %s\n", path);
 
 	unsigned char* head = malloc(6);
 	fread(head, 1, 6, file);

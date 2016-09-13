@@ -10,8 +10,8 @@ unsigned int version;
 
 FILE* file;
 
-void saveDungeon(char* path);
+void saveDungeon(char* path, int debug);
 
-void loadDungeon(char* path);
+void loadDungeon(char* path, int debug);
 
 #endif
