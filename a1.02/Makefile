@@ -1,8 +1,8 @@
 EXES = main
-OBJS = dungeon.o generate.o
+OBJS = dungeon.o generate.o save.o
 CFLAGS = -g -Wall -Werror
 
-DEPS = generate.h
+DEPS = generate.h save.h
 
 main: $(OBJS)
 	gcc -o $@ $^ $(CFLAGS)
