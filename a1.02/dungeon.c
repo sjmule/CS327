@@ -3,8 +3,63 @@
 
 dungeon aincrad;
 
-int save = 0;
-int load = 0;
+// Program version string
+const char *argp_program_version = "Rouge Like Game 327 v0";
+// Program bug address string
+const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
+// Program documentation string
+static char doc[] = "A Rouge Like Game developed for ComS 327";
+
+// List of options supported
+static struct argp_option options[] =
+{
+	{"load", 'l', 0, 0, "Load a dungeon from the default location"},
+	{"save", 's', 0, 0, "Save the dugeon to the default location"},
+	{"load-path", 'r', "PATH", 0, "Load the dungeon at the specified path"},
+	{"save-path", 'w', "PATH", 0, "Save the dungeon to the specified path"},
+	{0}
+};
+
+// Argument structure to store the results of command line parsing
+struct arguments
+{
+	// should we load?
+	int load;
+	// should we save?
+	int save;
+	// path to load from
+	char* loadPath;
+	// path to save to
+	char* savePath;
+};
+
+/*
+ * @brief	Callback to parse a command line argument
+ * @param	key
+ * 			The short code key of this argument
+ * @param	arg
+ *			The argument following the code
+ * @param	state
+ * 			The state of the arg parser state machine
+ * @return	0 if successfully handled the key, ARGP_ERR_UNKNOWN if the key was unknown
+ */
+error_t parse_opt(int key, char* arg, struct argp_state *state)
+{
+	struct arguments* arguments = state->input;
+	switch(key)
+	{
+		case 'l':
+			arguments->load = 1;
+			break;
+		case 's':
+			arguments->save = 1;
+			break;
+		case 'r':
+			arguments->char
+
+	}
+	return 0;
+}
 
 void printDungeon(int debug)
 {
