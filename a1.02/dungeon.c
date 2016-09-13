@@ -1,7 +1,5 @@
 #include "generate.h"
-
-#define _itos(x,y) ((x >> y) & 0xFF)
-#define _stoi(x) (x[3] << 24) | (x[2] << 16) | (x[1] << 8) | (x[0])
+#include "save.h"
 
 unsigned int version = 0;
 
@@ -10,7 +8,7 @@ dungeon aincrad;
 int save = 0;
 int load = 0;
 
-FILE *file;
+FILE* file;
 
 void saveDungeon(char* path)
 {
@@ -178,8 +176,8 @@ int main(int argc, char** argv)
 {
 	char* home = getenv("HOME");
 	char* path = strcat(home, "/.rlg327");
-	char* filePath = strcat(path, "/dungeon");
 	mkdir(path, 0777);
+	char* filePath = strcat(path, "/dungeon");
 
 	if(argc > 1)
 	{
