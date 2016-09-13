@@ -1,3 +1,23 @@
+Changelog Assignment 1.02
+
+9/13
+Implemented Argp interface for parsing Unix-style argument vectors.
+
+9/12
+Tested test files, all load/save correctly.
+Moved save/load functions to new file save.c. Defined header file save.h
+
+9/11
+Finished save/load functions. Need to test with test files provided.
+
+9/10
+Started adding to save/load methods. Added basic argument parsing.
+Added file io for writing/reading and closing the file in each related function.
+
+9/9
+Started work on assignment.
+Copied old code into new directory. Added stubs for what will become save/load functions.
+
 Changelog Assignment 1.01
 
 9/7
