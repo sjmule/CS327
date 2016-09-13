@@ -13,6 +13,7 @@ static char doc[] = "A Rouge Like Game developed for ComS 327";
 // List of options supported
 static struct argp_option options[] =
 {
+	{"verbose", 'v', 0, 0, "Prints the hardness of the dungeon with the map"},
 	{"load", 'l', 0, 0, "Load a dungeon from the default location"},
 	{"save", 's', 0, 0, "Save the dugeon to the default location"},
 	{"load-path", 'r', "PATH", 0, "Load the dungeon at the specified path"},
@@ -23,6 +24,8 @@ static struct argp_option options[] =
 // Argument structure to store the results of command line parsing
 struct arguments
 {
+	// are we in verbose mode?
+	int verboseMode;
 	// should we load?
 	int load;
 	// should we save?
@@ -48,6 +51,9 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 	struct arguments* arguments = state->input;
 	switch(key)
 	{
+		case 'v':
+			arguments->verboseMode = 1;
+			break;
 		case 'l':
 			arguments->load = 1;
 			break;
@@ -55,8 +61,15 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 			arguments->save = 1;
 			break;
 		case 'r':
-			arguments->char
-
+			arguments->load = 1;
+			arguments->loadPath = arg;
+			break;
+		case 'w':
+			arguments->save = 1;
+			arguments->savePath = arg;
+			break;
+		default:
+			return ARGP_ERR_UNKNOWN;
 	}
 	return 0;
 }
@@ -87,8 +100,11 @@ void printDungeon(int debug)
 	}
 }
 
+// The arg parser object
+static struct argp argp = {&options, parse_opt, 0, doc};
+
 int main(int argc, char** argv)
-{
+{	
 	version = 0;
 
 	char* home = getenv("HOME");
@@ -96,7 +112,16 @@ int main(int argc, char** argv)
 	mkdir(path, 0777);
 	char* filePath = strcat(path, "/dungeon");
 
-	if(argc > 1)
+	// Define defaults for the parser
+	struct arguments arguments;
+	arguments.verboseMode = 0;
+	arguments.load = 0;
+	arguments.save = 0;
+	arguments.loadPath = filePath;
+	arguments.savePath = filePath;
+	argp_parse(&argp, argc, argv, 0, 0, &arguments);
+
+/*	if(argc > 1)
 	{
 		if(strcmp(argv[1], "--save") == 0)
 			save = 1;
@@ -110,9 +135,9 @@ int main(int argc, char** argv)
 				load = 1;
 		}
 	}
-
-	if(load == 1)
-		loadDungeon(filePath);
+*/
+	if(arguments.load == 1)
+		loadDungeon(arguments.loadPath);
 	else
 	{
 		srand((unsigned) time(0));
@@ -123,8 +148,8 @@ int main(int argc, char** argv)
 		connectRooms();
 	}
 
-	if(save == 1)
-		saveDungeon(filePath);
+	if(arguments.save == 1)
+		saveDungeon(arguments.savePath);
 
 	printDungeon(0);
 

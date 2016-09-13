@@ -3,7 +3,13 @@
 void saveDungeon(char* path)
 {
 	file = fopen(path, "w");
-	
+
+	if(file == NULL)
+	{
+		printf("Unable to open file for saving.\n");
+		exit(-1);
+	}
+
 	unsigned char* head = malloc(14);
 	head[0] = 'R';
 	head[1] = 'L';
@@ -59,6 +65,12 @@ void saveDungeon(char* path)
 void loadDungeon(char* path)
 {
 	file = fopen(path, "r");
+
+	if(file == NULL)
+	{
+		printf("Unable to open file for loading\n");
+		exit(-1);
+	}
 
 	unsigned char* head = malloc(6);
 	fread(head, 1, 6, file);
