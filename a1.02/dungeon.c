@@ -101,7 +101,7 @@ void printDungeon(int debug)
 }
 
 // The arg parser object
-static struct argp argp = {&options, parse_opt, 0, doc};
+static struct argp argp = {options, parse_opt, 0, doc};
 
 int main(int argc, char** argv)
 {	
