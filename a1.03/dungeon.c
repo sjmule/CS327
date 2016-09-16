@@ -74,6 +74,11 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 	return 0;
 }
 
+void dijkstras()
+{
+
+}
+
 void printDungeon(int debug)
 {
 	int i = 0;

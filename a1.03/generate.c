@@ -26,7 +26,7 @@ void setHardness()
 		int j = 1;
 		for(; j < X - 1; ++j)
 		{
-			aincrad.hardness[i][j] = (rand() % 5) + 1;
+			aincrad.hardness[i][j] = (rand() % 254) + 1;
 		}
 	}	
 }
