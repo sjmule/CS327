@@ -1,5 +1,6 @@
 #include "generate.h"
 #include "save.h"
+#include "binheap.h"
 
 dungeon aincrad;
 
@@ -18,6 +19,8 @@ static struct argp_option options[] =
 	{"save", 's', 0, 0, "Save the dugeon to the default location"},
 	{"load-path", 'r', "PATH", 0, "Load the dungeon at the specified path"},
 	{"save-path", 'w', "PATH", 0, "Save the dungeon to the specified path"},
+	{"x-pos", 'x', "X", 0, "Set the starting x position for the player"},
+	{"y-pos", 'y', "Y", 0, "Set the starting y position for the player"},
 	{0}
 };
 
@@ -34,6 +37,10 @@ struct arguments
 	char* loadPath;
 	// path to save to
 	char* savePath;
+	// x position of player
+	int xPos;
+	// y position of player
+	int yPos;
 };
 
 /*
@@ -68,18 +75,19 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 			arguments->save = 1;
 			arguments->savePath = arg;
 			break;
+		case 'x':
+			arguments->xPos = atoi(arg);
+			break;
+		case 'y':
+			arguments->yPos = atoi(arg);
+			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
 	}
 	return 0;
 }
 
-void dijkstras()
-{
-
-}
-
-void printDungeon(int debug)
+void printDungeon(dungeon* temp, int debug)
 {
 	int i = 0;
 	for(; i < Y; ++i)
@@ -87,7 +95,7 @@ void printDungeon(int debug)
 		int j = 0;
 		for(; j < X; ++j)
 		{
-			printf("%c", aincrad.map[i][j]);
+			printf("%c", temp->map[i][j]);
 		}
 		printf("\n");
 	}
@@ -98,12 +106,18 @@ void printDungeon(int debug)
 			int j = 0;
 			for(; j < X; ++j)
 			{
-				printf("%d", aincrad.hardness[i][j]);
+				printf("%d", temp->hardness[i][j]);
 			}
 			printf("\n");
 		}
 	}
 }
+
+void dijkstras()
+{
+
+}
+
 
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
@@ -111,6 +125,7 @@ static struct argp argp = {options, parse_opt, 0, doc};
 int main(int argc, char** argv)
 {	
 	version = 0;
+	srand((unsigned) time(0));
 
 	char* home = getenv("HOME");
 	char* path = strcat(home, "/.rlg327");
@@ -124,6 +139,8 @@ int main(int argc, char** argv)
 	arguments.save = 0;
 	arguments.loadPath = filePath;
 	arguments.savePath = filePath;
+	arguments.xPos = (rand() % 78) + 1;
+	arguments.yPos = (rand() % 19) + 1;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	if(arguments.load == 1)
@@ -131,8 +148,7 @@ int main(int argc, char** argv)
 	else
 	{
 		if(arguments.verboseMode == 1)
-			printf("Generating new dungeon\n");
-		srand((unsigned) time(0));
+			printf("Generating new dungeon\n");	
 		aincrad.numRooms = 8;
 		aincrad.rooms = malloc(sizeof(room) * 8);
 		initializeDungeon();
@@ -143,7 +159,7 @@ int main(int argc, char** argv)
 	if(arguments.save == 1)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
 
-	printDungeon(arguments.verboseMode);
+	printDungeon(&aincrad, arguments.verboseMode);
 
 	free(aincrad.rooms);
 
