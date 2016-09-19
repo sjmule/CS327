@@ -1,11 +1,13 @@
 #include "generate.h"
 #include "save.h"
 #include "binheap.h"
+#include <limits.h>
+#include <stdint.h>
 
 dungeon aincrad;
 
 // Program version string
-const char *argp_program_version = "Rouge Like Game 327 v0";
+const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
 // Program bug address string
 const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
 // Program documentation string
@@ -113,9 +115,116 @@ void printDungeon(dungeon* temp, int debug)
 	}
 }
 
-void dijkstras()
-{
+typedef struct route {
+	binheap_node_t *hn;
+	int posX;
+	int posY;
+	int startX;
+	int startY;
+	int cost;
+} route;
 
+int hardnessCost(int x, int y)
+{
+	if(aincrad.hardness[y][x] >= 0 && aincrad.hardness[y][x] <= 84)
+		return 1;
+	if(aincrad.hardness[y][x] >= 85 && aincrad.hardness[y][x] <= 170)
+		return 2;
+	if(aincrad.hardness[y][x] >= 171 && aincrad.hardness[y][x] <= 254)
+		return 3;
+}
+
+int32_t path_cmp(const void* key, const void* with)
+{
+	return ((route *) key)->cost - ((route *) with)->cost;
+}
+
+void dijkstras(int tunnel, int playerX, int playerY)
+{
+	route path[Y][X], *p;
+	binheap_t h;
+
+	int x = 0, y = 0;
+	for(; y < Y; ++y)
+	{
+		for(; x < X; ++x)
+		{
+			path[y][x].posY = y;
+			path[y][x].posX = x;
+			path[y][x].cost = INT_MAX;
+		}
+	}
+
+	path[playerY][playerX].cost = 0;
+
+	binheap_init(&h, path_cmp, NULL);
+
+	for(y = 0; y < Y; ++y)
+	{
+		for(x = 0; x < X; ++x)
+		{
+			if(tunnel)
+			{
+				if(aincrad.hardness[y][x] != 255)
+					path[y][x].hn = binheap_insert(&h, &path[y][x]);
+				else
+					path[y][x].hn = NULL;
+			}
+			else
+			{
+				if(aincrad.hardness[y][x] == 0)
+					path[y][x].hn = binheap_insert(&h, &path[y][x]);
+				else
+					path[y][x].hn = NULL;
+			}
+		}
+	}
+
+	while(p = binheap_remove_min(&h))
+	{
+		p->hn = NULL;
+
+		if((path[p->posY - 1][p->posX].hn) && (path[p->posY - 1][p->posX].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		{
+			path[p->posY - 1][p->posX].cost = p->cost + hardnessCost(p->posX, p->posY);
+			path[p->posY - 1][p->posX].startX = p->posX;
+			path[p->posY - 1][p->posX].startY = p->posY;
+			binheap_decrease_key(&h, path[p->posY - 1][p->posX].hn);
+		}
+		if((path[p->posY][p->posX - 1].hn) && (path[p->posY][p->posX - 1].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		{
+			path[p->posY][p->posX - 1].cost = p->cost + hardnessCost(p->posX, p->posY);
+			path[p->posY][p->posX - 1].startX = p->posX;
+			path[p->posY][p->posX - 1].startY = p->posY;
+			binheap_decrease_key(&h, path[p->posY][p->posX - 1].hn);
+		}
+		if((path[p->posY + 1][p->posX].hn) && (path[p->posY + 1][p->posX].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		{
+			path[p->posY + 1][p->posX].cost = p->cost + hardnessCost(p->posX, p->posY);
+			path[p->posY + 1][p->posX].startX = p->posX;
+			path[p->posY + 1][p->posX].startY = p->posY;
+			binheap_decrease_key(&h, path[p->posY + 1][p->posX].hn);
+		}
+		if((path[p->posY][p->posX + 1].hn) && (path[p->posY][p->posX + 1].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		{
+			path[p->posY][p->posX + 1].cost = p->cost + hardnessCost(p->posX, p->posY);
+			path[p->posY][p->posX + 1].startX = p->posX;
+			path[p->posY][p->posX + 1].startY = p->posY;
+			binheap_decrease_key(&h, path[p->posY][p->posX + 1].hn);
+		}
+	}
+
+	for(y = 0; y < Y; ++y)
+	{
+		for(x = 0; x < X; ++x)
+		{
+			if(path[y][x].cost == INT_MAX)
+				printf(" ");
+			else
+				printf("%d", path[y][x].cost);
+		}
+		printf("\n");
+	}	
 }
 
 
@@ -160,6 +269,8 @@ int main(int argc, char** argv)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
 
 	printDungeon(&aincrad, arguments.verboseMode);
+
+	//dijkstras(0, arguments.xPos, arguments.yPos);
 
 	free(aincrad.rooms);
 
