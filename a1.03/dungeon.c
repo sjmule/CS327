@@ -162,6 +162,7 @@ void dijkstra(int fromX, int fromY, int tunnel)
 				allCost[y][x] = INT_MAX;
 			}
 		}
+		initialized = 1;
 	}
 
 	openCost[fromY][fromX] = 0;
@@ -351,8 +352,8 @@ int main(int argc, char** argv)
 
 	printDungeon(&aincrad, arguments.verboseMode);
 
-	dijkstra(fromX, fromY, 0);
 	dijkstra(fromX, fromY, 1);
+	dijkstra(fromX, fromY, 0);
 
 	int i = 0;
 	for(; i < Y; ++i)
