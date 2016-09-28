@@ -147,11 +147,11 @@ void dijkstra(int fromX, int fromY, int toX, int toY, int tunnel)
 	static route path[Y][X], *p;
 	static int initialized = 0;
 	binheap_t h;
-	int (*costs)[Y][X] = NULL;
+//	int (*costs)[Y][X] = NULL;
 	int x, y;
 
 	if(!initialized)
-	{printf("initializing\n");
+	{
 		for(y = 0; y < Y; ++y)
 		{
 			for(x = 0; x < X; ++x)
@@ -165,28 +165,24 @@ void dijkstra(int fromX, int fromY, int toX, int toY, int tunnel)
 		}
 	}
 	
-	printf("initialized\n");
+//	if(!tunnel)
+//		costs = &openCost;
+//	else
+//		costs = &allCost;
 
-	if(!tunnel)
-		costs = &openCost;
-	else
-		costs = &allCost;
-
-	printf("%p\n", costs);
-	printf("%p\n", &openCost);
+//	printf("%p\n", costs);
+//	printf("%p\n", &openCost);
 
 	for(y = 0; y < Y; ++y)
 	{
 		for(x = 0; x < X; ++x)
 		{
-			printf("%d", *costs[y][x]);
-			path[y][x].cost = *costs[y][x];
+//			printf("%d", *costs[y][x]);
+			path[y][x].cost = openCost[y][x];
 		}
 	}
 	
-	printf("costs set\n");
-
-	*costs[fromY][fromX] = 0;
+	openCost[fromY][fromX] = 0;
 	path[fromY][fromX].cost = 0;
 
 	binheap_init(&h, path_cmp, NULL);
@@ -212,8 +208,6 @@ void dijkstra(int fromX, int fromY, int toX, int toY, int tunnel)
 		}
 	}
 
-printf("bout to start while\n");
-
 	while((p = binheap_remove_min(&h)))
 	{
 		p->hn = NULL;
@@ -222,7 +216,7 @@ printf("bout to start while\n");
 		{
 			for(x = toX, y = toY; (x != fromX) || (y != fromY); p = &path[y][x], x = p->fromX, y = p->fromY)
 			{
-				*costs[y][x] = 0;
+				//openCost[y][x] = 0;
 			}
 			binheap_delete(&h);
 			return;
@@ -230,7 +224,7 @@ printf("bout to start while\n");
 		if((path[p->posY - 1][p->posX - 1].hn) && (path[p->posY - 1][p->posX - 1].cost > p->cost + 1))
 		{
 			path[p->posY - 1][p->posX - 1].cost = p->cost + 1;
-			*costs[p->posY - 1][p->posX - 1] = p->cost + 1;
+			openCost[p->posY - 1][p->posX - 1] = p->cost + 1;
 			path[p->posY - 1][p->posX - 1].fromY = p->posY;
 			path[p->posY - 1][p->posX - 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY - 1][p->posX - 1].hn);
@@ -238,7 +232,7 @@ printf("bout to start while\n");
 		if((path[p->posY - 1][p->posX    ].hn) && (path[p->posY - 1][p->posX    ].cost > p->cost + 1))
 		{
 			path[p->posY - 1][p->posX    ].cost = p->cost + 1;
-			*costs[p->posY - 1][p->posX    ] = p->cost + 1;
+			openCost[p->posY - 1][p->posX    ] = p->cost + 1;
 			path[p->posY - 1][p->posX    ].fromY = p->posY;
 			path[p->posY - 1][p->posX    ].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY - 1][p->posX    ].hn);
@@ -246,7 +240,7 @@ printf("bout to start while\n");
 		if((path[p->posY - 1][p->posX + 1].hn) && (path[p->posY - 1][p->posX + 1].cost > p->cost + 1))
 		{
 			path[p->posY - 1][p->posX + 1].cost = p->cost + 1;
-			*costs[p->posY - 1][p->posX + 1] = p->cost + 1;
+			openCost[p->posY - 1][p->posX + 1] = p->cost + 1;
 			path[p->posY - 1][p->posX + 1].fromY = p->posY;
 			path[p->posY - 1][p->posX + 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY - 1][p->posX + 1].hn);
@@ -254,7 +248,7 @@ printf("bout to start while\n");
 		if((path[p->posY    ][p->posX - 1].hn) && (path[p->posY    ][p->posX - 1].cost > p->cost + 1))
 		{
 			path[p->posY    ][p->posX - 1].cost = p->cost + 1;
-			*costs[p->posY    ][p->posX - 1] = p->cost + 1;
+			openCost[p->posY    ][p->posX - 1] = p->cost + 1;
 			path[p->posY    ][p->posX - 1].fromY = p->posY;
 			path[p->posY    ][p->posX - 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY    ][p->posX - 1].hn);
@@ -262,7 +256,7 @@ printf("bout to start while\n");
 		if((path[p->posY    ][p->posX + 1].hn) && (path[p->posY    ][p->posX + 1].cost > p->cost + 1))
 		{
 			path[p->posY    ][p->posX + 1].cost = p->cost + 1;
-			*costs[p->posY    ][p->posX + 1] = p->cost + 1;
+			openCost[p->posY    ][p->posX + 1] = p->cost + 1;
 			path[p->posY    ][p->posX + 1].fromY = p->posY;
 			path[p->posY    ][p->posX + 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY    ][p->posX + 1].hn);
@@ -270,7 +264,7 @@ printf("bout to start while\n");
 		if((path[p->posY + 1][p->posX - 1].hn) && (path[p->posY + 1][p->posX - 1].cost > p->cost + 1))
 		{
 			path[p->posY + 1][p->posX - 1].cost = p->cost + 1;
-			*costs[p->posY + 1][p->posX - 1] = p->cost + 1;
+			openCost[p->posY + 1][p->posX - 1] = p->cost + 1;
 			path[p->posY + 1][p->posX - 1].fromY = p->posY;
 			path[p->posY + 1][p->posX - 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY + 1][p->posX - 1].hn);
@@ -278,7 +272,7 @@ printf("bout to start while\n");
 		if((path[p->posY + 1][p->posX    ].hn) && (path[p->posY + 1][p->posX    ].cost > p->cost + 1))
 		{
 			path[p->posY + 1][p->posX    ].cost = p->cost + 1;
-			*costs[p->posY + 1][p->posX    ] = p->cost + 1;
+			openCost[p->posY + 1][p->posX    ] = p->cost + 1;
 			path[p->posY + 1][p->posX    ].fromY = p->posY;
 			path[p->posY + 1][p->posX    ].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY + 1][p->posX    ].hn);
@@ -286,12 +280,24 @@ printf("bout to start while\n");
 		if((path[p->posY + 1][p->posX + 1].hn) && (path[p->posY + 1][p->posX + 1].cost > p->cost + 1))
 		{
 			path[p->posY + 1][p->posX + 1].cost = p->cost + 1;
-			*costs[p->posY + 1][p->posX + 1] = p->cost + 1;
+			openCost[p->posY + 1][p->posX + 1] = p->cost + 1;
 			path[p->posY + 1][p->posX + 1].fromY = p->posY;
 			path[p->posY + 1][p->posX + 1].fromX = p->posX;
 			binheap_decrease_key(&h, path[p->posY + 1][p->posX + 1].hn);
 		}
 	}
+}
+
+char distToChar(int dist)
+{
+	if((dist >= 0) && (dist <= 9))
+		return (char) 48 + dist;
+	if((dist >= 10) && (dist <= 35))
+		return (char) 97 + (dist - 10);
+	if((dist >= 36) && (dist <= 61))
+		return (char) 65 + (dist - 36);
+	else
+		return (char) 21;
 }
 
 // The arg parser object
@@ -344,17 +350,8 @@ int main(int argc, char** argv)
 		if(aincrad.hardness[fromY][fromX] == 0)
 			break;
 	}
-	while(1)
-	{
-		toX = (rand() % (X - 2)) + 1;
-		toY = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[toY][toX] == 0)
-			break;
-	}
-
-	printf("going to call dijkstra\n");
-
-	dijkstra(fromX, fromY, toX, toY, 0);
+	
+	aincrad.map[fromY][fromX] = '@';
 
 	int i = 0;
 	for(; i < Y; ++i)
@@ -362,10 +359,26 @@ int main(int argc, char** argv)
 		int j = 0;
 		for(; j < X; ++j)
 		{
-			if(openCost[i][j] == 0)
-				printf("0");
+			if(aincrad.hardness[i][j] == 0)
+				dijkstra(fromX, fromY, j, i, 0);
+		}
+	}
+
+	for(i = 0; i < Y; ++i)
+	{
+		int j = 0;
+		for(; j < X; ++j)
+		{
+			if(openCost[i][j] != INT_MAX)
+			{
+				char c = distToChar(openCost[i][j]);
+				if(c != 21)
+					printf("%c", c);
+				else
+					printf("%c", aincrad.map[i][j]);
+			}
 			else
-				printf(" ");
+				printf("%c", aincrad.map[i][j]);
 		}
 		printf("\n");
 	}
