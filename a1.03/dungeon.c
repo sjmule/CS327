@@ -119,10 +119,13 @@ typedef struct route {
 	binheap_node_t *hn;
 	int posX;
 	int posY;
-	int startX;
-	int startY;
+	int fromX;
+	int fromY;
 	int cost;
 } route;
+
+int openCost[Y][X];
+int allCost[Y][X];
 
 int hardnessCost(int x, int y)
 {
@@ -139,23 +142,52 @@ int32_t path_cmp(const void* key, const void* with)
 	return ((route *) key)->cost - ((route *) with)->cost;
 }
 
-void dijkstras(int tunnel, int playerX, int playerY)
+void dijkstra(int fromX, int fromY, int toX, int toY, int tunnel)
 {
-	route path[Y][X], *p;
+	static route path[Y][X], *p;
+	static int initialized = 0;
 	binheap_t h;
+	int (*costs)[Y][X] = NULL;
+	int x, y;
 
-	int x = 0, y = 0;
-	for(; y < Y; ++y)
-	{
-		for(; x < X; ++x)
+	if(!initialized)
+	{printf("initializing\n");
+		for(y = 0; y < Y; ++y)
 		{
-			path[y][x].posY = y;
-			path[y][x].posX = x;
-			path[y][x].cost = INT_MAX;
+			for(x = 0; x < X; ++x)
+			{
+				path[y][x].cost = INT_MAX;
+				path[y][x].posY = y;
+				path[y][x].posX = x;
+				openCost[y][x] = INT_MAX;
+				allCost[y][x] = INT_MAX;
+			}
 		}
 	}
+	
+	printf("initialized\n");
 
-	path[playerY][playerX].cost = 0;
+	if(!tunnel)
+		costs = &openCost;
+	else
+		costs = &allCost;
+
+	printf("%p\n", costs);
+	printf("%p\n", &openCost);
+
+	for(y = 0; y < Y; ++y)
+	{
+		for(x = 0; x < X; ++x)
+		{
+			printf("%d", *costs[y][x]);
+			path[y][x].cost = *costs[y][x];
+		}
+	}
+	
+	printf("costs set\n");
+
+	*costs[fromY][fromX] = 0;
+	path[fromY][fromX].cost = 0;
 
 	binheap_init(&h, path_cmp, NULL);
 
@@ -163,70 +195,104 @@ void dijkstras(int tunnel, int playerX, int playerY)
 	{
 		for(x = 0; x < X; ++x)
 		{
-			if(tunnel)
-			{
-				if(aincrad.hardness[y][x] != 255)
-					path[y][x].hn = binheap_insert(&h, &path[y][x]);
-				else
-					path[y][x].hn = NULL;
-			}
-			else
+			if(!tunnel)
 			{
 				if(aincrad.hardness[y][x] == 0)
 					path[y][x].hn = binheap_insert(&h, &path[y][x]);
 				else
 					path[y][x].hn = NULL;
 			}
+			else
+			{
+				if(aincrad.hardness[y][x] == 255)
+					path[y][x].hn = NULL;
+				else
+					path[y][x].hn = binheap_insert(&h, &path[y][x]);
+			}
 		}
 	}
 
-	while(p = binheap_remove_min(&h))
+printf("bout to start while\n");
+
+	while((p = binheap_remove_min(&h)))
 	{
 		p->hn = NULL;
 
-		if((path[p->posY - 1][p->posX].hn) && (path[p->posY - 1][p->posX].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		if((p->posY == toY) && (p->posX == toX))
 		{
-			path[p->posY - 1][p->posX].cost = p->cost + hardnessCost(p->posX, p->posY);
-			path[p->posY - 1][p->posX].startX = p->posX;
-			path[p->posY - 1][p->posX].startY = p->posY;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX].hn);
+			for(x = toX, y = toY; (x != fromX) || (y != fromY); p = &path[y][x], x = p->fromX, y = p->fromY)
+			{
+				*costs[y][x] = 0;
+			}
+			binheap_delete(&h);
+			return;
 		}
-		if((path[p->posY][p->posX - 1].hn) && (path[p->posY][p->posX - 1].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		if((path[p->posY - 1][p->posX - 1].hn) && (path[p->posY - 1][p->posX - 1].cost > p->cost + 1))
 		{
-			path[p->posY][p->posX - 1].cost = p->cost + hardnessCost(p->posX, p->posY);
-			path[p->posY][p->posX - 1].startX = p->posX;
-			path[p->posY][p->posX - 1].startY = p->posY;
-			binheap_decrease_key(&h, path[p->posY][p->posX - 1].hn);
+			path[p->posY - 1][p->posX - 1].cost = p->cost + 1;
+			*costs[p->posY - 1][p->posX - 1] = p->cost + 1;
+			path[p->posY - 1][p->posX - 1].fromY = p->posY;
+			path[p->posY - 1][p->posX - 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY - 1][p->posX - 1].hn);
 		}
-		if((path[p->posY + 1][p->posX].hn) && (path[p->posY + 1][p->posX].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		if((path[p->posY - 1][p->posX    ].hn) && (path[p->posY - 1][p->posX    ].cost > p->cost + 1))
 		{
-			path[p->posY + 1][p->posX].cost = p->cost + hardnessCost(p->posX, p->posY);
-			path[p->posY + 1][p->posX].startX = p->posX;
-			path[p->posY + 1][p->posX].startY = p->posY;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX].hn);
+			path[p->posY - 1][p->posX    ].cost = p->cost + 1;
+			*costs[p->posY - 1][p->posX    ] = p->cost + 1;
+			path[p->posY - 1][p->posX    ].fromY = p->posY;
+			path[p->posY - 1][p->posX    ].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY - 1][p->posX    ].hn);
 		}
-		if((path[p->posY][p->posX + 1].hn) && (path[p->posY][p->posX + 1].cost > p->cost + hardnessCost(p->posX, p->posY)))
+		if((path[p->posY - 1][p->posX + 1].hn) && (path[p->posY - 1][p->posX + 1].cost > p->cost + 1))
 		{
-			path[p->posY][p->posX + 1].cost = p->cost + hardnessCost(p->posX, p->posY);
-			path[p->posY][p->posX + 1].startX = p->posX;
-			path[p->posY][p->posX + 1].startY = p->posY;
-			binheap_decrease_key(&h, path[p->posY][p->posX + 1].hn);
+			path[p->posY - 1][p->posX + 1].cost = p->cost + 1;
+			*costs[p->posY - 1][p->posX + 1] = p->cost + 1;
+			path[p->posY - 1][p->posX + 1].fromY = p->posY;
+			path[p->posY - 1][p->posX + 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY - 1][p->posX + 1].hn);
+		}
+		if((path[p->posY    ][p->posX - 1].hn) && (path[p->posY    ][p->posX - 1].cost > p->cost + 1))
+		{
+			path[p->posY    ][p->posX - 1].cost = p->cost + 1;
+			*costs[p->posY    ][p->posX - 1] = p->cost + 1;
+			path[p->posY    ][p->posX - 1].fromY = p->posY;
+			path[p->posY    ][p->posX - 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY    ][p->posX - 1].hn);
+		}
+		if((path[p->posY    ][p->posX + 1].hn) && (path[p->posY    ][p->posX + 1].cost > p->cost + 1))
+		{
+			path[p->posY    ][p->posX + 1].cost = p->cost + 1;
+			*costs[p->posY    ][p->posX + 1] = p->cost + 1;
+			path[p->posY    ][p->posX + 1].fromY = p->posY;
+			path[p->posY    ][p->posX + 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY    ][p->posX + 1].hn);
+		}
+		if((path[p->posY + 1][p->posX - 1].hn) && (path[p->posY + 1][p->posX - 1].cost > p->cost + 1))
+		{
+			path[p->posY + 1][p->posX - 1].cost = p->cost + 1;
+			*costs[p->posY + 1][p->posX - 1] = p->cost + 1;
+			path[p->posY + 1][p->posX - 1].fromY = p->posY;
+			path[p->posY + 1][p->posX - 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY + 1][p->posX - 1].hn);
+		}
+		if((path[p->posY + 1][p->posX    ].hn) && (path[p->posY + 1][p->posX    ].cost > p->cost + 1))
+		{
+			path[p->posY + 1][p->posX    ].cost = p->cost + 1;
+			*costs[p->posY + 1][p->posX    ] = p->cost + 1;
+			path[p->posY + 1][p->posX    ].fromY = p->posY;
+			path[p->posY + 1][p->posX    ].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY + 1][p->posX    ].hn);
+		}
+		if((path[p->posY + 1][p->posX + 1].hn) && (path[p->posY + 1][p->posX + 1].cost > p->cost + 1))
+		{
+			path[p->posY + 1][p->posX + 1].cost = p->cost + 1;
+			*costs[p->posY + 1][p->posX + 1] = p->cost + 1;
+			path[p->posY + 1][p->posX + 1].fromY = p->posY;
+			path[p->posY + 1][p->posX + 1].fromX = p->posX;
+			binheap_decrease_key(&h, path[p->posY + 1][p->posX + 1].hn);
 		}
 	}
-
-	for(y = 0; y < Y; ++y)
-	{
-		for(x = 0; x < X; ++x)
-		{
-			if(path[y][x].cost == INT_MAX)
-				printf(" ");
-			else
-				printf("%d", path[y][x].cost);
-		}
-		printf("\n");
-	}	
 }
-
 
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
@@ -270,7 +336,39 @@ int main(int argc, char** argv)
 
 	printDungeon(&aincrad, arguments.verboseMode);
 
-	//dijkstras(0, arguments.xPos, arguments.yPos);
+	int fromX, fromY, toX, toY;
+	while(1)
+	{
+		fromX = (rand() % (X - 2)) + 1;
+		fromY = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[fromY][fromX] == 0)
+			break;
+	}
+	while(1)
+	{
+		toX = (rand() % (X - 2)) + 1;
+		toY = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[toY][toX] == 0)
+			break;
+	}
+
+	printf("going to call dijkstra\n");
+
+	dijkstra(fromX, fromY, toX, toY, 0);
+
+	int i = 0;
+	for(; i < Y; ++i)
+	{
+		int j = 0;
+		for(; j < X; ++j)
+		{
+			if(openCost[i][j] == 0)
+				printf("0");
+			else
+				printf(" ");
+		}
+		printf("\n");
+	}
 
 	free(aincrad.rooms);
 
