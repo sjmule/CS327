@@ -1,8 +1,8 @@
 EXES = main
-OBJS = dungeon.o generate.o save.o binheap.o
+OBJS = dungeon.o generate.o save.o binheap.o routing.o
 CFLAGS = -g -Wall -Werror
 
-DEPS = generate.h save.h binheap.h
+DEPS = generate.h save.h binheap.h routing.o
 
 main: $(OBJS)
 	gcc -o $@ $^ $(CFLAGS)

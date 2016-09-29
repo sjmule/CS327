@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "binheap.h"
 
@@ -142,6 +143,7 @@ void *binheap_peek_min(binheap_t *h)
 
 void *binheap_remove_min(binheap_t *h)
 {
+//  printf("removing  ");
   void *tmp;
 
   if (!h->size) {
@@ -154,6 +156,7 @@ void *binheap_remove_min(binheap_t *h)
   h->array[0] = h->array[h->size];
   percolate_down(h, 0);
 
+//  printf("removed	");
   return tmp;
 }
 

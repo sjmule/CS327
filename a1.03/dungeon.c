@@ -1,8 +1,6 @@
 #include "generate.h"
 #include "save.h"
-#include "binheap.h"
-#include <limits.h>
-#include <stdint.h>
+#include "routing.h"
 
 dungeon aincrad;
 
@@ -21,8 +19,6 @@ static struct argp_option options[] =
 	{"save", 's', 0, 0, "Save the dugeon to the default location"},
 	{"load-path", 'r', "PATH", 0, "Load the dungeon at the specified path"},
 	{"save-path", 'w', "PATH", 0, "Save the dungeon to the specified path"},
-	{"x-pos", 'x', "X", 0, "Set the starting x position for the player"},
-	{"y-pos", 'y', "Y", 0, "Set the starting y position for the player"},
 	{0}
 };
 
@@ -39,10 +35,6 @@ struct arguments
 	char* loadPath;
 	// path to save to
 	char* savePath;
-	// x position of player
-	int xPos;
-	// y position of player
-	int yPos;
 };
 
 /*
@@ -77,12 +69,6 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 			arguments->save = 1;
 			arguments->savePath = arg;
 			break;
-		case 'x':
-			arguments->xPos = atoi(arg);
-			break;
-		case 'y':
-			arguments->yPos = atoi(arg);
-			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
 	}
@@ -115,190 +101,6 @@ void printDungeon(dungeon* temp, int debug)
 	}
 }
 
-typedef struct route {
-	binheap_node_t *hn;
-	int posX;
-	int posY;
-	int fromX;
-	int fromY;
-	int cost;
-} route;
-
-int openCost[Y][X];
-int allCost[Y][X];
-
-int hardnessCost(int y, int x)
-{
-	if(aincrad.hardness[y][x] >= 0 && aincrad.hardness[y][x] <= 84)
-		return 1;
-	if(aincrad.hardness[y][x] >= 85 && aincrad.hardness[y][x] <= 170)
-		return 2;
-	if(aincrad.hardness[y][x] >= 171 && aincrad.hardness[y][x] <= 254)
-		return 3;
-}
-
-int32_t path_cmp(const void* key, const void* with)
-{
-	return ((route *) key)->cost - ((route *) with)->cost;
-}
-
-void dijkstra(int fromX, int fromY, int tunnel)
-{
-	static route path[Y][X], *p;
-	static int initialized = 0;
-	binheap_t h;
-	int x, y;
-
-	if(!initialized)
-	{
-		for(y = 0; y < Y; ++y)
-		{
-			for(x = 0; x < X; ++x)
-			{
-				path[y][x].cost = INT_MAX;
-				path[y][x].posY = y;
-				path[y][x].posX = x;
-				openCost[y][x] = INT_MAX;
-				allCost[y][x] = INT_MAX;
-			}
-		}
-		initialized = 1;
-	}
-
-	openCost[fromY][fromX] = 0;
-	allCost[fromY][fromX] = 0;
-	path[fromY][fromX].cost = 0;
-
-	binheap_init(&h, path_cmp, NULL);
-
-	for(y = 0; y < Y; ++y)
-	{
-		for(x = 0; x < X; ++x)
-		{
-			if(!tunnel)
-			{
-				if(aincrad.hardness[y][x] == 0)
-					path[y][x].hn = binheap_insert(&h, &path[y][x]);
-				else
-					path[y][x].hn = NULL;
-			}
-			else
-			{
-				if(aincrad.hardness[y][x] == 255)
-					path[y][x].hn = NULL;
-				else
-					path[y][x].hn = binheap_insert(&h, &path[y][x]);
-			}
-		}
-	}
-
-	while((p = binheap_remove_min(&h)))
-	{
-		p->hn = NULL;
-		if((path[p->posY - 1][p->posX - 1].hn) && (path[p->posY - 1][p->posX - 1].cost > p->cost + hardnessCost(p->posY - 1, p->posX - 1)))
-		{
-			path[p->posY - 1][p->posX - 1].cost = p->cost + hardnessCost(p->posY - 1, p->posX - 1);
-			if(!tunnel)
-				openCost[p->posY - 1][p->posX - 1] = p->cost + hardnessCost(p->posY - 1, p->posX - 1);
-			else
-				allCost[p->posY - 1][p->posX - 1] = p->cost + hardnessCost(p->posY - 1, p->posX - 1);
-			path[p->posY - 1][p->posX - 1].fromY = p->posY;
-			path[p->posY - 1][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX - 1].hn);
-		}
-		if((path[p->posY - 1][p->posX    ].hn) && (path[p->posY - 1][p->posX    ].cost > p->cost + hardnessCost(p->posY - 1, p->posX)))
-		{
-			path[p->posY - 1][p->posX    ].cost = p->cost + hardnessCost(p->posY - 1, p->posX);
-			if(!tunnel)
-				openCost[p->posY - 1][p->posX    ] = p->cost + hardnessCost(p->posY - 1, p->posX);
-			else
-				allCost[p->posY - 1][p->posX    ] = p->cost + hardnessCost(p->posY - 1, p->posX);
-			path[p->posY - 1][p->posX    ].fromY = p->posY;
-			path[p->posY - 1][p->posX    ].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX    ].hn);
-		}
-		if((path[p->posY - 1][p->posX + 1].hn) && (path[p->posY - 1][p->posX + 1].cost > p->cost + hardnessCost(p->posY - 1, p->posX + 1)))
-		{
-			path[p->posY - 1][p->posX + 1].cost = p->cost + hardnessCost(p->posY - 1, p->posX + 1);
-			if(!tunnel)
-				openCost[p->posY - 1][p->posX + 1] = p->cost + hardnessCost(p->posY - 1, p->posX + 1);
-			else
-				allCost[p->posY - 1][p->posX + 1] = p->cost + hardnessCost(p->posY - 1, p->posX + 1);
-			path[p->posY - 1][p->posX + 1].fromY = p->posY;
-			path[p->posY - 1][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX + 1].hn);
-		}
-		if((path[p->posY    ][p->posX - 1].hn) && (path[p->posY    ][p->posX - 1].cost > p->cost + hardnessCost(p->posY, p->posX - 1)))
-		{
-			path[p->posY    ][p->posX - 1].cost = p->cost + hardnessCost(p->posY, p->posX - 1);
-			if(!tunnel)
-				openCost[p->posY    ][p->posX - 1] = p->cost + hardnessCost(p->posY, p->posX - 1);
-			else
-				allCost[p->posY    ][p->posX - 1] = p->cost + hardnessCost(p->posY, p->posX - 1);
-			path[p->posY    ][p->posX - 1].fromY = p->posY;
-			path[p->posY    ][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY    ][p->posX - 1].hn);
-		}
-		if((path[p->posY    ][p->posX + 1].hn) && (path[p->posY    ][p->posX + 1].cost > p->cost + hardnessCost(p->posY, p->posX + 1)))
-		{
-			path[p->posY    ][p->posX + 1].cost = p->cost + hardnessCost(p->posY, p->posX + 1);
-			if(!tunnel)
-				openCost[p->posY    ][p->posX + 1] = p->cost + hardnessCost(p->posY, p->posX + 1);
-			else
-				allCost[p->posY    ][p->posX + 1] = p->cost + hardnessCost(p->posY, p->posX + 1);
-			path[p->posY    ][p->posX + 1].fromY = p->posY;
-			path[p->posY    ][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY    ][p->posX + 1].hn);
-		}
-		if((path[p->posY + 1][p->posX - 1].hn) && (path[p->posY + 1][p->posX - 1].cost > p->cost + hardnessCost(p->posY + 1, p->posX - 1)))
-		{
-			path[p->posY + 1][p->posX - 1].cost = p->cost + hardnessCost(p->posY + 1, p->posX - 1);
-			if(!tunnel)
-				openCost[p->posY + 1][p->posX - 1] = p->cost + hardnessCost(p->posY + 1, p->posX - 1);
-			else
-				allCost[p->posY + 1][p->posX - 1] = p->cost + hardnessCost(p->posY + 1, p->posX - 1);
-			path[p->posY + 1][p->posX - 1].fromY = p->posY;
-			path[p->posY + 1][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX - 1].hn);
-		}
-		if((path[p->posY + 1][p->posX    ].hn) && (path[p->posY + 1][p->posX    ].cost > p->cost + hardnessCost(p->posY + 1, p->posX)))
-		{
-			path[p->posY + 1][p->posX    ].cost = p->cost + hardnessCost(p->posY + 1, p->posX);
-			if(!tunnel)
-				openCost[p->posY + 1][p->posX    ] = p->cost + hardnessCost(p->posY + 1, p->posX);
-			else
-				allCost[p->posY + 1][p->posX    ] = p->cost + hardnessCost(p->posY + 1, p->posX);
-			path[p->posY + 1][p->posX    ].fromY = p->posY;
-			path[p->posY + 1][p->posX    ].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX    ].hn);
-		}
-		if((path[p->posY + 1][p->posX + 1].hn) && (path[p->posY + 1][p->posX + 1].cost > p->cost + hardnessCost(p->posY + 1, p->posX + 1)))
-		{
-			path[p->posY + 1][p->posX + 1].cost = p->cost + hardnessCost(p->posY + 1, p->posX + 1);
-			if(!tunnel)
-				openCost[p->posY + 1][p->posX + 1] = p->cost + hardnessCost(p->posY + 1, p->posX + 1);
-			else
-				allCost[p->posY + 1][p->posX + 1] = p->cost + hardnessCost(p->posY + 1, p->posX + 1);
-			path[p->posY + 1][p->posX + 1].fromY = p->posY;
-			path[p->posY + 1][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX + 1].hn);
-		}
-	}
-	binheap_delete(&h);
-}
-
-char distToChar(int dist)
-{
-	if((dist >= 0) && (dist <= 9))
-		return (char) 48 + dist;
-	if((dist >= 10) && (dist <= 35))
-		return (char) 97 + (dist - 10);
-	if((dist >= 36) && (dist <= 61))
-		return (char) 65 + (dist - 36);
-	else
-		return (char) 21;
-}
-
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
 
@@ -319,8 +121,6 @@ int main(int argc, char** argv)
 	arguments.save = 0;
 	arguments.loadPath = filePath;
 	arguments.savePath = filePath;
-	arguments.xPos = (rand() % 78) + 1;
-	arguments.yPos = (rand() % 19) + 1;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	if(arguments.load == 1)
@@ -339,61 +139,25 @@ int main(int argc, char** argv)
 	if(arguments.save == 1)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
 
-	int fromX, fromY, toX, toY;
+	int playerX, playerY;
 	while(1)
 	{
-		fromX = (rand() % (X - 2)) + 1;
-		fromY = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[fromY][fromX] == 0)
+		playerX = (rand() % (X - 2)) + 1;
+		playerY = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[playerY][playerX] == 0)
 			break;
 	}
+
 	
-	aincrad.map[fromY][fromX] = '@';
+	aincrad.map[playerY][playerX] = '@';
 
 	printDungeon(&aincrad, arguments.verboseMode);
 
-	dijkstra(fromX, fromY, 1);
-	dijkstra(fromX, fromY, 0);
+	dijkstra(playerX, playerY, 0);
+	dijkstra(playerX, playerY, 1);
 
-	int i = 0;
-	for(; i < Y; ++i)
-	{
-		int j = 0;
-		for(; j < X; ++j)
-		{
-			if(openCost[i][j] != INT_MAX)
-			{
-				char c = distToChar(openCost[i][j]);
-				if(c != 21)
-					printf("%c", c);
-				else
-					printf("%c", aincrad.map[i][j]);
-			}
-			else
-				printf("%c", aincrad.map[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(i = 0; i < Y; ++i)
-	{
-		int j = 0;
-		for(; j < X; ++j)
-		{
-			if(allCost[i][j] != INT_MAX)
-			{
-				char c = distToChar(allCost[i][j]);
-				if(c != 21)
-					printf("%c", c);
-				else
-					printf("%c", aincrad.map[i][j]);
-			}
-			else
-				printf("%c", aincrad.map[i][j]);
-		}
-		printf("\n");
-	}
-
+	printCosts();
+	
 	free(aincrad.rooms);
 
 	return 0;
