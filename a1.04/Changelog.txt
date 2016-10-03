@@ -1,0 +1,68 @@
+Changelog Assignment 1.03
+
+9/28
+Updated README and Changelog.
+
+9/26
+Cleaned up code and moved Dijkstra's and related cost finding/printing methods into new file routing.c. Defined header file routing.h.
+
+9/24
+Modified Dijkstra's to take flag parameter to indicate wheater or not we are computing for tunneling or non-tunneling distances.
+Updated Dijkstra's to work for non-tunneling distances.
+
+9/22
+Implemented Dijkstra's for non-tunneling distances.
+
+9/20
+Updated make file to compile provided binary heap files.
+Defined new functions for Dijkstra's and method for computing cost of spaces based on hardness.
+
+9/17
+Started work on assignment.
+Copied old code into new directory. Downloaded provided binary heap implementation to include in project.
+
+Changelog Assignment 1.02
+
+9/13
+Implemented Argp interface for parsing Unix-style argument vectors.
+
+9/12
+Tested test files, all load/save correctly.
+Moved save/load functions to new file save.c. Defined header file save.h
+
+9/11
+Finished save/load functions. Need to test with test files provided.
+
+9/10
+Started adding to save/load methods. Added basic argument parsing.
+Added file io for writing/reading and closing the file in each related function.
+
+9/9
+Started work on assignment.
+Copied old code into new directory. Added stubs for what will become save/load functions.
+
+Changelog Assignment 1.01
+
+9/7
+Cleaned up code to remove debugging marks.
+Created README and Changelog.
+
+9/6
+Moved corridor generation code to file with room and dungeon generation code.
+
+9/5
+Started corridor generation.
+Created code to select random spot in one room and another random spot in another and attempt to connnect them.
+
+9/3
+Split dungeon and room generation code into separate file.
+Created header file. Created Makefile to compile all files together.
+
+9/2
+Started room generation.
+Created code to generate random rooms of random sizes and attempt to place them in a random place in the dungeon.
+
+9/1
+Started work on assignment.
+Created 2 arrays to hold the map and hardness of the dungeon.
+Created code to initialize the arrays to a raw state.
