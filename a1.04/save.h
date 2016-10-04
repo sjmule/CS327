@@ -1,6 +1,7 @@
 #ifndef SAVE_H
 #define SAVE_H
 
+#include "dungeon.h"
 #include "generate.h"
 
 #define _itos(x,y) ((x >> y) & 0xFF)

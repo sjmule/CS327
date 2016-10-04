@@ -1,7 +1,7 @@
 #ifndef ROUTING_H
 #define ROUTING_H
 
-#include "generate.h"
+#include "dungeon.h"
 #include "binheap.h"
 
 typedef struct ROUTE route;

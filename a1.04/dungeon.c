@@ -1,7 +1,8 @@
+#include "dungeon.h"
 #include "generate.h"
 #include "save.h"
 #include "routing.h"
-#include "monster.h"
+#include "move.h"
 
 dungeon aincrad;
 player kirito;
@@ -110,16 +111,16 @@ void printDungeon(int debug)
 		printCosts();
 
 		printf("Player:\n");
-		printf("  X: %d\n", kirito.x);
-		printf("  Y: %d\n", kirito.y);
+		printf("  X: %d\n", kirito.base.x);
+		printf("  Y: %d\n", kirito.base.y);
 
 		for(i = 0; i < aincrad.numMonsters; ++i)
 		{
-			printf("Monster %c:\n", aincrad.monsters[i].symbol);
-			printf("  X: %d\n", aincrad.monsters[i].x);
-			printf("  Y: %d\n", aincrad.monsters[i].y);
+			printf("Monster %c:\n", aincrad.monsters[i].base.symbol);
+			printf("  X: %d\n", aincrad.monsters[i].base.x);
+			printf("  Y: %d\n", aincrad.monsters[i].base.y);
 			printf("  Attr: %x\n", aincrad.monsters[i].attributes);
-			printf("  Speed: %d\n", aincrad.monsters[i].speed);
+			printf("  Speed: %d\n", aincrad.monsters[i].base.speed);
 		}
 	}
 }
@@ -144,17 +145,17 @@ void createMonsters()
 		if(attr < 50)
 			mon.attributes = mon.attributes | ERRATIC;
 		attr = (rand() % 15) + 5;
-		mon.speed = attr;
+		mon.base.speed = attr;
 		while(1)
 		{
-			mon.x = (rand() % (X - 2)) + 1;
-			mon.y = (rand() % (Y - 2)) + 1;
-			if(aincrad.hardness[mon.y][mon.x] == 0)
+			mon.base.x = (rand() % (X - 2)) + 1;
+			mon.base.y = (rand() % (Y - 2)) + 1;
+			if(aincrad.hardness[mon.base.y][mon.base.x] == 0)
 				break;
 		}
-		mon.symbol = (rand() % 25) + 97;
+		mon.base.symbol = (rand() % 25) + 97;
 		aincrad.monsters[i] = mon;
-		aincrad.map[mon.y][mon.x] = mon.symbol;
+		aincrad.map[mon.base.y][mon.base.x] = mon.base.symbol;
 	}
 }
 
@@ -174,53 +175,53 @@ void cleanCell(int x, int y)
 	}
 }
 
-void move(void *character, int dir)
+void move(entity* character, int dir)
 {
 	switch(dir)
 	{
 		case 0:
-			cleanCell(character.x, character.y);
-			character.x--;
-			character.y--;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x--;
+			character->y--;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 1:
-			cleanCell(character.x, character.y);
-			character.y--;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->y--;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 2:
-			cleanCell(character.x, character.y);
-			character.x++;
-			character.y--;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x++;
+			character->y--;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 3:
-			cleanCell(character.x, character.y);
-			character.x++;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x++;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 4:
-			cleanCell(character.x, character.y);
-			character.x++;
-			character.y++;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x++;
+			character->y++;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 5:
-			cleanCell(character.x, character.y);
-			character.y++;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->y++;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 6:
-			cleanCell(character.x, character.y);
-			character.x--;
-			character.y++;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x--;
+			character->y++;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		case 7:
-			cleanCell(character.x, character.y);
-			character.x--;
-			aincrad.map[character.y][character.x] = character.symbol;
+			cleanCell(character->x, character->y);
+			character->x--;
+			aincrad.map[character->y][character->x] = character->symbol;
 			break;
 		default:
 			break;
@@ -229,14 +230,14 @@ void move(void *character, int dir)
 
 void moveMonsters(monster mon)
 {
-	if((mon.attribute & ERRATIC) == 1)
+	if((mon.attributes & ERRATIC) == 1)
 	{
 
 	}
 	else
 	{
 		int dir = rand() % 7;
-		move(&mon, dir);
+		move(&mon.base, dir);
 	}
 	
 }
@@ -245,7 +246,7 @@ void moveMonsters(monster mon)
 static struct argp argp = {options, parse_opt, 0, doc};
 
 int main(int argc, char** argv)
-{	
+{
 	version = 0;
 	srand((unsigned) time(0));
 
@@ -264,8 +265,8 @@ int main(int argc, char** argv)
 	arguments.numMonsters = 0;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-	kirito.symbol = '@';
-	kirito.speed = 10;
+	kirito.base.symbol = '@';
+	kirito.base.speed = 10;
 
 	if(arguments.load == 1)
 		loadDungeon(arguments.loadPath, arguments.verboseMode);
@@ -285,9 +286,9 @@ int main(int argc, char** argv)
 
 	while(1)
 	{
-		kirito.x = (rand() % (X - 2)) + 1;
-		kirito.y = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[kirito.y][kirito.x] == 0)
+		kirito.base.x = (rand() % (X - 2)) + 1;
+		kirito.base.y = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[kirito.base.y][kirito.base.x] == 0)
 			break;
 	}
 
@@ -296,10 +297,10 @@ int main(int argc, char** argv)
 
 	createMonsters();
 
-	aincrad.map[kirito.y][kirito.x] = kirito.symbol;
+	aincrad.map[kirito.base.y][kirito.base.x] = kirito.base.symbol;
 	
-	dijkstra(kirito.x, kirito.y, 0);
-	dijkstra(kirito.x, kirito.y, 1);
+	dijkstra(kirito.base.x, kirito.base.y, 0);
+	dijkstra(kirito.base.x, kirito.base.y, 1);
 
 	printDungeon(arguments.verboseMode);
 
