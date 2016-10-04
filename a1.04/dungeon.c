@@ -158,6 +158,89 @@ void createMonsters()
 	}
 }
 
+void cleanCell(int x, int y)
+{
+	int i = 0;
+	for(; i < aincrad.numRooms; ++i)
+	{
+		room temp = aincrad.rooms[i];
+		if((x >= temp.x) && (x <= (temp.x + temp.width)))
+		{
+			if((y >= temp.y) && (y <= (temp.y + temp.height)))
+				aincrad.map[y][x] = '.';
+		}
+		else
+			aincrad.map[y][x] = '#';
+	}
+}
+
+void move(void *character, int dir)
+{
+	switch(dir)
+	{
+		case 0:
+			cleanCell(character.x, character.y);
+			character.x--;
+			character.y--;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 1:
+			cleanCell(character.x, character.y);
+			character.y--;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 2:
+			cleanCell(character.x, character.y);
+			character.x++;
+			character.y--;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 3:
+			cleanCell(character.x, character.y);
+			character.x++;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 4:
+			cleanCell(character.x, character.y);
+			character.x++;
+			character.y++;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 5:
+			cleanCell(character.x, character.y);
+			character.y++;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 6:
+			cleanCell(character.x, character.y);
+			character.x--;
+			character.y++;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		case 7:
+			cleanCell(character.x, character.y);
+			character.x--;
+			aincrad.map[character.y][character.x] = character.symbol;
+			break;
+		default:
+			break;
+	}
+}
+
+void moveMonsters(monster mon)
+{
+	if((mon.attribute & ERRATIC) == 1)
+	{
+
+	}
+	else
+	{
+		int dir = rand() % 7;
+		move(&mon, dir);
+	}
+	
+}
+
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
 
