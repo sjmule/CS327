@@ -1,11 +1,13 @@
 #include "dungeon.h"
 #include "generate.h"
 #include "save.h"
+#include "binheap.h"
 #include "routing.h"
 #include "move.h"
 
 dungeon aincrad;
 player kirito;
+int monCount = 0;
 
 // Program version string
 const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
@@ -111,135 +113,18 @@ void printDungeon(int debug)
 		printCosts();
 
 		printf("Player:\n");
-		printf("  X: %d\n", kirito.base.x);
-		printf("  Y: %d\n", kirito.base.y);
+		printf("  X: %d\n", kirito.base->x);
+		printf("  Y: %d\n", kirito.base->y);
 
 		for(i = 0; i < aincrad.numMonsters; ++i)
 		{
-			printf("Monster %c:\n", aincrad.monsters[i].base.symbol);
-			printf("  X: %d\n", aincrad.monsters[i].base.x);
-			printf("  Y: %d\n", aincrad.monsters[i].base.y);
+			printf("Monster %c:\n", aincrad.monsters[i].base->symbol);
+			printf("  X: %d\n", aincrad.monsters[i].base->x);
+			printf("  Y: %d\n", aincrad.monsters[i].base->y);
 			printf("  Attr: %x\n", aincrad.monsters[i].attributes);
-			printf("  Speed: %d\n", aincrad.monsters[i].base.speed);
+			printf("  Speed: %d\n", aincrad.monsters[i].base->speed);
 		}
 	}
-}
-
-void createMonsters()
-{
-	int i = 0;
-	for(; i < aincrad.numMonsters; ++i)
-	{
-		monster mon;
-		mon.attributes = 0;
-		int attr = rand() % 100;
-		if(attr < 50)
-			mon.attributes = mon.attributes | INTELLIGENT;
-		attr = rand() % 100;
-		if(attr < 50)
-			mon.attributes = mon.attributes | TELEPATHIC;
-		attr = rand() % 100;
-		if(attr < 50)
-			mon.attributes = mon.attributes | TUNNELING;
-		attr = rand() % 100;
-		if(attr < 50)
-			mon.attributes = mon.attributes | ERRATIC;
-		attr = (rand() % 15) + 5;
-		mon.base.speed = attr;
-		while(1)
-		{
-			mon.base.x = (rand() % (X - 2)) + 1;
-			mon.base.y = (rand() % (Y - 2)) + 1;
-			if(aincrad.hardness[mon.base.y][mon.base.x] == 0)
-				break;
-		}
-		mon.base.symbol = (rand() % 25) + 97;
-		aincrad.monsters[i] = mon;
-		aincrad.map[mon.base.y][mon.base.x] = mon.base.symbol;
-	}
-}
-
-void cleanCell(int x, int y)
-{
-	int i = 0;
-	for(; i < aincrad.numRooms; ++i)
-	{
-		room temp = aincrad.rooms[i];
-		if((x >= temp.x) && (x <= (temp.x + temp.width)))
-		{
-			if((y >= temp.y) && (y <= (temp.y + temp.height)))
-				aincrad.map[y][x] = '.';
-		}
-		else
-			aincrad.map[y][x] = '#';
-	}
-}
-
-void move(entity* character, int dir)
-{
-	switch(dir)
-	{
-		case 0:
-			cleanCell(character->x, character->y);
-			character->x--;
-			character->y--;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 1:
-			cleanCell(character->x, character->y);
-			character->y--;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 2:
-			cleanCell(character->x, character->y);
-			character->x++;
-			character->y--;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 3:
-			cleanCell(character->x, character->y);
-			character->x++;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 4:
-			cleanCell(character->x, character->y);
-			character->x++;
-			character->y++;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 5:
-			cleanCell(character->x, character->y);
-			character->y++;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 6:
-			cleanCell(character->x, character->y);
-			character->x--;
-			character->y++;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		case 7:
-			cleanCell(character->x, character->y);
-			character->x--;
-			aincrad.map[character->y][character->x] = character->symbol;
-			break;
-		default:
-			break;
-	}
-}
-
-void moveMonsters(monster mon)
-{
-	if((mon.attributes & ERRATIC) == 1)
-	{
-
-	}
-	else
-	{
-		int dir = rand() % 7;
-		move(&mon.base, dir);
-	}
-	
 }
 
 // The arg parser object
@@ -262,17 +147,18 @@ int main(int argc, char** argv)
 	arguments.save = 0;
 	arguments.loadPath = filePath;
 	arguments.savePath = filePath;
-	arguments.numMonsters = 0;
+	arguments.numMonsters = 10;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-	kirito.base.symbol = '@';
-	kirito.base.speed = 10;
+	kirito.base = malloc(sizeof(entity));
+	kirito.base->symbol = '@';
+	kirito.base->speed = 10;
 
-	if(arguments.load == 1)
+	if(arguments.load)
 		loadDungeon(arguments.loadPath, arguments.verboseMode);
 	else
 	{
-		if(arguments.verboseMode == 1)
+		if(arguments.verboseMode)
 			printf("Generating new dungeon\n");	
 		aincrad.numRooms = 8;
 		aincrad.rooms = malloc(sizeof(room) * 8);
@@ -281,14 +167,14 @@ int main(int argc, char** argv)
 		connectRooms();
 	}
 
-	if(arguments.save == 1)
+	if(arguments.save)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
 
 	while(1)
 	{
-		kirito.base.x = (rand() % (X - 2)) + 1;
-		kirito.base.y = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[kirito.base.y][kirito.base.x] == 0)
+		kirito.base->x = (rand() % (X - 2)) + 1;
+		kirito.base->y = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[kirito.base->y][kirito.base->x] == 0)
 			break;
 	}
 
@@ -297,14 +183,19 @@ int main(int argc, char** argv)
 
 	createMonsters();
 
-	aincrad.map[kirito.base.y][kirito.base.x] = kirito.base.symbol;
+	aincrad.map[kirito.base->y][kirito.base->x] = kirito.base->symbol;
 	
-	dijkstra(kirito.base.x, kirito.base.y, 0);
-	dijkstra(kirito.base.x, kirito.base.y, 1);
+	calculateDistances(kirito.base->x, kirito.base->y, 0);
+	calculateDistances(kirito.base->x, kirito.base->y, 1);
 
 	printDungeon(arguments.verboseMode);
 
 	free(aincrad.rooms);
+	int i = 0;
+	for(; i < aincrad.numMonsters; ++i)
+	{
+		free(aincrad.monsters[i].base);
+	}
 	free(aincrad.monsters);
 
 	return 0;

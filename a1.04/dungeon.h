@@ -34,21 +34,24 @@ typedef struct PLAYER player;
 
 struct PLAYER
 {
-	entity base;
+	entity* base;
 };
 
 typedef struct MONSTER monster;
 
 struct MONSTER
 {
-	entity base;
+	entity* base;
 	int attributes;
+	int playerX;
+	int playerY;
 };
 
 typedef struct ROOM room;
 
 struct ROOM
 {
+	int number;
 	int x;
 	int y;
 	int height;
@@ -69,5 +72,6 @@ struct DUNGEON
 
 extern dungeon aincrad;
 extern player kirito;
+extern int monCount;
 
 #endif

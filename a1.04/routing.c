@@ -17,7 +17,7 @@ int32_t path_cmp(const void* key, const void* with)
 	return ((route *) key)->cost - ((route *) with)->cost;
 }
 
-void dijkstra(int playerX, int playerY, int tunnel)
+void calculateDistances(int playerX, int playerY, int tunnel)
 {
 	static route path[Y][X], *p;
 	static int initialized = 0;

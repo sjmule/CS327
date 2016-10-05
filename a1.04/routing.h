@@ -23,7 +23,7 @@ int hardnessCost(int y, int x);
 
 int32_t path_cmp(const void* key, const void* with);
 
-void dijkstra(int playerX, int playerY, int tunnel);
+void calculateDistances(int playerX, int playerY, int tunnel);
 
 char distToChar(int dist);
 

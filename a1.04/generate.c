@@ -143,6 +143,7 @@ void placeRoom(room room, int x, int y)
 	}
 	room.x = x;
 	room.y = y;
+	room.number = aincrad.numRooms;
 	aincrad.rooms[aincrad.numRooms] = room;
 	aincrad.numRooms++;
 }
@@ -280,5 +281,43 @@ void connectRooms()
 				}
 			}
 		}
+	}
+}
+
+void createMonsters()
+{
+	int i = 0;
+	for(; i < aincrad.numMonsters; ++i)
+	{
+		monster mon;
+		mon.base = malloc(sizeof(entity));
+		mon.attributes = 0;
+		int attr = rand() % 100;
+		if(attr < 50)
+			mon.attributes = mon.attributes | INTELLIGENT;
+		attr = rand() % 100;
+		if(attr < 50)
+			mon.attributes = mon.attributes | TELEPATHIC;
+		attr = rand() % 100;
+		if(attr < 50)
+			mon.attributes = mon.attributes | TUNNELING;
+		attr = rand() % 100;
+		if(attr < 50)
+			mon.attributes = mon.attributes | ERRATIC;
+		attr = (rand() % 15) + 5;
+		mon.base->speed = attr;
+		while(1)
+		{
+			mon.base->x = (rand() % (X - 2)) + 1;
+			mon.base->y = (rand() % (Y - 2)) + 1;
+			if(aincrad.hardness[mon.base->y][mon.base->x] == 0)
+				break;
+		}
+		mon.base->symbol = (rand() % 25) + 97;
+		mon.playerX = 0;
+		mon.playerY = 0;
+		aincrad.monsters[i] = mon;
+		aincrad.map[mon.base->y][mon.base->x] = mon.base->symbol;
+		++monCount;
 	}
 }

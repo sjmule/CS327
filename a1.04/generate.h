@@ -21,4 +21,6 @@ void createRooms();
 
 void connectRooms();
 
+void createMonsters();
+
 #endif
