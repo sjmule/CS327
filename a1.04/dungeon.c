@@ -8,6 +8,7 @@
 dungeon aincrad;
 player kirito;
 int monCount = 0;
+int turn = 0;
 
 // Program version string
 const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
@@ -153,6 +154,7 @@ int main(int argc, char** argv)
 	kirito.base = malloc(sizeof(entity));
 	kirito.base->symbol = '@';
 	kirito.base->speed = 10;
+	kirito.base->turn = 0;
 
 	if(arguments.load)
 		loadDungeon(arguments.loadPath, arguments.verboseMode);

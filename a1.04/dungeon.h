@@ -28,6 +28,7 @@ struct ENTITY
 	int x;
 	int y;
 	int speed;
+	int turn;
 };
 
 typedef struct PLAYER player;
@@ -73,5 +74,6 @@ struct DUNGEON
 extern dungeon aincrad;
 extern player kirito;
 extern int monCount;
+extern int turn;
 
 #endif
