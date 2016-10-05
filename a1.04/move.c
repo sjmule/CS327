@@ -157,6 +157,7 @@ void move(entity* character, int dir)
 	}
 	aincrad.map[character->y][character->x] = character->symbol;
 	aincrad.hardness[character->y][character->x] = 0;
+	character->turn += (100/character->speed);
 }
 
 void moveRandom(entity* character, int tunnel)
@@ -164,7 +165,7 @@ void moveRandom(entity* character, int tunnel)
 	int valid = 0;
 	while(!valid)
 	{
-		int dir = rand() % 7;
+		int dir = rand() % 8;
 		valid = isMoveValid(character, dir, tunnel);
 		if(valid < 1)
 		{	
@@ -180,6 +181,8 @@ void moveRandom(entity* character, int tunnel)
 			calculateDistances(kirito.base->x, kirito.base->y, 0);
 			calculateDistances(kirito.base->x, kirito.base->y, 1);
 		}
+		if(override)
+			break;
 	}
 }
 
@@ -191,6 +194,7 @@ void moveDeliberately(monster* mon)
 		mon->playerY = kirito.base.y;
 		if(mon->attributes & INTELLIGENT) // is intelligent
 		{
+			// TODO implement shortestPath in routing.c
 			int dir = shortestPath(mon->base->x, mon->base->y, mon->playerX, mon->playerY, (mon->attributes & TUNNELING));
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid < 1)
@@ -210,19 +214,151 @@ void moveDeliberately(monster* mon)
 		}
 		else // is not intelligent
 		{
+			// find direction of player
+			//
+			// TODO
 			
 		}
 	}
 	else // is not telepathic
 	{
-	
+		if(mon->playerX != 0)
+		{
+			// find direction of last known position of player
+			//
+			// TODO
+		}
 	}
 }
 
 void moveMonster(monster* mon)
 {
 	// if we can see the PC, move towards him
-
+	int playerRoom = inRoom(kirito.base->x, kirito.base->y);
+	if(playerRoom >=0)
+	{
+		if(inRoom(mon->base->x, mon->base->y) == playerRoom)
+		{
+			// move towards player
+			//
+			// TODO
+			if(mon->attributes & INTELLIGENT)
+			{
+				mon->playerX = kirito.base->x;
+				mon->playerY = kirito.base->y;
+			}
+			return;
+		}
+		else
+		{
+			if(mon->base->x == kirito.base->x)
+			{
+				 if((mon->base->y - kirito.base->y) < 0)
+				 {
+					int i = mon->base->y;
+					int wall = 0;
+					for(; i < kirito.base->y; ++i)
+					{
+						if(aincrad.hardness[i][mon->base->x] != 0)
+						{
+							wall = 1;
+							break;
+						}
+					}
+					if(!wall)
+					{
+						// move down towards player
+						//
+						// TODO
+						if(mon->attributes & INTELLIGENT)
+						{
+							mon->playerX = kirito.base->x;
+							mon->playerY = kirito.base->y;
+						}
+						return;
+					}
+				 }
+				 else
+				 {
+					int i = kirito.base->y;
+					int wall = 0;
+					for(; i < mon->base->y; ++i)
+					{
+						if(aincrad.hardness[i][mon->base->x] != 0)
+						{
+							wall = 1;
+							break;
+						}
+					}
+					if(!wall)
+					{
+						// move up towards player
+						//
+						// TODO
+						if(mon->attributes & INTELLIGENT)
+						{
+							mon->playerX = kirito.base->x;
+							mon->playerY = kirito.base->y;
+						}
+						return;
+					}
+				 }
+			}
+			if(mon->base->y == kirito.base->y)
+			{
+				 if((mon->base->x - kirito.base->x) < 0)
+				 {
+					int i = mon->base->x;
+					int wall = 0;
+					for(; i < kirito.base->x; ++i)
+					{
+						if(aincrad.hardness[mon->base->y][i] != 0)
+						{
+							wall = 1;
+							break;
+						}
+					}
+					if(!wall)
+					{
+						// move right towards player
+						//
+						// TODO
+						if(mon->attributes & INTELLIGENT)
+						{
+							mon->playerX = kirito.base->x;
+							mon->playerY = kirito.base->y;
+						}
+						return;
+					}
+				 }
+				 else
+				 {
+					int i = kirito.base->x;
+					int wall = 0;
+					for(; i < mon->base->x; ++i)
+					{
+						if(aincrad.hardness[mon->base->y][i] != 0)
+						{
+							wall = 1;
+							break;
+						}
+					}
+					if(!wall)
+					{
+						// move left towards player
+						//
+						// TODO
+						if(mon->attributes & INTELLIGENT)
+						{
+							mon->playerX = kirito.base->x;
+							mon->playerY = kirito.base->y;
+						}
+						return;
+					}
+				 }
+			}
+		}
+	}
 	// else bahave based on characteristics
 	if((mon->attributes & ERRATIC) == 1)
 	{
@@ -233,15 +369,14 @@ void moveMonster(monster* mon)
 		}
 		else
 		{
-			moveDeliberately(mon);
+			if((mon->attributes & INTELLIGENT) || (mon->attributes & TELEPATHIC))
+				moveDeliberately(mon);
+			else
+				moveRandom(move->base, (mon->attributes & TUNNELING));
 		}
 	}
-	else if((mon->attributes & INTELLIGENT) || (mon->attributes & TELEPATHIC))
-	{
+	else if((mon->attributes & INTELLIGENT) || (mon->attributes & TELEPATHIC))	
 		moveDeliberately(mon);
-	}
 	else
-	{
 		moveRandom(mon->base, (mon->attributes & TUNNELING));
-	}
 }
