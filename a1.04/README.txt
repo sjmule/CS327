@@ -1,4 +1,4 @@
-README Assignment 1.03
+README Assignment 1.04
 This program creates a basic dungeon map. Bordered by dashes, the dungeon is comprised of 8 rooms depicted by '.' and connected by corridors depicted by '#'.
 Each space in the dungeon has a hardness of 0 through 255. 255 designates "immutable" and is reserved for the border of the dungeon. 0 designates open areas and
 corresponds to either room or corridor spaces. All other spaces have a value of 1-5.
@@ -16,8 +16,12 @@ The player is randomly placed in an open space in the dungeon, then the distance
 Distances are displayed on the map as 0-9,a-z,A-Z. For distances greater than the number of characters provided, 61(Z), the dungeon renders normally. All functions used to complete these operations are contained within
 routing.c and rely on binheap.c for a binary heap.
 
+This dugeon is initialized with a player character @ and by default 10 monsters. You may specify the number of monsters you wish to initialize the dungeon with by using the flags -n or --nummon followed by a number.
+The monsters will be initialized with random attributes and assigned random characters to represent them on the map. Once initialized, the player will randomly move around the map and the monsters will move according to their
+characteristics. The movement ends when all the monsters are dead or a monster reaches the player.
+
 Note: This implementation of Dijkstra's uses a binary heap provided by Jeremy Sheaffer unmodified. A bug has been found where this implementation will sometimes cause the program to crash and throw an error with the following message
-while completing the binheap_remove_min() operation. 
+while completing the binheap_remove_min() operation. *** THE PROFESSOR IS AWARE OF THIS IT WAS BROUGHT UP IN CLASS *** 
 
 *** Error in `./main': double free or corruption (fasttop): <address> ***
 Aborted
@@ -26,12 +30,15 @@ Uncommenting the added printf statments in the function will show that the error
 
 Contained within this archive is a README, Changelog, Makefile, and the following source files:
 dungeon.c
+dungeon.h
 generate.c
 generate.h
 save.c
 save.h
 routing.c
 routing.h
+move.c
+move.h
 binheap.c
 binheap.h
 

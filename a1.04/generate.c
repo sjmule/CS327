@@ -316,7 +316,8 @@ void createMonsters()
 		mon.base->symbol = (rand() % 25) + 97;
 		mon.playerX = 0;
 		mon.playerY = 0;
-		mon.turn = 0;
+		mon.base->turn = 0;
+		mon.base->alive = 1;
 		aincrad.monsters[i] = mon;
 		aincrad.map[mon.base->y][mon.base->x] = mon.base->symbol;
 		++monCount;

@@ -25,6 +25,8 @@ int32_t path_cmp(const void* key, const void* with);
 
 void calculateDistances(int playerX, int playerY, int tunnel);
 
+int shortestPath(int toX, int toY, int tunnel);
+
 char distToChar(int dist);
 
 void printCosts();

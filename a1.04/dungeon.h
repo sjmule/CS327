@@ -11,6 +11,7 @@
 #include <argp.h>
 #include <limits.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #define X 80
 #define Y 21
@@ -29,6 +30,7 @@ struct ENTITY
 	int y;
 	int speed;
 	int turn;
+	int alive;
 };
 
 typedef struct PLAYER player;

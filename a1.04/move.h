@@ -3,6 +3,8 @@
 
 #include "dungeon.h"
 
+int switchBoard(monster* mon, int playerX, int playerY);
+
 int inRoom(int x, int y);
 
 void cleanCell(int x, int y);

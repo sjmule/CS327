@@ -170,6 +170,102 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 	binheap_delete(&h);
 }
 
+int shortestPath(int fromX, int fromY, int tunnel)
+{
+	if(tunnel)
+	{
+		int min = INT_MAX;
+		int dir = 8;
+		if(allCost[fromY-1][fromX-1] < min)
+		{
+			min = allCost[fromY-1][fromX-1];
+			dir = 0;
+		}
+		if(allCost[fromY-1][fromX] < min)
+		{
+			min = allCost[fromY-1][fromX];
+			dir = 1;
+		}
+		if(allCost[fromY-1][fromX+1] < min)
+		{
+			min = allCost[fromY-1][fromX+1];
+			dir = 2;
+		}
+		if(allCost[fromY][fromX+1] < min)
+		{
+			min = allCost[fromY][fromX+1];
+			dir = 3;
+		}
+		if(allCost[fromY+1][fromX+1] < min)
+		{
+			min = allCost[fromY+1][fromX+1];
+			dir = 4;
+		}
+		if(allCost[fromY+1][fromX] < min)
+		{
+			min = allCost[fromY+1][fromX];
+			dir = 5;
+		}
+		if(allCost[fromY+1][fromX-1] < min)
+		{
+			min = allCost[fromY+1][fromX-1];
+			dir = 6;
+		}
+		if(allCost[fromY][fromX-1] < min)
+		{
+			min = allCost[fromY][fromX-1];
+			dir = 7;
+		}
+		return dir;
+	}
+	else
+	{
+		int min = INT_MAX;
+		int dir = 8;
+		if(openCost[fromY-1][fromX-1] < min)
+		{
+			min = openCost[fromY-1][fromX-1];
+			dir = 0;
+		}
+		if(openCost[fromY-1][fromX] < min)
+		{
+			min = openCost[fromY-1][fromX];
+			dir = 1;
+		}
+		if(openCost[fromY-1][fromX+1] < min)
+		{
+			min = openCost[fromY-1][fromX+1];
+			dir = 2;
+		}
+		if(openCost[fromY][fromX+1] < min)
+		{
+			min = openCost[fromY][fromX+1];
+			dir = 3;
+		}
+		if(openCost[fromY+1][fromX+1] < min)
+		{
+			min = openCost[fromY+1][fromX+1];
+			dir = 4;
+		}
+		if(openCost[fromY+1][fromX] < min)
+		{
+			min = openCost[fromY+1][fromX];
+			dir = 5;
+		}
+		if(openCost[fromY+1][fromX-1] < min)
+		{
+			min = openCost[fromY+1][fromX-1];
+			dir = 6;
+		}
+		if(openCost[fromY][fromX-1] < min)
+		{
+			min = openCost[fromY][fromX-1];
+			dir = 7;
+		}
+		return dir;
+	}
+}
+
 char distToChar(int dist)
 {
 	if((dist >= 0) && (dist <= 9))
