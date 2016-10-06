@@ -180,9 +180,7 @@ void moveRandom(entity* character, int tunnel)
 		{
 			calculateDistances(kirito.base->x, kirito.base->y, 0);
 			calculateDistances(kirito.base->x, kirito.base->y, 1);
-		}
-		if(override)
-			break;
+		}	
 	}
 }
 
