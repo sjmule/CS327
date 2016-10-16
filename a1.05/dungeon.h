@@ -12,6 +12,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <ncurses.h>
 
 #define X 80
 #define Y 21
@@ -25,12 +26,13 @@ typedef struct ENTITY entity;
 
 struct ENTITY
 {
+	int id;
 	char symbol;
-	int x;
-	int y;
-	int speed;
+	char x;
+	char y;
+	char speed;
 	int turn;
-	int alive;
+	char alive;
 };
 
 typedef struct PLAYER player;
@@ -46,8 +48,8 @@ struct MONSTER
 {
 	entity* base;
 	int attributes;
-	int playerX;
-	int playerY;
+	char playerX;
+	char playerY;
 };
 
 typedef struct ROOM room;

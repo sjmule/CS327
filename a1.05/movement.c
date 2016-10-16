@@ -1,4 +1,4 @@
-#include "move.h"
+#include "movement.h"
 #include "routing.h"
 
 int switchBoard(monster* mon, int playerX, int playerY)
@@ -44,6 +44,7 @@ int switchBoard(monster* mon, int playerX, int playerY)
 		else
 			return 5;
 	}
+	return 8;
 }
 
 int inRoom(int x, int y)
@@ -63,15 +64,17 @@ int inRoom(int x, int y)
 
 void killing(entity* character)
 {
-	if(character->symbol != '@')
+	if(character->id != 0)
+	{
 		if((character->x == kirito.base->x) && (character->y == kirito.base->y))
 			kirito.base->alive = 0;
+	}
 	else
 	{
 		int i = 0;
 		for(; i < aincrad.numMonsters; ++i)
 		{
-			if(character->symbol == aincrad.monsters[i].base->symbol)
+			if(character->id == aincrad.monsters[i].base->id)
 				continue;
 			else
 			{
@@ -82,44 +85,35 @@ void killing(entity* character)
 	}
 }
 
-void cleanCell(int x, int y)
+void makeTunnel(int x, int y)
 {
-	if(inRoom(x, y) >= 0)
-		aincrad.map[y][x] = '.';
-	else
+	if(aincrad.map[y][x] == ' ')
 		aincrad.map[y][x] = '#';
 }
 
 // 0 invalid move, 1 invalid move - recalculate distance, 2 valid move, 3 valid move - recalculate distance
-int valid(entity entity, int tunnel)
+int valid(entity character, int tunnel)
 {
 	if(tunnel == 4) // monster
 	{
-		if(aincrad.hardness[entity.y][entity.x] == 255)
+		if(aincrad.hardness[character.y][character.x] == 255)
 			return 0;
 		else
 		{
-			if(aincrad.hardness[entity.y][entity.x] == 0) // open space
+			if(aincrad.hardness[character.y][character.x] == 0) // open space
 				return 2;
-			else if(aincrad.hardness[entity.y][entity.x] - 85 <= 0) // after digging will be open
+			else if(aincrad.hardness[character.y][character.x] - 85 <= 0) // after digging will be open
 				return 3;
 			else // dig
 			{
-				aincrad.hardness[entity.y][entity.x] = aincrad.hardness[entity.y][entity.x] - 85;
+				aincrad.hardness[character.y][character.x] = aincrad.hardness[character.y][character.x] - 85;
 				return 1;
 			}
 		}
-	}
-	else if(tunnel == 1) // player
-	{
-		if(aincrad.hardness[entity.y][entity.x] == 255)
-			return 0;
-		else
-			return 3;
-	}
+	}	
 	else
 	{
-		if(aincrad.hardness[entity.y][entity.x] == 0)
+		if(aincrad.hardness[character.y][character.x] == 0)
 			return 2;
 		else
 			return 0;
@@ -167,9 +161,9 @@ int isMoveValid(entity* character, int dir, int tunnel)
 	}
 }
 
-void move(entity* character, int dir)
+void doMove(entity* character, int dir)
 {
-	cleanCell(character->x, character->y);	
+	makeTunnel(character->x, character->y);	
 	switch(dir)
 	{
 		case 0:
@@ -203,20 +197,19 @@ void move(entity* character, int dir)
 		default:
 			break;
 	}
-	aincrad.map[character->y][character->x] = character->symbol;
 	aincrad.hardness[character->y][character->x] = 0;
 	killing(character);
-	character->turn += (100/character->speed);
 }
 
 void moveRandom(entity* character, int tunnel)
 {
+	mvprintw(ncurse++, 0, "%c, moving randomly", character->symbol);
 	int valid = 0;
 	int dir = rand() % 8;
 	valid = isMoveValid(character, dir, tunnel);
 	if(valid > 1)
 	{	
-		move(character, dir);
+		doMove(character, dir);
 		if(valid == 3)
 		{
 			calculateDistances(kirito.base->x, kirito.base->y, 0);
@@ -227,7 +220,7 @@ void moveRandom(entity* character, int tunnel)
 	{
 		calculateDistances(kirito.base->x, kirito.base->y, 0);
 		calculateDistances(kirito.base->x, kirito.base->y, 1);
-	}	
+	}
 }
 
 void moveDeliberately(monster* mon)
@@ -238,11 +231,12 @@ void moveDeliberately(monster* mon)
 		mon->playerY = kirito.base->y;
 		if(mon->attributes & INTELLIGENT) // is intelligent
 		{
+			mvprintw(ncurse++, 0, "%c, moving telepathically and intelligently", mon->base->symbol);
 			int dir = shortestPath(mon->base->x, mon->base->y, (mon->attributes & TUNNELING));
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
 			{
-				move(mon->base, dir);
+				doMove(mon->base, dir);
 				if(valid == 3)
 				{
 					calculateDistances(kirito.base->x, kirito.base->y, 0);
@@ -257,11 +251,12 @@ void moveDeliberately(monster* mon)
 		}
 		else // is not intelligent
 		{
+			mvprintw(ncurse++, 0, "%c, moving telepathically", mon->base->symbol);
 			int dir = switchBoard(mon, mon->playerX, mon->playerY);
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
 			{
-				move(mon->base, dir);
+				doMove(mon->base, dir);
 				if(valid == 3)
 				{
 					calculateDistances(kirito.base->x, kirito.base->y, 0);
@@ -279,11 +274,12 @@ void moveDeliberately(monster* mon)
 	{
 		if(mon->playerX != 0)
 		{
+			mvprintw(ncurse++, 0, "%c, moving intelligently", mon->base->symbol);
 			int dir = shortestPath(mon->base->x, mon->base->y, (mon->attributes & TUNNELING));
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
 			{
-				move(mon->base, dir);
+				doMove(mon->base, dir);
 				if(valid == 3)
 				{
 					calculateDistances(kirito.base->x, kirito.base->y, 0);
@@ -310,15 +306,19 @@ void moveDeliberately(monster* mon)
 
 void moveMonster(monster* mon)
 {
+	mvprintw(ncurse++, 0, "%d + (100/%d) = %d", mon->base->turn, mon->base->speed, ((100/mon->base->speed) + mon->base->turn));
+	mon->base->turn = mon->base->turn + (100/mon->base->speed);
+	mvprintw(ncurse+6, 0, "%c, turn %d", mon->base->symbol, mon->base->turn);
 	// if we can see the PC, move towards him
 	int playerRoom = inRoom(kirito.base->x, kirito.base->y);
 	if((playerRoom >=0) && (inRoom(mon->base->x, mon->base->y) == playerRoom))
 	{
+		mvprintw(ncurse++, 0, "%c, in room with player", mon->base->symbol);
 		int dir = switchBoard(mon, kirito.base->x, kirito.base->y);
 		int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 		if(valid > 1)
 		{
-			move(mon->base, dir);
+			doMove(mon->base, dir);
 			if(valid == 3)
 			{
 				calculateDistances(kirito.base->x, kirito.base->y, 0);
@@ -339,9 +339,9 @@ void moveMonster(monster* mon)
 	}
 	else
 	{
-		if(mon->base->x == kirito.base->x)
+		if(mon->base->x == kirito.base->x) // player is above or below monster
 		{
-			if((mon->base->y - kirito.base->y) < 0)
+			if((mon->base->y - kirito.base->y) < 0) // monster is above player
 			{
 				int i = mon->base->y;
 				int wall = 0;
@@ -355,7 +355,8 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					move(mon->base, 5);
+					mvprintw(ncurse++, 0, "%c, above player", mon->base->symbol);
+					doMove(mon->base, 5);
 					if(mon->attributes & INTELLIGENT)
 					{
 						mon->playerX = kirito.base->x;
@@ -364,7 +365,7 @@ void moveMonster(monster* mon)
 					return;
 				}
 			}
-			else
+			else // monster is below player
 			{
 				int i = kirito.base->y;
 				int wall = 0;
@@ -378,7 +379,8 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					move(mon->base, 1);
+					mvprintw(ncurse++, 0, "%c, below player", mon->base->symbol);
+					doMove(mon->base, 1);
 					if(mon->attributes & INTELLIGENT)
 					{
 						mon->playerX = kirito.base->x;
@@ -388,9 +390,9 @@ void moveMonster(monster* mon)
 				}
 			}
 		}
-		if(mon->base->y == kirito.base->y)
+		if(mon->base->y == kirito.base->y) // player is to left or right of monster
 		{
-			if((mon->base->x - kirito.base->x) < 0)
+			if((mon->base->x - kirito.base->x) < 0) // monster is to left of player
 			{
 				int i = mon->base->x;
 				int wall = 0;
@@ -404,7 +406,8 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					move(mon->base, 3);
+					mvprintw(ncurse++, 0, "%c, left player", mon->base->symbol);
+					doMove(mon->base, 3);
 					if(mon->attributes & INTELLIGENT)
 					{
 						mon->playerX = kirito.base->x;
@@ -413,7 +416,7 @@ void moveMonster(monster* mon)
 					return;
 				}
 			}
-			else
+			else // monster is to right of player
 			{
 				int i = kirito.base->x;
 				int wall = 0;
@@ -427,7 +430,8 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					move(mon->base, 7);
+					mvprintw(ncurse++, 0, "%c, right player", mon->base->symbol);
+					doMove(mon->base, 7);
 					if(mon->attributes & INTELLIGENT)
 					{
 						mon->playerX = kirito.base->x;

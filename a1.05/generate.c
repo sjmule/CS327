@@ -286,6 +286,7 @@ void connectRooms()
 
 void createMonsters()
 {
+	static int id = 1;
 	int i = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
@@ -313,13 +314,13 @@ void createMonsters()
 			if(aincrad.hardness[mon.base->y][mon.base->x] == 0)
 				break;
 		}
+		mon.base->id = id++;
 		mon.base->symbol = (rand() % 25) + 97;
 		mon.playerX = 0;
 		mon.playerY = 0;
 		mon.base->turn = 0;
 		mon.base->alive = 1;
 		aincrad.monsters[i] = mon;
-		aincrad.map[mon.base->y][mon.base->x] = mon.base->symbol;
 		++monCount;
 	}
 }

@@ -151,3 +151,53 @@ void loadDungeon(char* path, int debug)
 	free(locations);
 	fclose(file);
 }
+
+void saveLevel(char* path, char* level, int debug)
+{
+	strcat(path, level);
+	file = fopen(path, "w");
+
+	unsigned char* head = malloc(4);
+
+	char* matrix = malloc(1680);
+	int i = 0;
+	int j = 0;
+	for(; j < Y; ++j)
+	{
+		int k = 0;
+		for(; k < X; ++k)
+		{
+			matrix[i++] = (char) aincrad.hardness[j][k];
+		}
+	}
+
+	unsigned char* locations = malloc(4 * aincrad.numRooms);
+	j = 0;
+	for(i = 0; i < aincrad.numRooms; ++i)
+	{
+		locations[j++] = (unsigned char) aincrad.rooms[i].x;
+		locations[j++] = (unsigned char) aincrad.rooms[i].width;
+		locations[j++] = (unsigned char) aincrad.rooms[i].y;
+		locations[j++] = (unsigned char) aincrad.rooms[i].height;
+	}
+
+	unsigned int size = 1680 + (4 * aincrad.numRooms) + sizeof(entity) + (aincrad.numMonsters * sizeof(entity));
+	
+	head[0] = _itos(htonl(size),0);
+	head[1] = _itos(htonl(size),8);
+	head[2] = _itos(htonl(size),16);
+	head[3] = _itos(htonl(size),24);
+
+	fwrite(matrix, 1, 1680, file);
+	fwrite(locations, 1, (4 * aincrad.numRooms), file);
+
+	free(matrix);
+	free(locations);
+	fclose(file);
+
+}
+
+void loadLevel(char* path, char* level, int debug)
+{
+
+}

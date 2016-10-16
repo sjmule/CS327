@@ -3,12 +3,14 @@
 #include "save.h"
 #include "binheap.h"
 #include "routing.h"
-#include "move.h"
+#include "movement.h"
+#include "pControls.h"
 
 dungeon aincrad;
 player kirito;
 int monCount = 0;
 int turn = 0;
+int ncurse = 0;
 
 // Program version string
 const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
@@ -91,49 +93,29 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 	return 0;
 }
 
-void printDungeon(int debug)
+void printDungeon()
 {
 	int i = 0;
-	for(; i < Y; ++i)
+	int j = 0;
+	for(; i < X; ++i)
 	{
-		int j = 0;
-		for(; j < X; ++j)
-		{
-			printf("%c", aincrad.map[i][j]);
-		}
-		printf("\n");
+		mvaddch(0, i, ' ');
 	}
-	if(debug)
+	for(i = 0; i < Y; ++i)
 	{
-		if(debug == 2)
+		for(j = 0; j < X; ++j)
 		{
-			for(i = 0; i < Y; ++i)
-			{
-				int j = 0;
-				for(; j < X; ++j)
-				{
-					printf("%d", aincrad.hardness[i][j]);
-				}
-				printf("\n");
-			}
-
-			printCosts();
-		}
-
-		printf("Player:\n");
-		printf("  X: %d\n", kirito.base->x);
-		printf("  Y: %d\n", kirito.base->y);
-
-		for(i = 0; i < aincrad.numMonsters; ++i)
-		{
-			printf("Monster %c:\n", aincrad.monsters[i].base->symbol);
-			printf("  Alive: %d\n", aincrad.monsters[i].base->alive);
-			printf("  X: %d\n", aincrad.monsters[i].base->x);
-			printf("  Y: %d\n", aincrad.monsters[i].base->y);
-			printf("  Attr: %x\n", aincrad.monsters[i].attributes);
-			printf("  Speed: %d\n", aincrad.monsters[i].base->speed);
+			mvaddch(i + 1, j, aincrad.map[i][j]);
 		}
 	}
+	mvaddch(kirito.base->y + 1, kirito.base->x, kirito.base->symbol);
+	for(i = 0; i < aincrad.numMonsters; ++i)
+	{
+		if(aincrad.monsters[i].base->alive == 1)
+			mvaddch(aincrad.monsters[i].base->y + 1, aincrad.monsters[i].base->x, aincrad.monsters[i].base->symbol);
+	}
+	refresh();
+	ncurse = Y + 2;
 }
 
 // The arg parser object
@@ -145,7 +127,7 @@ int monstersAlive()
 	int alive = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
-		if(aincrad.monsters[1].base->alive)
+		if(aincrad.monsters[i].base->alive)
 			++alive;
 	}
 	return alive;
@@ -156,22 +138,32 @@ int main(int argc, char** argv)
 	version = 0;
 	srand((unsigned) time(0));
 
-	char* home = getenv("HOME");
-	char* path = strcat(home, "/.rlg327");
+	char* path = malloc(40);
+	strcat(path, getenv("HOME"));
+	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
-	char* filePath = strcat(path, "/dungeon");
+	strcat(path, "/dungeon");
+
+	char* levelPath = malloc(40);
+	strcat(levelPath, getenv("HOME"));
+	strcat(levelPath, "/.rlg327/tmp");
+	mkdir(levelPath, 0777);
+
+	printf("%s\n", path);
+	printf("%s\n", levelPath);
 
 	// Define defaults for the parser
 	struct arguments arguments;
 	arguments.verboseMode = 0;
 	arguments.load = 0;
 	arguments.save = 0;
-	arguments.loadPath = filePath;
-	arguments.savePath = filePath;
+	arguments.loadPath = path;
+	arguments.savePath = path;
 	arguments.numMonsters = 10;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	kirito.base = malloc(sizeof(entity));
+	kirito.base->id = 0;
 	kirito.base->symbol = '@';
 	kirito.base->speed = 10;
 	kirito.base->turn = 0;
@@ -201,8 +193,6 @@ int main(int argc, char** argv)
 			break;
 	}
 
-	aincrad.map[kirito.base->y][kirito.base->x] = kirito.base->symbol;
-
 	calculateDistances(kirito.base->x, kirito.base->y, 0);
 	calculateDistances(kirito.base->x, kirito.base->y, 1);
 
@@ -210,35 +200,73 @@ int main(int argc, char** argv)
 	aincrad.monsters = malloc(sizeof(monster) * aincrad.numMonsters);
 
 	createMonsters();
-	
-	printDungeon(arguments.verboseMode);
 
+	// Initialize ncurses
+	initscr();
+	keypad(stdscr, TRUE);
+	nonl();
+	cbreak();
+	noecho();
+
+	printDungeon();
+
+	int quit = 0;
 	while(kirito.base->alive && monstersAlive())
 	{
 		int print = 0;
 		if(kirito.base->turn == turn)
 		{
-			moveRandom(kirito.base, 1);
+			mvprintw(0, 0, "Kirito's turn, turn: %d", turn);
+			refresh();
+			int good = 0;
+			while(!good)
+			{
+				int ch = getch();
+				if(ch == 'Q')
+				{
+					quit = 1;
+					break;
+				}
+				if(ch == 'm')
+				{
+					displayMonsters();
+					printDungeon();
+				}
+				else
+					good = movePlayer(kirito.base, ch);
+			}
 			print = 1;
+			if(quit)
+				break;
+			calculateDistances(kirito.base->x, kirito.base->y, 0);
+			calculateDistances(kirito.base->x, kirito.base->y, 1);
+			kirito.base->turn = kirito.base->turn + (100/kirito.base->speed);
 		}
 		int i = 0;
 		for(; i < aincrad.numMonsters; ++i)
 		{
+			mvprintw(Y + 1, 0, "checking monsters  turn: %d", turn);
+			refresh();
 			if(aincrad.monsters[i].base->turn == turn)
 			{
+				mvprintw(0, 0, "%c's turn", aincrad.monsters[i].base->symbol);
+				refresh();
 				moveMonster(&aincrad.monsters[i]);
 				print = 1;
 			}
 		}
 		if(print)
 		{
-			printDungeon(arguments.verboseMode);
-			sleep(1);
+			printDungeon();
 		}
 		++turn;
 	}
 
-	printDungeon(1);
+	if(!quit)
+	{
+		printDungeon();
+		getch();
+	}
 
 	free(aincrad.rooms);
 	free(kirito.base);
@@ -248,6 +276,10 @@ int main(int argc, char** argv)
 		free(aincrad.monsters[j].base);
 	}
 	free(aincrad.monsters);
+
+	endwin();
+	free(path);
+	free(levelPath);
 
 	return 0;
 }
