@@ -108,6 +108,8 @@ void printDungeon()
 			mvaddch(i + 1, j, aincrad.map[i][j]);
 		}
 	}
+	mvaddch(aincrad.stairUpY, aincrad.stairUpX, '<');
+	mvaddch(aincrad.stairDownY, aincrad.stairDownX, '>');
 	mvaddch(kirito.base->y + 1, kirito.base->x, kirito.base->symbol);
 	for(i = 0; i < aincrad.numMonsters; ++i)
 	{
@@ -143,14 +145,6 @@ int main(int argc, char** argv)
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
 	strcat(path, "/dungeon");
-
-	char* levelPath = malloc(40);
-	strcat(levelPath, getenv("HOME"));
-	strcat(levelPath, "/.rlg327/tmp");
-	mkdir(levelPath, 0777);
-
-	printf("%s\n", path);
-	printf("%s\n", levelPath);
 
 	// Define defaults for the parser
 	struct arguments arguments;
@@ -214,6 +208,7 @@ int main(int argc, char** argv)
 	while(kirito.base->alive && monstersAlive())
 	{
 		int print = 0;
+		int newFloor = 0;
 		if(kirito.base->turn == turn)
 		{
 			mvprintw(0, 0, "Kirito's turn, turn: %d", turn);
@@ -232,6 +227,18 @@ int main(int argc, char** argv)
 					displayMonsters();
 					printDungeon();
 				}
+				if(ch == '>')
+				{
+					initializeDungeon();
+					createRooms();
+					connectRooms();
+				}
+				if(ch == '<')
+				{
+					initializeDungeon();
+					createRooms();
+					connectRooms();
+				}
 				else
 					good = movePlayer(kirito.base, ch);
 			}
@@ -242,24 +249,30 @@ int main(int argc, char** argv)
 			calculateDistances(kirito.base->x, kirito.base->y, 1);
 			kirito.base->turn = kirito.base->turn + (100/kirito.base->speed);
 		}
-		int i = 0;
-		for(; i < aincrad.numMonsters; ++i)
+		if(!newFloor)
 		{
-			mvprintw(Y + 1, 0, "checking monsters  turn: %d", turn);
-			refresh();
-			if(aincrad.monsters[i].base->turn == turn)
+			int i = 0;
+			for(; i < aincrad.numMonsters; ++i)
 			{
-				mvprintw(0, 0, "%c's turn", aincrad.monsters[i].base->symbol);
+				mvprintw(Y + 1, 0, "checking monsters  turn: %d", turn);
 				refresh();
-				moveMonster(&aincrad.monsters[i]);
-				print = 1;
+				if(aincrad.monsters[i].base->turn == turn)
+				{
+					mvprintw(0, 0, "%c's turn", aincrad.monsters[i].base->symbol);
+					refresh();
+					moveMonster(&aincrad.monsters[i]);
+					print = 1;
+				}
 			}
 		}
 		if(print)
 		{
 			printDungeon();
 		}
-		++turn;
+		if(!newFloor)
+			++turn;
+		else
+			turn = 0;
 	}
 
 	if(!quit)
@@ -279,7 +292,6 @@ int main(int argc, char** argv)
 
 	endwin();
 	free(path);
-	free(levelPath);
 
 	return 0;
 }

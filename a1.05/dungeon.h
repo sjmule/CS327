@@ -73,6 +73,11 @@ struct DUNGEON
 	room* rooms;
 	int numMonsters;
 	monster* monsters;
+	int level;
+	int stairUpX;
+	int stairUpY;
+	int stairDownX;
+	int stairDownY;
 };
 
 extern dungeon aincrad;

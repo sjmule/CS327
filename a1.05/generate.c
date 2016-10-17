@@ -184,6 +184,18 @@ void createRooms()
 		}
 		++attempts;
 	}
+	int up = rand() % 9;
+	aincrad.stairUpX = aincrad.rooms[up].x + (rand() % aincrad.rooms[up].width);
+	aincrad.stairUpY = aincrad.rooms[up].y + (rand() % aincrad.rooms[up].height);
+	int down = 0;
+	while(1)
+	{
+		down = rand() % 9;
+		if(down != up)
+			break;
+	}
+	aincrad.stairDownX = aincrad.rooms[down].x + (rand() % aincrad.rooms[down].width);
+	aincrad.stairDownY = aincrad.rooms[down].y + (rand() % aincrad.rooms[down].height);
 }
 
 void connectRooms()
