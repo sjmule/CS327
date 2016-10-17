@@ -93,6 +93,31 @@ error_t parse_opt(int key, char* arg, struct argp_state *state)
 	return 0;
 }
 
+void createDungeon()
+{
+	initializeDungeon();
+	createRooms();
+	connectRooms();
+	aincrad.numMonsters = arguments.numMonsters;
+	aincrad.monsters = malloc(sizeof(monster) * aincrad.numMonsters);
+}
+
+void placeCharacters()
+{
+	while(1)
+	{
+		kirito.base->x = (rand() % (X - 2)) + 1;
+		kirito.base->y = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[kirito.base->y][kirito.base->x] == 0)
+			break;
+	}
+
+	calculateDistances(kirito.base->x, kirito.base->y, 0);
+	calculateDistances(kirito.base->x, kirito.base->y, 1);
+
+	createMonsters();
+}
+
 void printDungeon()
 {
 	int i = 0;
@@ -168,33 +193,17 @@ int main(int argc, char** argv)
 	else
 	{
 		if(arguments.verboseMode)
-			printf("Generating new dungeon\n");	
+			printf("Generating new dungeon\n");
 		aincrad.numRooms = 8;
 		aincrad.rooms = malloc(sizeof(room) * 8);
-		initializeDungeon();
-		createRooms();
-		connectRooms();
+		createDungeon();
 	}
 
 	if(arguments.save)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
 
-	while(1)
-	{
-		kirito.base->x = (rand() % (X - 2)) + 1;
-		kirito.base->y = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[kirito.base->y][kirito.base->x] == 0)
-			break;
-	}
-
-	calculateDistances(kirito.base->x, kirito.base->y, 0);
-	calculateDistances(kirito.base->x, kirito.base->y, 1);
-
-	aincrad.numMonsters = arguments.numMonsters;
-	aincrad.monsters = malloc(sizeof(monster) * aincrad.numMonsters);
-
-	createMonsters();
-
+	placeCharacters();
+	
 	// Initialize ncurses
 	initscr();
 	keypad(stdscr, TRUE);
@@ -229,15 +238,27 @@ int main(int argc, char** argv)
 				}
 				if(ch == '>')
 				{
-					initializeDungeon();
-					createRooms();
-					connectRooms();
+					if((kirito.base->x == aincrad.stairDownX) && (kirito.base->y == aincrad.stairDownY))
+					{
+						createDungeon();
+						placeCharacters();
+						newFloor = 1;
+						turn = 0;
+					}
+					else
+						continue;
 				}
 				if(ch == '<')
 				{
-					initializeDungeon();
-					createRooms();
-					connectRooms();
+					if((kirito.base->x == aincrad.stairDownX) && (kirito.base->y == aincrad.stairDownY))
+					{
+						createDungeon();
+						placeCharacters();
+						newFloor = 1;
+						turn = 0;
+					}
+					else
+						continue;
 				}
 				else
 					good = movePlayer(kirito.base, ch);
@@ -271,8 +292,6 @@ int main(int argc, char** argv)
 		}
 		if(!newFloor)
 			++turn;
-		else
-			turn = 0;
 	}
 
 	if(!quit)
