@@ -98,7 +98,6 @@ void createDungeon()
 	initializeDungeon();
 	createRooms();
 	connectRooms();
-	aincrad.numMonsters = arguments.numMonsters;
 	aincrad.monsters = malloc(sizeof(monster) * aincrad.numMonsters);
 }
 
@@ -118,6 +117,18 @@ void placeCharacters()
 	createMonsters();
 }
 
+void cleanup()
+{
+	free(aincrad.rooms);
+	free(kirito.base);
+	int j = 0;
+	for(; j < aincrad.numMonsters; ++j)
+	{
+		free(aincrad.monsters[j].base);
+	}
+	free(aincrad.monsters);
+}
+
 void printDungeon()
 {
 	int i = 0;
@@ -133,8 +144,8 @@ void printDungeon()
 			mvaddch(i + 1, j, aincrad.map[i][j]);
 		}
 	}
-	mvaddch(aincrad.stairUpY, aincrad.stairUpX, '<');
-	mvaddch(aincrad.stairDownY, aincrad.stairDownX, '>');
+	mvaddch(aincrad.stairUpY + 1, aincrad.stairUpX, '<');
+	mvaddch(aincrad.stairDownY + 1, aincrad.stairDownX, '>');
 	mvaddch(kirito.base->y + 1, kirito.base->x, kirito.base->symbol);
 	for(i = 0; i < aincrad.numMonsters; ++i)
 	{
@@ -196,11 +207,14 @@ int main(int argc, char** argv)
 			printf("Generating new dungeon\n");
 		aincrad.numRooms = 8;
 		aincrad.rooms = malloc(sizeof(room) * 8);
+		aincrad.numMonsters = arguments.numMonsters;
 		createDungeon();
 	}
 
 	if(arguments.save)
 		saveDungeon(arguments.savePath, arguments.verboseMode);
+
+	free(path);
 
 	placeCharacters();
 	
@@ -220,8 +234,6 @@ int main(int argc, char** argv)
 		int newFloor = 0;
 		if(kirito.base->turn == turn)
 		{
-			mvprintw(0, 0, "Kirito's turn, turn: %d", turn);
-			refresh();
 			int good = 0;
 			while(!good)
 			{
@@ -240,22 +252,26 @@ int main(int argc, char** argv)
 				{
 					if((kirito.base->x == aincrad.stairDownX) && (kirito.base->y == aincrad.stairDownY))
 					{
+						cleanup();
 						createDungeon();
 						placeCharacters();
 						newFloor = 1;
 						turn = 0;
+						good = 1;
 					}
 					else
 						continue;
 				}
 				if(ch == '<')
 				{
-					if((kirito.base->x == aincrad.stairDownX) && (kirito.base->y == aincrad.stairDownY))
+					if((kirito.base->x == aincrad.stairUpX) && (kirito.base->y == aincrad.stairUpY))
 					{
+						cleanup();
 						createDungeon();
 						placeCharacters();
 						newFloor = 1;
 						turn = 0;
+						good = 1;
 					}
 					else
 						continue;
@@ -275,12 +291,8 @@ int main(int argc, char** argv)
 			int i = 0;
 			for(; i < aincrad.numMonsters; ++i)
 			{
-				mvprintw(Y + 1, 0, "checking monsters  turn: %d", turn);
-				refresh();
 				if(aincrad.monsters[i].base->turn == turn)
 				{
-					mvprintw(0, 0, "%c's turn", aincrad.monsters[i].base->symbol);
-					refresh();
 					moveMonster(&aincrad.monsters[i]);
 					print = 1;
 				}
@@ -297,20 +309,14 @@ int main(int argc, char** argv)
 	if(!quit)
 	{
 		printDungeon();
+		mvprintw(0, 0, "Game over");
+		refresh();
 		getch();
 	}
 
-	free(aincrad.rooms);
-	free(kirito.base);
-	int j = 0;
-	for(; j < aincrad.numMonsters; ++j)
-	{
-		free(aincrad.monsters[j].base);
-	}
-	free(aincrad.monsters);
+	cleanup();
 
 	endwin();
-	free(path);
 
 	return 0;
 }

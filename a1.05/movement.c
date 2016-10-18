@@ -203,7 +203,6 @@ void doMove(entity* character, int dir)
 
 void moveRandom(entity* character, int tunnel)
 {
-	mvprintw(ncurse++, 0, "%c, moving randomly", character->symbol);
 	int valid = 0;
 	int dir = rand() % 8;
 	valid = isMoveValid(character, dir, tunnel);
@@ -231,7 +230,6 @@ void moveDeliberately(monster* mon)
 		mon->playerY = kirito.base->y;
 		if(mon->attributes & INTELLIGENT) // is intelligent
 		{
-			mvprintw(ncurse++, 0, "%c, moving telepathically and intelligently", mon->base->symbol);
 			int dir = shortestPath(mon->base->x, mon->base->y, (mon->attributes & TUNNELING));
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
@@ -251,7 +249,6 @@ void moveDeliberately(monster* mon)
 		}
 		else // is not intelligent
 		{
-			mvprintw(ncurse++, 0, "%c, moving telepathically", mon->base->symbol);
 			int dir = switchBoard(mon, mon->playerX, mon->playerY);
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
@@ -274,7 +271,6 @@ void moveDeliberately(monster* mon)
 	{
 		if(mon->playerX != 0)
 		{
-			mvprintw(ncurse++, 0, "%c, moving intelligently", mon->base->symbol);
 			int dir = shortestPath(mon->base->x, mon->base->y, (mon->attributes & TUNNELING));
 			int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 			if(valid > 1)
@@ -306,14 +302,11 @@ void moveDeliberately(monster* mon)
 
 void moveMonster(monster* mon)
 {
-	mvprintw(ncurse++, 0, "%d + (100/%d) = %d", mon->base->turn, mon->base->speed, ((100/mon->base->speed) + mon->base->turn));
 	mon->base->turn = mon->base->turn + (100/mon->base->speed);
-	mvprintw(ncurse+6, 0, "%c, turn %d", mon->base->symbol, mon->base->turn);
 	// if we can see the PC, move towards him
 	int playerRoom = inRoom(kirito.base->x, kirito.base->y);
 	if((playerRoom >=0) && (inRoom(mon->base->x, mon->base->y) == playerRoom))
 	{
-		mvprintw(ncurse++, 0, "%c, in room with player", mon->base->symbol);
 		int dir = switchBoard(mon, kirito.base->x, kirito.base->y);
 		int valid = isMoveValid(mon->base, dir, (mon->attributes & TUNNELING));
 		if(valid > 1)
@@ -355,7 +348,6 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					mvprintw(ncurse++, 0, "%c, above player", mon->base->symbol);
 					doMove(mon->base, 5);
 					if(mon->attributes & INTELLIGENT)
 					{
@@ -379,7 +371,6 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					mvprintw(ncurse++, 0, "%c, below player", mon->base->symbol);
 					doMove(mon->base, 1);
 					if(mon->attributes & INTELLIGENT)
 					{
@@ -406,7 +397,6 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					mvprintw(ncurse++, 0, "%c, left player", mon->base->symbol);
 					doMove(mon->base, 3);
 					if(mon->attributes & INTELLIGENT)
 					{
@@ -430,7 +420,6 @@ void moveMonster(monster* mon)
 				}
 				if(!wall)
 				{
-					mvprintw(ncurse++, 0, "%c, right player", mon->base->symbol);
 					doMove(mon->base, 7);
 					if(mon->attributes & INTELLIGENT)
 					{
