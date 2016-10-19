@@ -67,11 +67,16 @@ int movePlayer(entity* character, int ch)
 
 void displayMonsters()
 {
+	int offset = 0;
 	int i = 0;
+	int alive = monstersAlive();
+	char **monList = malloc(alive * sizeof(char*));
+	int j = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
 		if(aincrad.monsters[i].base->alive == 1)
 		{
+			char *str = malloc(30);
 			monster mon = aincrad.monsters[i];
 			char* up;
 			int updist = 0;
@@ -97,7 +102,8 @@ void displayMonsters()
 				left = "east";
 				leftdist = mon.base->x - kirito.base->x;
 			}
-			mvprintw(i, 0, "%c, %d %s and %d %s", mon.base->symbol, updist, up, leftdist, left);
+			sprintf(str, "%c, %d %s and %d %s", mon.base->symbol, updist, up, leftdist, left);
+			monList[j++] = str;
 		}
 	}
 	refresh();
@@ -107,4 +113,9 @@ void displayMonsters()
 		if(ch == 27)
 			break;
 	}
+	for(j = 0; j < alive; ++j)
+	{
+		free(monList[i]);
+	}
+	free(monList);
 }

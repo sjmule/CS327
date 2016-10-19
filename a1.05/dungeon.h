@@ -85,4 +85,6 @@ extern player kirito;
 extern int monCount;
 extern int turn;
 
+int monstersAlive();
+
 #endif
