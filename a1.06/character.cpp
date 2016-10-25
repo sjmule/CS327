@@ -24,5 +24,6 @@ class Character
 		void setX(char c) { x = c; }
 		void setY(char c) { y = c; }
 		void setSpeed(char c) { speed = c; }
-		
+		void setTurn(int i) { turn = i; }
+		void setAlive(char c) { alive = c; }
 };

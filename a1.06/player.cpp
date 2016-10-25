@@ -1,23 +1,14 @@
 #include "dungeon.h"
+#include "character.h"
 
-class Player : Character
+class Player : public Character
 {
 	int[Y][X] visible;
 	public:
-		int[][] getVisible();
+		int[][] getVisible() { return visible; }
 		void setVisible(int x, int y);
 		Player();
 };
-
-Player::Player()
-{
-	
-}
-
-int[][] Player::getVisible()
-{
-
-}
 
 void setVisible(int x, int y)
 {
