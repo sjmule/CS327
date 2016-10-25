@@ -1,6 +1,10 @@
 #ifndef SAVE_H
 #define SAVE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "dungeon.h"
 #include "generate.h"
 
@@ -14,5 +18,9 @@ FILE* file;
 void saveDungeon(char* path, int debug);
 
 void loadDungeon(char* path, int debug);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

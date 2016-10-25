@@ -1,6 +1,10 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "dungeon.h"
 
 void setImmutable();
@@ -22,5 +26,9 @@ void createRooms();
 void connectRooms();
 
 void createMonsters();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

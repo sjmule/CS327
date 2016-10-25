@@ -1,6 +1,10 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "dungeon.h"
 
 extern int ncurse;
@@ -22,5 +26,9 @@ void moveRandom(entity* character, int tunnel);
 void moveDeliberately(monster* mon);
 
 void moveMonster(monster* mon);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

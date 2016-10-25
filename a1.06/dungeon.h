@@ -1,6 +1,10 @@
 #ifndef DUNGEON_H
 #define DUNGEON_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -86,5 +90,9 @@ extern int monCount;
 extern int turn;
 
 int monstersAlive();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
