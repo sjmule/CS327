@@ -1,3 +1,4 @@
+#include "character.h"
 #include "dungeon.h"
 
 class Character
