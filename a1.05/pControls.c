@@ -102,20 +102,43 @@ void displayMonsters()
 				left = "east";
 				leftdist = mon.base->x - kirito.base->x;
 			}
-			sprintf(str, "%c, %d %s and %d %s", mon.base->symbol, updist, up, leftdist, left);
+			sprintf(str, "%c, %d %s and %d %s   ", mon.base->symbol, updist, up, leftdist, left);
 			monList[j++] = str;
 		}
 	}
-	refresh();
+
 	while(1)
 	{
+		for(i = offset, j = 1; j < 22 && i < alive; ++j, ++i)
+		{
+			mvprintw(j, 0, monList[i]);
+		}
+		for(; j < 22; ++j)
+		{
+			for(i = 0; i < X; ++i)
+			{
+				mvaddch(j, i, ' ');
+			}
+		}
+		refresh();
 		int ch = getch();
+		if(ch == KEY_UP)
+		{
+			if(offset != 0)
+				--offset;
+		}
+		if(ch == KEY_DOWN)
+		{
+			if(offset != alive)
+				++offset;
+		}
 		if(ch == 27)
 			break;
 	}
+
 	for(j = 0; j < alive; ++j)
 	{
-		free(monList[i]);
+		free(monList[j]);
 	}
 	free(monList);
 }

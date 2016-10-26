@@ -1,7 +1,7 @@
 #include "dungeon.h"
 #include "generate.h"
 #include "save.h"
-#include "binheap.h"
+#include "heap.h"
 #include "routing.h"
 #include "movement.h"
 #include "pControls.h"
@@ -113,7 +113,6 @@ void placeCharacters()
 
 	calculateDistances(kirito.base->x, kirito.base->y, 0);
 	calculateDistances(kirito.base->x, kirito.base->y, 1);
-
 	createMonsters();
 }
 
@@ -224,6 +223,7 @@ int main(int argc, char** argv)
 	nonl();
 	cbreak();
 	noecho();
+	curs_set(0);
 
 	printDungeon();
 

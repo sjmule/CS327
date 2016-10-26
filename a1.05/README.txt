@@ -1,4 +1,4 @@
-README Assignment 1.04
+README Assignment 1.05
 This program creates a basic dungeon map. Bordered by dashes, the dungeon is comprised of 8 rooms depicted by '.' and connected by corridors depicted by '#'.
 Each space in the dungeon has a hardness of 0 through 255. 255 designates "immutable" and is reserved for the border of the dungeon. 0 designates open areas and
 corresponds to either room or corridor spaces. All other spaces have a value of 1-5.
@@ -14,19 +14,18 @@ The file generate.c contains all functions used to create the different parts of
 This implementation of our Rouge Like Game implements Dijkstra's algorithm to find the cost of traveling from 1) open spaces, rooms and corridors, and 2) all spaces, to the location of the player character denoted by a @.
 The player is randomly placed in an open space in the dungeon, then the distances are calculated. Distances are printed after the basic map as the cost of traveling across open spaces only first, then all spaces.
 Distances are displayed on the map as 0-9,a-z,A-Z. For distances greater than the number of characters provided, 61(Z), the dungeon renders normally. All functions used to complete these operations are contained within
-routing.c and rely on binheap.c for a binary heap.
+routing.c and rely on heap.c for a heap.
 
 This dugeon is initialized with a player character @ and by default 10 monsters. You may specify the number of monsters you wish to initialize the dungeon with by using the flags -n or --nummon followed by a number.
-The monsters will be initialized with random attributes and assigned random characters to represent them on the map. Once initialized, the player will randomly move around the map and the monsters will move according to their
-characteristics. The movement ends when all the monsters are dead or a monster reaches the player.
+The monsters will be initialized with random attributes and assigned random characters to represent them on the map.
 
-Note: This implementation of Dijkstra's uses a binary heap provided by Jeremy Sheaffer unmodified. A bug has been found where this implementation will sometimes cause the program to crash and throw an error with the following message
-while completing the binheap_remove_min() operation. *** THE PROFESSOR IS AWARE OF THIS IT WAS BROUGHT UP IN CLASS *** 
+Once initialized, the player and monsters are placed randomly through the dungeon. The dungeon is printed using ncurses and the player may be controlled using the numpad or y,u,h,j,k,l,b,n keys.
+The monster list can be printed at any time using the m key and can be scrolled through using the up and down arrow keys. You can exit this display with the escape key.
 
-*** Error in `./main': double free or corruption (fasttop): <address> ***
-Aborted
+Stairs are designated on the map with < for stairs up and > for stairs down and can be used by pressing the corresponding key while standing on the icon.
+Moving to a new floor will generate a completely new dungeon with new monsters.
 
-Uncommenting the added printf statments in the function will show that the error occurs at some point when this function is called. This does not always happen, and is rather rare.
+Pressing shift+q quits the game when not displaying the monster list.
 
 Contained within this archive is a README, Changelog, Makefile, and the following source files:
 dungeon.c
@@ -39,7 +38,8 @@ routing.c
 routing.h
 move.c
 move.h
-binheap.c
-binheap.h
+heap.c
+heap.h
+macros.h
 
 Running make will compile the source files together into the executable main.

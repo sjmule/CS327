@@ -1,3 +1,24 @@
+Changelog Assignment 1.05
+
+10/18
+Fixed miscellaneous bugs, updated Changelog and README.
+
+10/17
+Added functionality for stair usage.
+
+10/16
+Added functions to allow for displaying of the monster list.
+
+10/15
+Added controls to define character movement.
+
+10/14
+Added basic controls to quit the game.
+
+10/13
+Started work on assignment.
+Copied old code into new directory. Created new print function using ncurses.
+
 Changelog Assignment 1.04
 
 10/5
