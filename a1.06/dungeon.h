@@ -40,10 +40,6 @@ struct ROOM
 	int width;
 };
 
-typedef struct Character {} character;
-typedef struct Player {} player;
-typedef struct Monster {} monster;
-
 typedef struct DUNGEON dungeon;
 
 struct DUNGEON

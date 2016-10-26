@@ -12,19 +12,19 @@ class Character
 	char alive;
 	public:
 		// Getters
-		int getId() const { return id; }
-		char getSymbol const { return symbol; }
-		char getX const { return x; }
-		char getY const { return y; }
-		char getSpeed const { return speed; }
-		int getTurn const { return turn; }
-		char getAlive const { return alive; }
+		int getId(Character* c) { return c->id; }
+		char getSymbol(Character* c) { return c->symbol; }
+		char getX(Character* c) { return c->x; }
+		char getY(Character* c) { return c->y; }
+		char getSpeed(Character* c) { return c->speed; }
+		int getTurn(Character* c) { return c->turn; }
+		char getAlive(Chaacter* c) { return c->alive; }
 		// Setters
-		void setId(int i) { id = i; }
-		void setSymbol(char c) { symbol = c; }
-		void setX(char c) { x = c; }
-		void setY(char c) { y = c; }
-		void setSpeed(char c) { speed = c; }
-		void setTurn(int i) { turn = i; }
-		void setAlive(char c) { alive = c; }
+		void setId(Character* c, int i) { c->id = i; }
+		void setSymbol(Character* c, char s) { c->symbol = s; }
+		void setX(Character* c, char s) { c->x = s; }
+		void setY(Character* c, char s) { c->y = s; }
+		void setSpeed(Character* c, char s) { c->speed = s; }
+		void setTurn(Character* c, int i) { c->turn = i; }
+		void setAlive(Character* c, char s) { c->alive = s; }
 };

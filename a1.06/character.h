@@ -5,21 +5,23 @@
 extern "C" {
 #endif
 
-int getId();
-char getSymbol();
-char getX();
-char getY();
-char getSpeed();
-int getTurn();
-char getAlive();
+typedef struct Character {} character;
 
-void setId(int i);
-void setSymbol(char c);
-void setX(char c);
-void setY(char c);
-void setSpeed(char c);
-void setTurn(int i);
-void setAlive(char c);
+int getId(character* c);
+char getSymbol(character* c);
+char getX(character* c);
+char getY(character* c);
+char getSpeed(character* c);
+int getTurn(character* c);
+char getAlive(character* c);
+
+void setId(character* c, int i);
+void setSymbol(character* c, char s);
+void setX(character* c, char s);
+void setY(character* c, char s);
+void setSpeed(character* c, char s);
+void setTurn(character* c, int i);
+void setAlive(character* c, char s);
 
 #ifdef __cplusplus
 }

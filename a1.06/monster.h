@@ -5,13 +5,15 @@
 extern "C" {
 #endif
 
-int getAttributes();
-char getPlayerX();
-char getPlayerY();
+typedef struct Monster {} monster;
 
-void setAttributes(int i);
-void setPlayerX(char c);
-void setPlayerY(char c);
+int getAttributes(monster* m);
+char getPlayerX(monster* m);
+char getPlayerY(monster* m);
+
+void setAttributes(monster* m, int i);
+void setPlayerX(monster* m, char c);
+void setPlayerY(monster* m, char c);
 
 #ifdef __cplusplus
 }

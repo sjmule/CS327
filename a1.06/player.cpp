@@ -6,12 +6,12 @@ class Player : public Character
 {
 	int[Y][X] visible = new int[Y][X];
 	public:
-		void initializeVisible();
-		int[][] getVisible() { return visible; }
-		void setVisible(int x, int y);
+		void initializeVisible(Player* p);
+		int** getVisible(Player* p) { return p->visible; }
+		void setVisible(Player* p);
 };
 
-void initializeVisible()
+void initializeVisible(Player* p)
 {
 	for(int i = 0; i < Y; ++i)
 	{
@@ -32,9 +32,9 @@ void initializeVisible()
 	}
 }
 
-void setVisible()
+void setVisible(Player* p)
 {
-	int i = this.y;
+	int i = p->y;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((i - 1) >= 1)
@@ -42,19 +42,19 @@ void setVisible()
 		else
 			break;
 	}
-	int j = this.x;
+	int j = p->x;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((j - 1) >= 1)
 			j -= 1;
 		else
-		 break;
+			break;
 	}
 	for(; i <= (y + 3) && i < Y; ++i)
 	{
 		for(int k = j; k <= (x + 3) && k < X; ++k)
 		{
-			visible[i][k] = aincrad.map[i][k];
+			p->visible[i][k] = aincrad.map[i][k];
 		}
 	}
 }

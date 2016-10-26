@@ -314,7 +314,6 @@ void createMonsters()
 		if(attr < 50)
 			attributes = attributes | ERRATIC;
 		attr = (rand() % 15) + 5;
-		mon.getSpeed() = attr;
 		int x = 0;
 		int y = 0;
 		while(1)
@@ -324,15 +323,16 @@ void createMonsters()
 			if(aincrad.hardness[y][x] == 0)
 				break;
 		}
-		mon.setX(x);
-		mon.setY(y);
-		mon.setAttributes(attributes);
-		mon.setId(id++);
-		mon.setSymbol((rand() % 25) + 97);
-		mon.setPlayerX(0);
-		mon.setPlayerY(0);
-		mon.setTurn(0);
-		mon.setAlive(1);
+		setX((character*)&mon, x);
+		setY((character*)&mon, y);
+		setAttributes(&mon, attributes);
+		setId((character*)&mon, id++);
+		setSymbol((character*)&mon, (rand() % 25) + 97);
+		setSpeed((character*)&mon, (rand() % 15) + 5);
+		setPlayerX(&mon, 0);
+		setPlayerY(&mon, 0);
+		setTurn((character*)&mon, 0);
+		setAlive((character*)&mon, 1);
 		aincrad.monsters[i] = mon;
 		++monCount;
 	}

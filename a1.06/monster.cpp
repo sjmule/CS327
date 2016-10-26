@@ -9,11 +9,11 @@ class Monster : public Character
 	char playerY;
 	public:
 		// Getters
-		int getAttributes() { return attribues; }
-		char getPlayerX() { return playerX; }
-		char getPlayerY() { return playerY; }
+		int getAttributes(Monster* m) { return m->attribues; }
+		char getPlayerX(Monster* m) { return m->playerX; }
+		char getPlayerY(Monster* m) { return m->playerY; }
 		// Setters
-		void setAttributes(int i) { attributes = i; }
-		void setPlayerX(char c) { playerX = c; }
-		void setPlayerY(char c) { playerY = c; }
+		void setAttributes(Monster* m, int i) { m->attributes = i; }
+		void setPlayerX(Monster* m, char c) { m->playerX = c; }
+		void setPlayerY(Monster* m, char c) { m->playerY = c; }
 };

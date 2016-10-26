@@ -5,11 +5,13 @@
 extern "C" {
 #endif
 
-void initializeVisible();
+typedef struct Player {} player;
 
-int** getVisible();
+void initializeVisible(player* p);
 
-void setVisible();
+int** getVisible(player* p);
+
+void setVisible(player* p);
 
 #ifdef __cplusplus
 }

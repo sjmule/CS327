@@ -17,13 +17,9 @@ void makeTunnel(int x, int y);
 
 int valid(int x, int y, int tunnel);
 
-int isMoveValidMonster(monster* character, int dir, int tunnel);
+int isMoveValid(character* entity, int dir, int tunnel);
 
-int isMoveValid(player* entity, int dir);
-
-void doMoveMonster(monster* character, int dir);
-
-void doMove(player* entity, int dir);
+void doMove(character* entity, int dir);
 
 void moveRandom(monster* character, int tunnel);
 
