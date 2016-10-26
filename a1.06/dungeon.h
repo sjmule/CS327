@@ -17,6 +17,9 @@ extern "C" {
 #include <stdint.h>
 #include <unistd.h>
 #include <ncurses.h>
+#include "character.h"
+#include "monster.h"
+#include "player.h"
 
 #define X 80
 #define Y 21
@@ -25,36 +28,6 @@ extern "C" {
 #define TELEPATHIC  0x2
 #define TUNNELING   0x4
 #define ERRATIC     0x8
-
-typedef struct ENTITY entity;
-
-struct ENTITY
-{
-	int id;
-	char symbol;
-	char x;
-	char y;
-	char speed;
-	int turn;
-	char alive;
-};
-
-typedef struct PLAYER player;
-
-struct PLAYER
-{
-	entity* base;
-};
-
-typedef struct MONSTER monster;
-
-struct MONSTER
-{
-	entity* base;
-	int attributes;
-	char playerX;
-	char playerY;
-};
 
 typedef struct ROOM room;
 
@@ -66,6 +39,10 @@ struct ROOM
 	int height;
 	int width;
 };
+
+typedef struct Character character;
+typedef struct Player player;
+typedef struct Monster monster;
 
 typedef struct DUNGEON dungeon;
 

@@ -15,13 +15,17 @@ int inRoom(int x, int y);
 
 void makeTunnel(int x, int y);
 
-int valid(entity entity, int tunnel);
+int valid(int x, int y, int tunnel);
 
-int isMoveValid(entity* character, int dir, int tunnel);
+int isMoveValidMonster(monster* character, int dir, int tunnel);
 
-void doMove(entity* character, int dir);
+int isMoveValid(player* entity, int dir);
 
-void moveRandom(entity* character, int tunnel);
+void doMoveMonster(monster* character, int dir);
+
+void doMove(player* entity, int dir);
+
+void moveRandom(monster* character, int tunnel);
 
 void moveDeliberately(monster* mon);
 

@@ -1,62 +1,62 @@
 #include "pControls.h"
 #include "movement.h"
 
-int movePlayer(entity* character, int ch)
+int movePlayer(player* character, int ch)
 {
 	int good = 0;
 	switch(ch)
 	{
 		case '7':
 		case 'y':
-			good = isMoveValid(character, 0, 0);
+			good = isMoveValid(character, 0);
 			if(good)
 				doMove(character, 0);
 			break;
 		case '8':
 		case 'k':
-			good = isMoveValid(character, 1, 0);
+			good = isMoveValid(character, 1);
 			if(good)
 				doMove(character, 1);
 			break;
 		case '9':
 		case 'u':
-			good = isMoveValid(character, 2, 0);
+			good = isMoveValid(character, 2);
 			if(good)
 				doMove(character, 2);
 			break;
 		case '6':
 		case 'l':
-			good = isMoveValid(character, 3, 0);
+			good = isMoveValid(character, 3);
 			if(good)
 				doMove(character, 3);
 			break;
 		case '3':
 		case 'n':
-			good = isMoveValid(character, 4, 0);
+			good = isMoveValid(character, 4);
 			if(good)
 				doMove(character, 4);
 			break;
 		case '2':
 		case 'j':
-			good = isMoveValid(character, 5, 0);
+			good = isMoveValid(character, 5);
 			if(good)
 				doMove(character, 5);
 			break;
 		case '1':
 		case 'b':
-			good = isMoveValid(character, 6, 0);
+			good = isMoveValid(character, 6);
 			if(good)
 				doMove(character, 6);
 			break;
 		case '4':
 		case 'h':
-			good = isMoveValid(character, 7, 0);
+			good = isMoveValid(character, 7);
 			if(good)
 				doMove(character, 7);
 			break;
 		case '5':
 		case ' ':
-			character->turn += (100/character->speed);
+			character->setTurn(character->getTurn() + (100/character->getSpeed());
 			good = 1;
 			break;
 		default:
@@ -74,35 +74,35 @@ void displayMonsters()
 	int j = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
-		if(aincrad.monsters[i].base->alive == 1)
+		if(aincrad.monsters[i].getAlive() == 1)
 		{
 			char *str = malloc(30);
 			monster mon = aincrad.monsters[i];
 			char* up;
 			int updist = 0;
-			if(mon.base->y < kirito.base->y)
+			if(mon.getY() < kirito.getY())
 			{
 				up = "north";
-				updist = kirito.base->y - mon.base->y;
+				updist = kirito.getY() - mon.getY();
 			}
 			else
 			{
 				up = "south";
-				updist = mon.base->y - kirito.base->y;
+				updist = mon.getY() - kirito.getY();
 			}
 			char* left;
 			int leftdist = 0;
-			if(mon.base->x < kirito.base->x)
+			if(mon.getX() < kirito.getX())
 			{
 				left = "west";
-				leftdist = kirito.base->x - mon.base->x;
+				leftdist = kirito.getX() - mon.getX();
 			}
 			else
 			{
 				left = "east";
-				leftdist = mon.base->x - kirito.base->x;
+				leftdist = mon.getX() - kirito.getX();
 			}
-			sprintf(str, "%c, %d %s and %d %s", mon.base->symbol, updist, up, leftdist, left);
+			sprintf(str, "%c, %d %s and %d %s", mon.getSymbol(), updist, up, leftdist, left);
 			monList[j++] = str;
 		}
 	}

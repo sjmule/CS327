@@ -181,13 +181,13 @@ void createRooms()
 		}
 		++attempts;
 	}
-	int up = rand() % 9;
+	int up = rand() % aincrad.numRooms;
 	aincrad.stairUpX = aincrad.rooms[up].x + (rand() % aincrad.rooms[up].width);
 	aincrad.stairUpY = aincrad.rooms[up].y + (rand() % aincrad.rooms[up].height);
 	int down = 0;
 	while(1)
 	{
-		down = rand() % 9;
+		down = rand() % aincrad.numRooms;
 		if(down != up)
 			break;
 	}
@@ -300,35 +300,39 @@ void createMonsters()
 	for(; i < aincrad.numMonsters; ++i)
 	{
 		monster mon;
-		mon.base = malloc(sizeof(entity));
-		mon.attributes = 0;
+		int attributes = 0;
 		int attr = rand() % 100;
 		if(attr < 50)
-			mon.attributes = mon.attributes | INTELLIGENT;
+			attributes = attributes | INTELLIGENT;
 		attr = rand() % 100;
 		if(attr < 50)
-			mon.attributes = mon.attributes | TELEPATHIC;
+			attributes = attributes | TELEPATHIC;
 		attr = rand() % 100;
 		if(attr < 50)
-			mon.attributes = mon.attributes | TUNNELING;
+			attributes = attributes | TUNNELING;
 		attr = rand() % 100;
 		if(attr < 50)
-			mon.attributes = mon.attributes | ERRATIC;
+			attributes = attributes | ERRATIC;
 		attr = (rand() % 15) + 5;
-		mon.base->speed = attr;
+		mon.getSpeed() = attr;
+		int x = 0;
+		int y = 0;
 		while(1)
 		{
-			mon.base->x = (rand() % (X - 2)) + 1;
-			mon.base->y = (rand() % (Y - 2)) + 1;
-			if(aincrad.hardness[mon.base->y][mon.base->x] == 0)
+			x = (rand() % (X - 2)) + 1;
+			y = (rand() % (Y - 2)) + 1;
+			if(aincrad.hardness[y][x] == 0)
 				break;
 		}
-		mon.base->id = id++;
-		mon.base->symbol = (rand() % 25) + 97;
-		mon.playerX = 0;
-		mon.playerY = 0;
-		mon.base->turn = 0;
-		mon.base->alive = 1;
+		mon.setX(x);
+		mon.setY(y);
+		mon.setAttributes(attributes);
+		mon.setId(id++);
+		mon.setSymbol((rand() % 25) + 97);
+		mon.setPlayerX(0);
+		mon.setPlayerY(0);
+		mon.setTurn(0);
+		mon.setAlive(1);
 		aincrad.monsters[i] = mon;
 		++monCount;
 	}

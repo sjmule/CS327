@@ -1,7 +1,7 @@
 #include "dungeon.h"
 #include "generate.h"
 #include "save.h"
-#include "binheap.h"
+#include "heap.h"
 #include "routing.h"
 #include "movement.h"
 #include "pControls.h"
@@ -103,16 +103,20 @@ void createDungeon()
 
 void placeCharacters()
 {
+	int x = 0;
+	int y = 0;
 	while(1)
 	{
-		kirito.base->x = (rand() % (X - 2)) + 1;
-		kirito.base->y = (rand() % (Y - 2)) + 1;
-		if(aincrad.hardness[kirito.base->y][kirito.base->x] == 0)
+		x = (rand() % (X - 2)) + 1;
+		y = (rand() % (Y - 2)) + 1;
+		if(aincrad.hardness[y][x] == 0)
 			break;
 	}
+	kirito.setX(x);
+	kirito.setY(y);
 
-	calculateDistances(kirito.base->x, kirito.base->y, 0);
-	calculateDistances(kirito.base->x, kirito.base->y, 1);
+	calculateDistances(kirito.getX(), kirito.getY(), 0);
+	calculateDistances(kirito.getX(), kirito.getY(), 1);
 
 	createMonsters();
 }
@@ -120,12 +124,6 @@ void placeCharacters()
 void cleanup()
 {
 	free(aincrad.rooms);
-	free(kirito.base);
-	int j = 0;
-	for(; j < aincrad.numMonsters; ++j)
-	{
-		free(aincrad.monsters[j].base);
-	}
 	free(aincrad.monsters);
 }
 
@@ -133,6 +131,7 @@ void printDungeon()
 {
 	int i = 0;
 	int j = 0;
+	int** map = kirito.getVisible();
 	for(; i < X; ++i)
 	{
 		mvaddch(0, i, ' ');
@@ -141,61 +140,33 @@ void printDungeon()
 	{
 		for(j = 0; j < X; ++j)
 		{
-			mvaddch(i + 1, j, aincrad.map[i][j]);
+			mvaddch(i + 1, j, map[i][j]);
 		}
 	}
-	mvaddch(aincrad.stairUpY + 1, aincrad.stairUpX, '<');
-	mvaddch(aincrad.stairDownY + 1, aincrad.stairDownX, '>');
-	mvaddch(kirito.base->y + 1, kirito.base->x, kirito.base->symbol);
+	if((aincrad.stairUpX >= (kirito.getX() - 3)) && (aincrad.stairUpX <= (kirito.getX() + 3)))
+	{
+		if((aincrad.stairUpY >= (kirito.getY() - 3)) && (aincrad.stairUpY <= (kirito.getY() + 3)))
+			mvaddch(aincrad.stairUpY + 1, aincrad.stairUpX, '<');
+	}
+	if((aincrad.stairDownX >= (kirito.getX() - 3)) && (aincrad.stairDownX <= (kirito.getX() + 3)))
+	{
+		if((aincrad.stairDownY >= (kirito.getY() - 3)) && (aincrad.stairDownY <= (kirito.getY() + 3)))
+			mvaddch(aincrad.stairDownY + 1, aincrad.stairDownX, '<');
+	}
+	mvaddch(kirito.getY() + 1, kirito.getX(), kirito.getSymbol());
 	for(i = 0; i < aincrad.numMonsters; ++i)
 	{
-		if(aincrad.monsters[i].base->alive == 1)
-			mvaddch(aincrad.monsters[i].base->y + 1, aincrad.monsters[i].base->x, aincrad.monsters[i].base->symbol);
+		if(aincrad.monsters[i].getAlive() == 1)
+		{
+			if((aincrad.monsters[i].getX() >= (kirito.getX() - 3)) && (aincrad.monsters[i].getX() <= (kirito.getX() + 3)))
+			{
+				if((aincrad.monsters[i].getY() >= (kirito.getY() - 3)) && (aincrad.monsters[i].getY() <= (kirito.getY() + 3)))
+					mvaddch(aincrad.monsters[i].getY() + 1, aincrad.monsters[i].getX(), aincrad.monsters[i].getSymbol());
+			}
+		}
 	}
 	refresh();
-	ncurse = Y + 2;
 }
-
-// void printDungeon()
-// {
-// 	int i = 0;
-// 	int j = 0;
-// 	int[][] map = kirito.getVisible();
-// 	for(; i < X; ++i)
-// 	{
-// 		mvaddch(0, i, ' ');
-// 	}
-// 	for(i = 0; i < Y; ++i)
-// 	{
-// 		for(j = 0; j < X; ++j)
-// 		{
-// 			mvaddch(i + 1, j, map[i][j]);
-// 		}
-// 	}
-// 	if((aincrad.stairUpX >= (kirito.getX() - 3)) && (aincrad.stairUpX <= (kirito.getX() + 3)))
-// 	{
-// 		if((aincrad.stairUpY >= (kirito.getY() - 3)) && (aincrad.stairUpY <= (kirito.getY() + 3)))
-// 			mvaddch(aincrad.stairUpY + 1, aincrad.stairUpX, '<');
-// 	}
-// 	if((aincrad.stairDownX >= (kirito.getX() - 3)) && (aincrad.stairDownX <= (kirito.getX() + 3)))
-// 	{
-// 		if((aincrad.stairDownY >= (kirito.getY() - 3)) && (aincrad.stairDownY <= (kirito.getY() + 3)))
-// 			mvaddch(aincrad.stairDownY + 1, aincrad.stairDownX, '<');
-// 	}
-// 	mvaddch(kirito.getY() + 1, kirito.getX(), kirito.getSymbol());
-// 	for(i = 0; i < aincrad.numMonsters; ++i)
-// 	{
-// 		if(aincrad.monsters[i].getAlive() == 1)
-// 		{
-// 			if((aincrad.monsters[i].getX() >= (kirito.getX() - 3)) && (aincrad.monsters[i].getX() <= (kirito.getX() + 3)))
-// 			{
-// 				if((aincrad.monsters[i].getY() >= (kirito.getY() - 3)) && (aincrad.monsters[i].getY() <= (kirito.getY() + 3)))
-// 					mvaddch(aincrad.monsters[i].getY() + 1, aincrad.monsters[i].getX(), aincrad.monsters[i].getSymbol());
-// 			}
-// 		}
-// 	}
-// 	refresh();
-// }
 
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
@@ -206,7 +177,7 @@ int monstersAlive()
 	int alive = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
-		if(aincrad.monsters[i].base->alive)
+		if(aincrad.monsters[i].getAlive())
 			++alive;
 	}
 	return alive;
@@ -221,7 +192,6 @@ int main(int argc, char** argv)
 	strcat(path, getenv("HOME"));
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
-	strcat(path, "/dungeon");
 
 	// Define defaults for the parser
 	struct arguments arguments;
@@ -233,12 +203,11 @@ int main(int argc, char** argv)
 	arguments.numMonsters = 10;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-	kirito.base = malloc(sizeof(entity));
-	kirito.base->id = 0;
-	kirito.base->symbol = '@';
-	kirito.base->speed = 10;
-	kirito.base->turn = 0;
-	kirito.base->alive = 1;
+	kirito.setId(0);
+	kirito.setSymbol('@');
+	kirito.setSpeed(10);
+	kirito.setTurn(0);
+	kirito.setAlive(1);
 
 	if(arguments.load)
 		loadDungeon(arguments.loadPath, arguments.verboseMode);
@@ -269,11 +238,11 @@ int main(int argc, char** argv)
 	printDungeon();
 
 	int quit = 0;
-	while(kirito.base->alive && monstersAlive())
+	while(kirito.getAlive() && monstersAlive())
 	{
 		int print = 0;
 		int newFloor = 0;
-		if(kirito.base->turn == turn)
+		if(kirito.getTurn() == turn)
 		{
 			int good = 0;
 			while(!good)
@@ -291,7 +260,7 @@ int main(int argc, char** argv)
 				}
 				if(ch == '>')
 				{
-					if((kirito.base->x == aincrad.stairDownX) && (kirito.base->y == aincrad.stairDownY))
+					if((kirito.getX() == aincrad.stairDownX) && (kirito.getY() == aincrad.stairDownY))
 					{
 						cleanup();
 						createDungeon();
@@ -305,7 +274,7 @@ int main(int argc, char** argv)
 				}
 				if(ch == '<')
 				{
-					if((kirito.base->x == aincrad.stairUpX) && (kirito.base->y == aincrad.stairUpY))
+					if((kirito.getX() == aincrad.stairUpX) && (kirito.getY() == aincrad.stairUpY))
 					{
 						cleanup();
 						createDungeon();
@@ -318,21 +287,21 @@ int main(int argc, char** argv)
 						continue;
 				}
 				else
-					good = movePlayer(kirito.base, ch);
+					good = movePlayer(kirito, ch);
 			}
 			print = 1;
 			if(quit)
 				break;
-			calculateDistances(kirito.base->x, kirito.base->y, 0);
-			calculateDistances(kirito.base->x, kirito.base->y, 1);
-			kirito.base->turn = kirito.base->turn + (100/kirito.base->speed);
+			calculateDistances(kirito.getX(), kirito.getY(), 0);
+			calculateDistances(kirito.getX(), kirito.getY(), 1);
+			kirito.setTurn(kirito.getTurn() + (100/kirito.getSpeed()));
 		}
 		if(!newFloor)
 		{
 			int i = 0;
 			for(; i < aincrad.numMonsters; ++i)
 			{
-				if(aincrad.monsters[i].base->turn == turn)
+				if(aincrad.monsters[i].getTurn() == turn)
 				{
 					moveMonster(&aincrad.monsters[i]);
 					print = 1;

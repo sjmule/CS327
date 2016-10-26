@@ -2,13 +2,13 @@
 #define ROUTING_H
 
 #include "dungeon.h"
-#include "binheap.h"
+#include "heap.h"
 
 typedef struct ROUTE route;
 
 struct ROUTE
 {
-	binheap_node_t *hn;
+	heap_node_t *hn;
 	int posX;
 	int posY;
 	int fromX;

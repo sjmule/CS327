@@ -21,7 +21,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 {
 	static route path[Y][X], *p;
 	static int initialized = 0;
-	binheap_t h;
+	heap_t h;
 	int x, y;
 
 	if(!initialized)
@@ -51,7 +51,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 
 	path[playerY][playerX].cost = 0;
 
-	binheap_init(&h, path_cmp, NULL);
+	heap_init(&h, path_cmp, NULL);
 
 	for(y = 0; y < Y; ++y)
 	{
@@ -60,7 +60,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 			if(!tunnel)
 			{
 				if(aincrad.hardness[y][x] == 0)
-					path[y][x].hn = binheap_insert(&h, &path[y][x]);
+					path[y][x].hn = heap_insert(&h, &path[y][x]);
 				else
 					path[y][x].hn = NULL;
 			}
@@ -69,12 +69,12 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				if(aincrad.hardness[y][x] == 255)
 					path[y][x].hn = NULL;
 				else
-					path[y][x].hn = binheap_insert(&h, &path[y][x]);
+					path[y][x].hn = heap_insert(&h, &path[y][x]);
 			}
 		}
 	}
 
-	while((p = binheap_remove_min(&h)))
+	while((p = heap_remove_min(&h)))
 	{
 		p->hn = NULL;
 		if((path[p->posY - 1][p->posX - 1].hn) && (path[p->posY - 1][p->posX - 1].cost > p->cost + hardnessCost(p->posY - 1, p->posX - 1)))
@@ -86,7 +86,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY - 1][p->posX - 1] = p->cost + hardnessCost(p->posY - 1, p->posX - 1);
 			path[p->posY - 1][p->posX - 1].fromY = p->posY;
 			path[p->posY - 1][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX - 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY - 1][p->posX - 1].hn);
 		}
 		if((path[p->posY - 1][p->posX    ].hn) && (path[p->posY - 1][p->posX    ].cost > p->cost + hardnessCost(p->posY - 1, p->posX)))
 		{
@@ -97,7 +97,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY - 1][p->posX    ] = p->cost + hardnessCost(p->posY - 1, p->posX);
 			path[p->posY - 1][p->posX    ].fromY = p->posY;
 			path[p->posY - 1][p->posX    ].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX    ].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY - 1][p->posX    ].hn);
 		}
 		if((path[p->posY - 1][p->posX + 1].hn) && (path[p->posY - 1][p->posX + 1].cost > p->cost + hardnessCost(p->posY - 1, p->posX + 1)))
 		{
@@ -108,7 +108,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY - 1][p->posX + 1] = p->cost + hardnessCost(p->posY - 1, p->posX + 1);
 			path[p->posY - 1][p->posX + 1].fromY = p->posY;
 			path[p->posY - 1][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY - 1][p->posX + 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY - 1][p->posX + 1].hn);
 		}
 		if((path[p->posY    ][p->posX - 1].hn) && (path[p->posY    ][p->posX - 1].cost > p->cost + hardnessCost(p->posY, p->posX - 1)))
 		{
@@ -119,7 +119,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY    ][p->posX - 1] = p->cost + hardnessCost(p->posY, p->posX - 1);
 			path[p->posY    ][p->posX - 1].fromY = p->posY;
 			path[p->posY    ][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY    ][p->posX - 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY    ][p->posX - 1].hn);
 		}
 		if((path[p->posY    ][p->posX + 1].hn) && (path[p->posY    ][p->posX + 1].cost > p->cost + hardnessCost(p->posY, p->posX + 1)))
 		{
@@ -130,7 +130,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY    ][p->posX + 1] = p->cost + hardnessCost(p->posY, p->posX + 1);
 			path[p->posY    ][p->posX + 1].fromY = p->posY;
 			path[p->posY    ][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY    ][p->posX + 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY    ][p->posX + 1].hn);
 		}
 		if((path[p->posY + 1][p->posX - 1].hn) && (path[p->posY + 1][p->posX - 1].cost > p->cost + hardnessCost(p->posY + 1, p->posX - 1)))
 		{
@@ -141,7 +141,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY + 1][p->posX - 1] = p->cost + hardnessCost(p->posY + 1, p->posX - 1);
 			path[p->posY + 1][p->posX - 1].fromY = p->posY;
 			path[p->posY + 1][p->posX - 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX - 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY + 1][p->posX - 1].hn);
 		}
 		if((path[p->posY + 1][p->posX    ].hn) && (path[p->posY + 1][p->posX    ].cost > p->cost + hardnessCost(p->posY + 1, p->posX)))
 		{
@@ -152,7 +152,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY + 1][p->posX    ] = p->cost + hardnessCost(p->posY + 1, p->posX);
 			path[p->posY + 1][p->posX    ].fromY = p->posY;
 			path[p->posY + 1][p->posX    ].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX    ].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY + 1][p->posX    ].hn);
 		}
 		if((path[p->posY + 1][p->posX + 1].hn) && (path[p->posY + 1][p->posX + 1].cost > p->cost + hardnessCost(p->posY + 1, p->posX + 1)))
 		{
@@ -163,11 +163,11 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 				allCost[p->posY + 1][p->posX + 1] = p->cost + hardnessCost(p->posY + 1, p->posX + 1);
 			path[p->posY + 1][p->posX + 1].fromY = p->posY;
 			path[p->posY + 1][p->posX + 1].fromX = p->posX;
-			binheap_decrease_key(&h, path[p->posY + 1][p->posX + 1].hn);
+			heap_decrease_key_no_replace(&h, path[p->posY + 1][p->posX + 1].hn);
 		}
 	}
 
-	binheap_delete(&h);
+	heap_delete(&h);
 }
 
 int shortestPath(int fromX, int fromY, int tunnel)

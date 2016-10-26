@@ -7,7 +7,7 @@ extern "C" {
 
 void initializeVisible();
 
-int[][] getVisible();
+int** getVisible();
 
 void setVisible();
 
