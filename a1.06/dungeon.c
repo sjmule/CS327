@@ -156,6 +156,47 @@ void printDungeon()
 	ncurse = Y + 2;
 }
 
+// void printDungeon()
+// {
+// 	int i = 0;
+// 	int j = 0;
+// 	int[][] map = kirito.getVisible();
+// 	for(; i < X; ++i)
+// 	{
+// 		mvaddch(0, i, ' ');
+// 	}
+// 	for(i = 0; i < Y; ++i)
+// 	{
+// 		for(j = 0; j < X; ++j)
+// 		{
+// 			mvaddch(i + 1, j, map[i][j]);
+// 		}
+// 	}
+// 	if((aincrad.stairUpX >= (kirito.getX() - 3)) && (aincrad.stairUpX <= (kirito.getX() + 3)))
+// 	{
+// 		if((aincrad.stairUpY >= (kirito.getY() - 3)) && (aincrad.stairUpY <= (kirito.getY() + 3)))
+// 			mvaddch(aincrad.stairUpY + 1, aincrad.stairUpX, '<');
+// 	}
+// 	if((aincrad.stairDownX >= (kirito.getX() - 3)) && (aincrad.stairDownX <= (kirito.getX() + 3)))
+// 	{
+// 		if((aincrad.stairDownY >= (kirito.getY() - 3)) && (aincrad.stairDownY <= (kirito.getY() + 3)))
+// 			mvaddch(aincrad.stairDownY + 1, aincrad.stairDownX, '<');
+// 	}
+// 	mvaddch(kirito.getY() + 1, kirito.getX(), kirito.getSymbol());
+// 	for(i = 0; i < aincrad.numMonsters; ++i)
+// 	{
+// 		if(aincrad.monsters[i].getAlive() == 1)
+// 		{
+// 			if((aincrad.monsters[i].getX() >= (kirito.getX() - 3)) && (aincrad.monsters[i].getX() <= (kirito.getX() + 3)))
+// 			{
+// 				if((aincrad.monsters[i].getY() >= (kirito.getY() - 3)) && (aincrad.monsters[i].getY() <= (kirito.getY() + 3)))
+// 					mvaddch(aincrad.monsters[i].getY() + 1, aincrad.monsters[i].getX(), aincrad.monsters[i].getSymbol());
+// 			}
+// 		}
+// 	}
+// 	refresh();
+// }
+
 // The arg parser object
 static struct argp argp = {options, parse_opt, 0, doc};
 
@@ -217,7 +258,7 @@ int main(int argc, char** argv)
 	free(path);
 
 	placeCharacters();
-	
+
 	// Initialize ncurses
 	initscr();
 	keypad(stdscr, TRUE);

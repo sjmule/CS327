@@ -16,7 +16,7 @@ void setImmutable()
 		aincrad.hardness[i][0] = 255;
 		aincrad.hardness[i][X-1] = 255;
 	}
-} 
+}
 
 void setHardness()
 {
@@ -28,7 +28,7 @@ void setHardness()
 		{
 			aincrad.hardness[i][j] = (rand() % 254) + 1;
 		}
-	}	
+	}
 }
 
 void setBoundary()
@@ -37,9 +37,6 @@ void setBoundary()
 	for(; i < X; ++i)
 	{
 		aincrad.map[0][i] = '-';
-	}
-	for(i = 0; i < X; ++i)
-	{
 		aincrad.map[Y-1][i] = '-';
 	}
 	for(i = 1; i < Y - 1; ++i)
@@ -53,7 +50,7 @@ void initializeDungeon()
 {
 	setImmutable();
 	setHardness();
-	
+
 	int i = 0;
 	for(; i < Y; ++i)
 	{
@@ -63,7 +60,7 @@ void initializeDungeon()
 			aincrad.map[i][j] = ' ';
 		}
 	}
-	
+
 	setBoundary();
 
 	aincrad.numRooms = 0;
@@ -119,7 +116,7 @@ int verifyValidity(room room, int x, int y)
 	}
 	if(x + room.width + 1 != X - 2)
 	{
-		int next = x + room.width + 1; 
+		int next = x + room.width + 1;
 		for(i = y; i < y + room.height + 1; ++i)
 		{
 			if(aincrad.hardness[i][next] == 0)
@@ -161,7 +158,7 @@ void createRooms()
 		if(aincrad.hardness[y][x] != 0 && aincrad.hardness[y][x] != 255)
 		{
 			if(y + room.height >= Y - 1)
-			{	
+			{
 				++attempts;
 				continue;
 			}

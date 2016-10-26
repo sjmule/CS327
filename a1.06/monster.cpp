@@ -1,5 +1,6 @@
 #include "dungeon.h"
 #include "character.h"
+#include "monster.h"
 
 class Monster : public Character
 {
