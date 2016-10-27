@@ -2,39 +2,47 @@
 #include "character.h"
 #include "player.h"
 
-class Player : public Character
+void createPlayer()
 {
-	int[Y][X] visible = new int[Y][X];
-	public:
-		void initializeVisible(Player* p);
-		int** getVisible(Player* p) { return p->visible; }
-		void setVisible(Player* p);
-};
+	Player* pc;
+	pc = new Player;
+	kirito = (player*) pc;
+}
 
-void initializeVisible(Player* p)
+int** getVisible(player* p)
 {
+	return ((Player*) p)->visible;
+}
+
+void initializeVisible(player* p)
+{
+	((Player*) p)->visible = new int*[Y];
+	for(int i = 0; i < Y; ++i)
+	{
+		((Player*) p)->visible[i] = new int[X];
+	}
 	for(int i = 0; i < Y; ++i)
 	{
 		for(int j = 0; j < X; ++j)
 		{
-			visible[i][j] = ' ';
+			((Player*) p)->visible[i][j] = ' ';
 		}
 	}
 	for(int i = 0; i < X; ++i)
 	{
-		visible[0][i] = '-'
-		visible[Y-1][i] = '-';
+		((Player*) p)->visible[0][i] = '-';
+		((Player*) p)->visible[Y-1][i] = '-';
 	}
 	for(int i = 1; i < Y - 1; ++i)
 	{
-		visible[i][0] = '|';
-		visible[i][X-1] = '|';
+		((Player*) p)->visible[i][0] = '|';
+		((Player*) p)->visible[i][X-1] = '|';
 	}
 }
 
-void setVisible(Player* p)
+void setVisible(player* p)
 {
-	int i = p->y;
+	int i = ((Player*) p)->y;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((i - 1) >= 1)
@@ -42,7 +50,7 @@ void setVisible(Player* p)
 		else
 			break;
 	}
-	int j = p->x;
+	int j = ((Player*) p)->x;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((j - 1) >= 1)
@@ -50,11 +58,37 @@ void setVisible(Player* p)
 		else
 			break;
 	}
-	for(; i <= (y + 3) && i < Y; ++i)
+	for(; i <= (((Player*) p)->y + 3) && i < Y; ++i)
 	{
-		for(int k = j; k <= (x + 3) && k < X; ++k)
+		for(int k = j; k <= (((Player*) p)->x + 3) && k < X; ++k)
 		{
-			p->visible[i][k] = aincrad.map[i][k];
+			((Player*) p)->visible[i][k] = aincrad.map[i][k];
 		}
 	}
+}
+
+void clearVisible(player* p)
+{
+	for(int i = 0; i < Y; ++i)
+	{
+		for(int j = 0; j < X; ++j)
+		{
+			((Player*) p)->visible[i][j] = ' ';
+		}
+	}
+	for(int i = 0; i < X; ++i)
+	{
+		((Player*) p)->visible[0][i] = '-';
+		((Player*) p)->visible[Y-1][i] = '-';
+	}
+	for(int i = 1; i < Y - 1; ++i)
+	{
+		((Player*) p)->visible[i][0] = '|';
+		((Player*) p)->visible[i][X-1] = '|';
+	}
+}
+
+void cleanupPlayer()
+{
+	delete[] kirito;
 }

@@ -25,8 +25,6 @@ void createRooms();
 
 void connectRooms();
 
-void createMonsters();
-
 #ifdef __cplusplus
 }
 #endif

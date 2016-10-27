@@ -209,131 +209,86 @@ void connectRooms()
 		int y2 = second.y + (rand() % second.height);
 		if(x1 <= x2 && y1 <= y2)
 		{
-			int i = x1;
-			for(; i < x2; ++i)
+			int j = x1;
+			for(; j < x2; ++j)
 			{
-				if(aincrad.hardness[y1][i] != 0)
+				if(aincrad.hardness[y1][j] != 0)
 				{
-					aincrad.hardness[y1][i] = 0;
-					aincrad.map[y1][i] = '#';
+					aincrad.hardness[y1][j] = 0;
+					aincrad.map[y1][j] = '#';
 				}
 			}
-			for(i = y1; i < y2; ++i)
+			for(j = y1; j < y2; ++j)
 			{
-				if(aincrad.hardness[i][x2] != 0)
+				if(aincrad.hardness[j][x2] != 0)
 				{
-					aincrad.hardness[i][x2] = 0;
-					aincrad.map[i][x2] = '#';
+					aincrad.hardness[j][x2] = 0;
+					aincrad.map[j][x2] = '#';
 				}
 			}
 		}
 		// first room left and below second
 		else if(x1 <= x2 && y1 >= y2)
 		{
-			int i = x1;
-			for(; i <= x2; ++i)
+			int j = x1;
+			for(; j <= x2; ++j)
 			{
-				if(aincrad.hardness[y1][i] != 0)
+				if(aincrad.hardness[y1][j] != 0)
 				{
-					aincrad.hardness[y1][i] = 0;
-					aincrad.map[y1][i] = '#';
+					aincrad.hardness[y1][j] = 0;
+					aincrad.map[y1][j] = '#';
 				}
 			}
-			for(i = y2; i < y1; ++i)
+			for(j = y2; j < y1; ++j)
 			{
-				if(aincrad.hardness[i][x2] != 0)
+				if(aincrad.hardness[j][x2] != 0)
 				{
-					aincrad.hardness[i][x2] = 0;
-					aincrad.map[i][x2] = '#';
+					aincrad.hardness[j][x2] = 0;
+					aincrad.map[j][x2] = '#';
 				}
 			}
 		}
 		// first room right and above second
 		else if(x1 >= x2 && y1 <= y2)
 		{
-			int i = x2;
-			for(; i <= x1; ++i)
+			int j = x2;
+			for(; j <= x1; ++j)
 			{
-				if(aincrad.hardness[y2][i] != 0)
+				if(aincrad.hardness[y2][j] != 0)
 				{
-					aincrad.hardness[y2][i] = 0;
-					aincrad.map[y2][i] = '#';
+					aincrad.hardness[y2][j] = 0;
+					aincrad.map[y2][j] = '#';
 				}
 			}
-			for(i = y1; i < y2; ++i)
+			for(j = y1; j < y2; ++j)
 			{
-				if(aincrad.hardness[i][x1] != 0)
+				if(aincrad.hardness[j][x1] != 0)
 				{
-					aincrad.hardness[i][x1] = 0;
-					aincrad.map[i][x1] = '#';
+					aincrad.hardness[j][x1] = 0;
+					aincrad.map[j][x1] = '#';
 				}
 			}
 		}
 		// first room right and below second
 		else if(x1 >= x2 && y1 >= y2)
 		{
-			int i = x2;
-			for(; i < x1; ++i)
+			int j = x2;
+			for(; j < x1; ++j)
 			{
-				if(aincrad.hardness[y2][i] != 0)
+				if(aincrad.hardness[y2][j] != 0)
 				{
-					aincrad.hardness[y2][i] = 0;
-					aincrad.map[y2][i] = '#';
+					aincrad.hardness[y2][j] = 0;
+					aincrad.map[y2][j] = '#';
 				}
 			}
-			for(i = y2; i < y1; ++i)
+			for(j = y2; j < y1; ++j)
 			{
-				if(aincrad.hardness[i][x1] != 0)
+				if(aincrad.hardness[j][x1] != 0)
 				{
-					aincrad.hardness[i][x1] = 0;
-					aincrad.map[i][x1] = '#';
+					aincrad.hardness[j][x1] = 0;
+					aincrad.map[j][x1] = '#';
 				}
 			}
 		}
-	}
-}
-
-void createMonsters()
-{
-	static int id = 1;
-	int i = 0;
-	for(; i < aincrad.numMonsters; ++i)
-	{
-		monster mon;
-		int attributes = 0;
-		int attr = rand() % 100;
-		if(attr < 50)
-			attributes = attributes | INTELLIGENT;
-		attr = rand() % 100;
-		if(attr < 50)
-			attributes = attributes | TELEPATHIC;
-		attr = rand() % 100;
-		if(attr < 50)
-			attributes = attributes | TUNNELING;
-		attr = rand() % 100;
-		if(attr < 50)
-			attributes = attributes | ERRATIC;
-		attr = (rand() % 15) + 5;
-		int x = 0;
-		int y = 0;
-		while(1)
-		{
-			x = (rand() % (X - 2)) + 1;
-			y = (rand() % (Y - 2)) + 1;
-			if(aincrad.hardness[y][x] == 0)
-				break;
-		}
-		setX((character*)&mon, x);
-		setY((character*)&mon, y);
-		setAttributes(&mon, attributes);
-		setId((character*)&mon, id++);
-		setSymbol((character*)&mon, (rand() % 25) + 97);
-		setSpeed((character*)&mon, (rand() % 15) + 5);
-		setPlayerX(&mon, 0);
-		setPlayerY(&mon, 0);
-		setTurn((character*)&mon, 0);
-		setAlive((character*)&mon, 1);
-		aincrad.monsters[i] = mon;
-		++monCount;
 	}
 }

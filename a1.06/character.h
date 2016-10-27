@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-typedef struct Character {} character;
+typedef struct {} character;
 
 int getId(character* c);
 char getSymbol(character* c);
@@ -24,6 +24,17 @@ void setTurn(character* c, int i);
 void setAlive(character* c, char s);
 
 #ifdef __cplusplus
+class Character
+{
+  public:
+	  int id;
+	  char symbol;
+	  char x;
+	  char y;
+	  char speed;
+	  int turn;
+	  char alive;
+};
 }
 #endif
 

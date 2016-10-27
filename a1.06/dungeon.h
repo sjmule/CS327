@@ -49,7 +49,7 @@ struct DUNGEON
 	int numRooms;
 	room* rooms;
 	int numMonsters;
-	monster* monsters;
+	monster** monsters;
 	int level;
 	int stairUpX;
 	int stairUpY;
@@ -58,7 +58,7 @@ struct DUNGEON
 };
 
 extern dungeon aincrad;
-extern player kirito;
+extern player* kirito;
 extern int monCount;
 extern int turn;
 

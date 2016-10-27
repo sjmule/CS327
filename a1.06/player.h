@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
-typedef struct Player {} player;
+typedef struct {} player;
+
+void createPlayer();
 
 void initializeVisible(player* p);
 
@@ -13,7 +15,16 @@ int** getVisible(player* p);
 
 void setVisible(player* p);
 
+void clearVisible(player* p);
+
+void cleanupPlayer();
+
 #ifdef __cplusplus
+class Player : public Character
+{
+  public:
+	  int** visible;
+};
 }
 #endif
 
