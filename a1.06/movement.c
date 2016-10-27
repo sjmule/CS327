@@ -64,23 +64,21 @@ int inRoom(int x, int y)
 
 void killing(character* entity)
 {
+	// if not kirito
 	if(getId(entity) != 0)
 	{
-		if((getX(entity) == getX((character*)&kirito)) && (getY(entity) == getY((character*)&kirito)))
-			setAlive((character*)&kirito, 0);
+		if((getX(entity) == getX((character*)kirito)) && (getY(entity) == getY((character*)kirito)))
+			setAlive((character*)kirito, 0);
 	}
-	else
+	int i = 0;
+	for(; i < aincrad.numMonsters; ++i)
 	{
-		int i = 0;
-		for(; i < aincrad.numMonsters; ++i)
+		if(getId(entity) == getId((character*)aincrad.monsters[i]))
+			continue;
+		else
 		{
-			if(getId(entity) == getId((character*)&aincrad.monsters[i]))
-				continue;
-			else
-			{
-				if((getX(entity) == getX((character*)&aincrad.monsters[i])) && (getY(entity) == getY((character*)&aincrad.monsters[i])))
-					setAlive((character*)&aincrad.monsters[i], 0);
-			}
+			if((getX(entity) == getX((character*)aincrad.monsters[i])) && (getY(entity) == getY((character*)aincrad.monsters[i])))
+				setAlive((character*)aincrad.monsters[i], 0);
 		}
 	}
 }
@@ -210,14 +208,14 @@ void moveRandom(monster* entity, int tunnel)
 		doMove((character*)entity, dir);
 		if(valid == 3)
 		{
-			calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-			calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+			calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+			calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 		}
 	}
 	if(valid == 1)
 	{
-		calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-		calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+		calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+		calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 	}
 }
 
@@ -225,8 +223,8 @@ void moveDeliberately(monster* mon)
 {
 	if(getAttributes(mon) & TELEPATHIC) // is telepathic
 	{
-		setPlayerX(mon, getX((character*)&kirito));
-		setPlayerY(mon, getY((character*)&kirito));
+		setPlayerX(mon, getX((character*)kirito));
+		setPlayerY(mon, getY((character*)kirito));
 		if(getAttributes(mon) & INTELLIGENT) // is intelligent
 		{
 			int dir = shortestPath(getX((character*)mon), getY((character*)mon), (getAttributes(mon) & TUNNELING));
@@ -236,14 +234,14 @@ void moveDeliberately(monster* mon)
 				doMove((character*)mon, dir);
 				if(valid == 3)
 				{
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 				}
 			}
 			if(valid == 1)
 			{
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 			}
 		}
 		else // is not intelligent
@@ -255,14 +253,14 @@ void moveDeliberately(monster* mon)
 				doMove((character*)mon, dir);
 				if(valid == 3)
 				{
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 				}
 			}
 			if(valid == 1)
 			{
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 			}
 		}
 	}
@@ -277,14 +275,14 @@ void moveDeliberately(monster* mon)
 				doMove((character*)mon, dir);
 				if(valid == 3)
 				{
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 				}
 			}
 			if(valid == 1)
 			{
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 			}
 			if((getX((character*)mon) == getPlayerX(mon)) && (getY((character*)mon) == getPlayerY(mon)))
 			{
@@ -303,41 +301,41 @@ void moveMonster(monster* mon)
 {
 	setTurn((character*)mon, getTurn((character*)mon) + (100/getSpeed((character*)mon)));
 	// if we can see the PC, move towards him
-	int playerRoom = inRoom(getX((character*)&kirito), getY((character*)&kirito));
+	int playerRoom = inRoom(getX((character*)kirito), getY((character*)kirito));
 	if((playerRoom >=0) && (inRoom(getX((character*)mon), getY((character*)mon)) == playerRoom))
 	{
-		int dir = switchBoard(mon, getX((character*)&kirito), getY((character*)&kirito));
+		int dir = switchBoard(mon, getX((character*)kirito), getY((character*)kirito));
 		int valid = isMoveValid((character*)mon, dir, (getAttributes(mon) & TUNNELING));
 		if(valid > 1)
 		{
 			doMove((character*)mon, dir);
 			if(valid == 3)
 			{
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-					calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+					calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 				}
 			}
 			if(valid == 1)
 			{
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 0);
-				calculateDistances(getX((character*)&kirito), getY((character*)&kirito), 1);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
+				calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
 		}
 		if(getAttributes(mon) & INTELLIGENT)
 		{
-			getPlayerX(mon) = getX((character*)&kirito);
-			getPlayerY(mon) = getY((character*)&kirito);
+			setPlayerX(mon, getX((character*)kirito));
+			setPlayerY(mon, getY((character*)kirito));
 		}
 		return;
 	}
 	else
 	{
-		if(getX((character*)mon) == getX((character*)&kirito)) // player is above or below monster
+		if(getX((character*)mon) == getX((character*)kirito)) // player is above or below monster
 		{
-			if((getY((character*)mon) - getY((character*)&kirito)) < 0) // monster is above player
+			if((getY((character*)mon) - getY((character*)kirito)) < 0) // monster is above player
 			{
 				int i = getY((character*)mon);
 				int wall = 0;
-				for(; i < getY((character*)&kirito); ++i)
+				for(; i < getY((character*)kirito); ++i)
 				{
 					if(aincrad.hardness[i][(int)getX((character*)mon)] != 0)
 					{
@@ -350,15 +348,15 @@ void moveMonster(monster* mon)
 					doMove((character*)mon, 5);
 					if(getAttributes(mon) & INTELLIGENT)
 					{
-						setPlayerX(mon, getX((character*)&kirito));
-						setPlayerY(mon, getY((character*)&kirito));
+						setPlayerX(mon, getX((character*)kirito));
+						setPlayerY(mon, getY((character*)kirito));
 					}
 					return;
 				}
 			}
 			else // monster is below player
 			{
-				int i = getY((character*)&kirito);
+				int i = getY((character*)kirito);
 				int wall = 0;
 				for(; i < getY((character*)mon); ++i)
 				{
@@ -373,20 +371,20 @@ void moveMonster(monster* mon)
 					doMove((character*)mon, 1);
 					if(getAttributes(mon) & INTELLIGENT)
 					{
-						setPlayerX(mon, getX((character*)&kirito));
-						setPlayerY(mon, getY((character*)&kirito));
+						setPlayerX(mon, getX((character*)kirito));
+						setPlayerY(mon, getY((character*)kirito));
 					}
 					return;
 				}
 			}
 		}
-		if(getY((character*)mon) == getY((character*)&kirito)) // player is to left or right of monster
+		if(getY((character*)mon) == getY((character*)kirito)) // player is to left or right of monster
 		{
-			if((getX((character*)mon) - getX((character*)&kirito)) < 0) // monster is to left of player
+			if((getX((character*)mon) - getX((character*)kirito)) < 0) // monster is to left of player
 			{
 				int i = getX((character*)mon);
 				int wall = 0;
-				for(; i < getX((character*)&kirito); ++i)
+				for(; i < getX((character*)kirito); ++i)
 				{
 					if(aincrad.hardness[(int)getY((character*)mon)][i] != 0)
 					{
@@ -399,15 +397,15 @@ void moveMonster(monster* mon)
 					doMove((character*)mon, 3);
 					if(getAttributes(mon) & INTELLIGENT)
 					{
-						setPlayerX(mon, getX((character*)&kirito));
-						setPlayerY(mon, getY((character*)&kirito));
+						setPlayerX(mon, getX((character*)kirito));
+						setPlayerY(mon, getY((character*)kirito));
 					}
 					return;
 				}
 			}
 			else // monster is to right of player
 			{
-				int i = getX((character*)&kirito);
+				int i = getX((character*)kirito);
 				int wall = 0;
 				for(; i < getX((character*)mon); ++i)
 				{
@@ -422,8 +420,8 @@ void moveMonster(monster* mon)
 					doMove((character*)mon, 7);
 					if(getAttributes(mon) & INTELLIGENT)
 					{
-						setPlayerX(mon, getX((character*)&kirito));
-						setPlayerY(mon, getY((character*)&kirito));
+						setPlayerX(mon, getX((character*)kirito));
+						setPlayerY(mon, getY((character*)kirito));
 					}
 					return;
 				}

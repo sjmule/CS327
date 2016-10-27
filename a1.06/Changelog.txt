@@ -1,3 +1,45 @@
+Changelog Assignment 1.06
+
+10/26
+Code compiles and runs. Movement up and down stairs does not work so well.
+Fog-of-war works. Updated README and Changelog.
+
+10/25
+Finished converting C code to use new functions. Update Makefile to compile all code together.
+Started working out bugs associated with mixing code.
+
+10/24
+Worked out issues in header files to properly declare C++ classes for use in C code with definition in C++ file.
+Started converting C code to use interfacing functions.
+
+10/22
+Fully implemented C++ classes.
+
+10/21
+Started work on assignment.
+Copied old code into new directory. Started to define new C++ classes.
+
+Changelog Assignment 1.05
+
+10/18
+Fixed miscellaneous bugs, updated Changelog and README.
+
+10/17
+Added functionality for stair usage.
+
+10/16
+Added functions to allow for displaying of the monster list.
+
+10/15
+Added controls to define character movement.
+
+10/14
+Added basic controls to quit the game.
+
+10/13
+Started work on assignment.
+Copied old code into new directory. Created new print function using ncurses.
+
 Changelog Assignment 1.04
 
 10/5
