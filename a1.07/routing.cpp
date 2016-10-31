@@ -74,7 +74,7 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 		}
 	}
 
-	while((p = heap_remove_min(&h)))
+	while((p = (route*) heap_remove_min(&h)))
 	{
 		p->hn = NULL;
 		if((path[p->posY - 1][p->posX - 1].hn) && (path[p->posY - 1][p->posX - 1].cost > p->cost + hardnessCost(p->posY - 1, p->posX - 1)))

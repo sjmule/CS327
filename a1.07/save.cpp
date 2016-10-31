@@ -12,7 +12,7 @@ void saveDungeon(char* path, int debug)
 	if(debug == 1)
 		printf("Saving dungeon to file located at %s\n", path);
 
-	unsigned char* head = malloc(14);
+	unsigned char* head = (unsigned char*) malloc(14);
 	head[0] = 'R';
 	head[1] = 'L';
 	head[2] = 'G';
@@ -25,7 +25,7 @@ void saveDungeon(char* path, int debug)
 	head[8] = _itos(htonl(version),16);
 	head[9] = _itos(htonl(version),24);
 	
-	char* matrix = malloc(1680);
+	char* matrix = (char*) malloc(1680);
 	int i = 0;
 	int j = 0;
 	for(; j < Y; ++j)
@@ -37,7 +37,7 @@ void saveDungeon(char* path, int debug)
 		}
 	}
 
-	unsigned char* locations = malloc(4 * aincrad.numRooms);
+	unsigned char* locations = (unsigned char*) malloc(4 * aincrad.numRooms);
 	j = 0;
 	for(i = 0; i < aincrad.numRooms; ++i)
 	{
@@ -76,7 +76,7 @@ void loadDungeon(char* path, int debug)
 	if(debug == 1)
 		printf("Loading dungeon from file located at %s\n", path);
 
-	unsigned char* head = malloc(6);
+	unsigned char* head = (unsigned char*) malloc(6);
 	fread(head, 1, 6, file);
 
 	if(strcmp((char*) head, "RLG327") != 0)
@@ -85,7 +85,7 @@ void loadDungeon(char* path, int debug)
 		exit(-1);
 	}
 
-	unsigned char* versionC = malloc(4);
+	unsigned char* versionC = (unsigned char*) malloc(4);
 	fread(versionC, 1, 4, file);
 	unsigned int fileVersion = _stoi(versionC);
 	fileVersion = ntohl(fileVersion);
@@ -96,14 +96,14 @@ void loadDungeon(char* path, int debug)
 		exit(-1);
 	}
 	
-	unsigned char* sizeC = malloc(4);
+	unsigned char* sizeC = (unsigned char*) malloc(4);
 	fread(sizeC, 1, 4, file);
 	unsigned int size = _stoi(sizeC);
 	size = ntohl(size);
 
 	initializeDungeon();
 
-	unsigned char* matrix = malloc(1680);
+	unsigned char* matrix = (unsigned char*) malloc(1680);
 	fread(matrix, 1, 1680, file);
 
 	int i = 0;
@@ -118,10 +118,10 @@ void loadDungeon(char* path, int debug)
 	}
 
 	int end = size - 1680 - 14;
-	char* locations = malloc(end);
+	char* locations = (char*) malloc(end);
 	fread(locations, 1, end, file);
 	int numRooms = end/4;
-	aincrad.rooms = malloc(sizeof(room) * numRooms);
+	aincrad.rooms = (room*) malloc(sizeof(room) * numRooms);
 	room room;	
 
 	i = 0;

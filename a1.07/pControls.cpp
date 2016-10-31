@@ -70,36 +70,36 @@ void displayMonsters()
 	int offset = 0;
 	int i = 0;
 	int alive = monstersAlive();
-	char **monList = malloc(alive * sizeof(char*));
+	char **monList = (char**) malloc(alive * sizeof(char*));
 	int j = 0;
 	for(; i < aincrad.numMonsters; ++i)
 	{
 		if(getAlive((character*)aincrad.monsters[i]))
 		{
-			char *str = malloc(30);
+			char *str = (char*) malloc(30);
 			monster* mon = aincrad.monsters[i];
-			char* up;
+			char* up = (char*) malloc(6);
 			int updist = 0;
 			if(getY((character*)mon) < getY((character*)kirito))
 			{
-				up = "north";
+				strcpy(up, "north");
 				updist = getY((character*)kirito) - getY((character*)mon);
 			}
 			else
 			{
-				up = "south";
+				strcpy(up, "south");
 				updist = getY((character*)mon) - getY((character*)kirito);
 			}
-			char* left;
+			char* left = (char*) malloc(5);
 			int leftdist = 0;
 			if(getX((character*)mon) < getX((character*)kirito))
 			{
-				left = "west";
+				strcpy(left, "west");
 				leftdist = getX((character*)kirito) - getX((character*)mon);
 			}
 			else
 			{
-				left = "east";
+				strcpy(left, "east");
 				leftdist = getX((character*)mon) - getX((character*)kirito);
 			}
 			sprintf(str, "%c, %d %s and %d %s", getSymbol((character*)mon), updist, up, leftdist, left);
