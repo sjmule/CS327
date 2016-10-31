@@ -1,5 +1,7 @@
 #include "save.h"
 
+FILE* file;
+
 void saveDungeon(char* path, int debug)
 {
 	file = fopen(path, "w");
@@ -24,7 +26,7 @@ void saveDungeon(char* path, int debug)
 	head[7] = _itos(htonl(version),8);
 	head[8] = _itos(htonl(version),16);
 	head[9] = _itos(htonl(version),24);
-	
+
 	char* matrix = (char*) malloc(1680);
 	int i = 0;
 	int j = 0;
@@ -48,7 +50,7 @@ void saveDungeon(char* path, int debug)
 	}
 
 	unsigned int size = 14 + 1680 + (4 * aincrad.numRooms);
-	
+
 	head[10] = _itos(htonl(size),0);
 	head[11] = _itos(htonl(size),8);
 	head[12] = _itos(htonl(size),16);
@@ -95,7 +97,7 @@ void loadDungeon(char* path, int debug)
 		printf("Incompatable version number\n");
 		exit(-1);
 	}
-	
+
 	unsigned char* sizeC = (unsigned char*) malloc(4);
 	fread(sizeC, 1, 4, file);
 	unsigned int size = _stoi(sizeC);
@@ -122,7 +124,7 @@ void loadDungeon(char* path, int debug)
 	fread(locations, 1, end, file);
 	int numRooms = end/4;
 	aincrad.rooms = (room*) malloc(sizeof(room) * numRooms);
-	room room;	
+	room room;
 
 	i = 0;
 	for(j = 0; j < numRooms; ++j)

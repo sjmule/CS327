@@ -11,6 +11,7 @@ player* kirito;
 int monCount = 0;
 int turn = 0;
 int ncurse = 0;
+unsigned int version = 0;
 
 // Program version string
 const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
@@ -186,7 +187,6 @@ int monstersAlive()
 
 int main(int argc, char** argv)
 {
-	version = 0;
 	srand((unsigned) time(0));
 
 	char* path = (char*) malloc(40);

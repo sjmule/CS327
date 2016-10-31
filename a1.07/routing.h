@@ -16,8 +16,8 @@ struct ROUTE
 	int cost;
 };
 
-int openCost[Y][X];
-int allCost[Y][X];
+extern int openCost[Y][X];
+extern int allCost[Y][X];
 
 int hardnessCost(int y, int x);
 

@@ -1,5 +1,8 @@
 #include "routing.h"
 
+int openCost[Y][X];
+int allCost[Y][X];
+
 int hardnessCost(int y, int x)
 {
 	if(aincrad.hardness[y][x] >= 0 && aincrad.hardness[y][x] <= 84)
