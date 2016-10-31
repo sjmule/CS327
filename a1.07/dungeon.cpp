@@ -61,7 +61,7 @@ struct arguments
  */
 error_t parse_opt(int key, char* arg, struct argp_state *state)
 {
-	struct arguments* arguments = state->input;
+	struct arguments* arguments = ((arguments*)) state->input;
 	switch(key)
 	{
 		case 'v':
@@ -98,7 +98,7 @@ void createDungeon()
 	initializeDungeon();
 	createRooms();
 	connectRooms();
-	aincrad.monsters = malloc(sizeof(monster) * aincrad.numMonsters);
+	aincrad.monsters = (monster**) malloc(sizeof(monster) * aincrad.numMonsters);
 }
 
 void placeCharacters()
@@ -189,7 +189,7 @@ int main(int argc, char** argv)
 	version = 0;
 	srand((unsigned) time(0));
 
-	char* path = malloc(40);
+	char* path = (char*) malloc(40);
 	strcat(path, getenv("HOME"));
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 		if(arguments.verboseMode)
 			printf("Generating new dungeon\n");
 		aincrad.numRooms = 8;
-		aincrad.rooms = malloc(sizeof(room) * 8);
+		aincrad.rooms = ((room*) (malloc(sizeof(room) * 8)));
 		aincrad.numMonsters = arguments.numMonsters;
 		createDungeon();
 	}

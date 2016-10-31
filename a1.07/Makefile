@@ -8,11 +8,8 @@ DEPS = dungeon.h generate.h save.h macros.h heap.h routing.h movement.h pControl
 main: $(OBJS)
 	g++ -o $@ $^ $(CFLAGS) $(LIBS)
 
-%.o: %.c $(DEPS)
-	gcc $(CFLAGS) $(LIBS) -c $<
-
 %.o: %.cpp
-	g++ $(CFLAGS) -c $<
+	g++ $(CFLAGS) $(LIBS) -c $<
 
 clean:
 	rm -rf $(EXES)
