@@ -3,7 +3,7 @@
 
 #include "dungeon.h"
 
-int switchBoard(monster* mon, int playerX, int playerY);
+int switchBoard(Monster* mon, int playerX, int playerY);
 
 int inRoom(int x, int y);
 
