@@ -48,6 +48,7 @@ void setBoundary()
 
 void initializeDungeon()
 {
+	aincrad = new Dungeon();
 	setImmutable();
 	setHardness();
 

@@ -2,22 +2,12 @@
 #include "character.h"
 #include "monster.h"
 
-// Getters
-int getAttributes(monster* m) { return ((Monster*) m)->attributes; }
-char getPlayerX(monster* m) { return ((Monster*) m)->playerX; }
-char getPlayerY(monster* m) { return ((Monster*) m)->playerY; }
-
-// Setters
-void setAttributes(monster* m, int i) { ((Monster*) m)->attributes = i; }
-void setPlayerX(monster* m, char c) { ((Monster*) m)->playerX = c; }
-void setPlayerY(monster* m, char c) { ((Monster*) m)->playerY = c; }
-
 void createMonsters()
 {
-  aincrad.monsters = (monster**) malloc(sizeof(Monster) * aincrad.numMonsters);
+	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad.numMonsters);
 	static int id = 1;
 	int i = 0;
-	for(; i < aincrad.numMonsters; ++i)
+	for(; i < aincrad->numMonsters; ++i)
 	{
 		Monster* mon;
 		mon = new Monster();
