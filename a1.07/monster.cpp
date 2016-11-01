@@ -4,7 +4,7 @@
 
 void createMonsters()
 {
-	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad.numMonsters);
+	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
 	static int id = 1;
 	int i = 0;
 	for(; i < aincrad->numMonsters; ++i)
@@ -32,10 +32,10 @@ void createMonsters()
 			x = (rand() % (X - 2)) + 1;
 			y = (rand() % (Y - 2)) + 1;
 			if(aincrad.hardness[y][x] == 0)
-      {
-        if((x != getX((character*)kirito)) && (y != getY((character*)kirito)))
-				  break;
-      }
+			{
+				if((x != kirito->x) && (y != kirito->y))
+					break;
+			}
 		}
 		mon->x = x;
 		mon->y = y;
@@ -47,16 +47,16 @@ void createMonsters()
 		mon->playerY = 0;
 		mon->turn = 0;
 		mon->alive = 1;
-		aincrad.monsters[i] = (monster *) mon;
+		aincrad->monsters[i] = mon;
 		++monCount;
 	}
 }
 
 void cleanupMonsters()
 {
-  for(int i = 0; i < aincrad.numMonsters; ++i)
+  for(int i = 0; i < aincrad->numMonsters; ++i)
   {
-    delete[] aincrad.monsters[i];
+    delete[] aincrad->monsters[i];
   }
   //free(aincrad.monsters);
 }

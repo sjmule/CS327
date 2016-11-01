@@ -5,11 +5,11 @@ int allCost[Y][X];
 
 int hardnessCost(int y, int x)
 {
-	if(aincrad.hardness[y][x] >= 0 && aincrad.hardness[y][x] <= 84)
+	if(aincrad->hardness[y][x] >= 0 && aincrad->hardness[y][x] <= 84)
 		return 1;
-	if(aincrad.hardness[y][x] >= 85 && aincrad.hardness[y][x] <= 170)
+	if(aincrad->hardness[y][x] >= 85 && aincrad->hardness[y][x] <= 170)
 		return 2;
-	if(aincrad.hardness[y][x] >= 171 && aincrad.hardness[y][x] <= 254)
+	if(aincrad->hardness[y][x] >= 171 && aincrad->hardness[y][x] <= 254)
 		return 3;
 	else
 		return INT_MAX;
@@ -62,14 +62,14 @@ void calculateDistances(int playerX, int playerY, int tunnel)
 		{
 			if(!tunnel)
 			{
-				if(aincrad.hardness[y][x] == 0)
+				if(aincrad->hardness[y][x] == 0)
 					path[y][x].hn = heap_insert(&h, &path[y][x]);
 				else
 					path[y][x].hn = NULL;
 			}
 			else
 			{
-				if(aincrad.hardness[y][x] == 255)
+				if(aincrad->hardness[y][x] == 255)
 					path[y][x].hn = NULL;
 				else
 					path[y][x].hn = heap_insert(&h, &path[y][x]);
@@ -295,10 +295,10 @@ void printCosts()
 				if(c != 21)
 					printf("%c", c);
 				else
-					printf("%c", aincrad.map[i][j]);
+					printf("%c", aincrad->map[i][j]);
 			}
 			else
-				printf("%c", aincrad.map[i][j]);
+				printf("%c", aincrad->map[i][j]);
 		}
 		printf("\n");
 	}
@@ -314,12 +314,11 @@ void printCosts()
 				if(c != 21)
 					printf("%c", c);
 				else
-					printf("%c", aincrad.map[i][j]);
+					printf("%c", aincrad->map[i][j]);
 			}
 			else
-				printf("%c", aincrad.map[i][j]);
+				printf("%c", aincrad->map[i][j]);
 		}
 		printf("\n");
 	}
-
 }

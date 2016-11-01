@@ -7,7 +7,7 @@ extern "C" {
 
 #include "dungeon.h"
 
-int movePlayer(player* character, int ch);
+int movePlayer(int ch);
 
 void displayMonsters();
 

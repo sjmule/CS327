@@ -1,62 +1,62 @@
 #include "pControls.h"
 #include "movement.h"
 
-int movePlayer(player* entity, int ch)
+int movePlayer(int ch)
 {
 	int good = 0;
 	switch(ch)
 	{
 		case '7':
 		case 'y':
-			good = isMoveValid((character*)entity, 0, 0);
+			good = isMoveValid(kirito, 0, 0);
 			if(good)
-				doMove((character*)entity, 0);
+				doMove(kirito, 0);
 			break;
 		case '8':
 		case 'k':
-			good = isMoveValid((character*)entity, 1, 0);
+			good = isMoveValid(kirito, 1, 0);
 			if(good)
-				doMove((character*)entity, 1);
+				doMove(kirito, 1);
 			break;
 		case '9':
 		case 'u':
-			good = isMoveValid((character*)entity, 2, 0);
+			good = isMoveValid(kirito, 2, 0);
 			if(good)
-				doMove((character*)entity, 2);
+				doMove(kirito, 2);
 			break;
 		case '6':
 		case 'l':
-			good = isMoveValid((character*)entity, 3, 0);
+			good = isMoveValid(kirito, 3, 0);
 			if(good)
-				doMove((character*)entity, 3);
+				doMove(kirito, 3);
 			break;
 		case '3':
 		case 'n':
-			good = isMoveValid((character*)entity, 4, 0);
+			good = isMoveValid(kirito, 4, 0);
 			if(good)
-				doMove((character*)entity, 4);
+				doMove(kirito, 4);
 			break;
 		case '2':
 		case 'j':
-			good = isMoveValid((character*)entity, 5, 0);
+			good = isMoveValid(kirito, 5, 0);
 			if(good)
-				doMove((character*)entity, 5);
+				doMove(kirito, 5);
 			break;
 		case '1':
 		case 'b':
-			good = isMoveValid((character*)entity, 6, 0);
+			good = isMoveValid(kirito, 6, 0);
 			if(good)
-				doMove((character*)entity, 6);
+				doMove(kirito, 6);
 			break;
 		case '4':
 		case 'h':
-			good = isMoveValid((character*)entity, 7, 0);
+			good = isMoveValid(kirito, 7, 0);
 			if(good)
-				doMove((character*)entity, 7);
+				doMove(kirito, 7);
 			break;
 		case '5':
 		case ' ':
-			setTurn((character*)entity, getTurn((character*)entity) + (100/getSpeed((character*)entity)));
+			kirito->turn = kirito->turn + (100/kirito->speed);
 			good = 1;
 			break;
 		default:
@@ -72,37 +72,37 @@ void displayMonsters()
 	int alive = monstersAlive();
 	char **monList = (char**) malloc(alive * sizeof(char*));
 	int j = 0;
-	for(; i < aincrad.numMonsters; ++i)
+	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(getAlive((character*)aincrad.monsters[i]))
+		if(aincrad->monsters[i]->alive)
 		{
 			char *str = (char*) malloc(30);
-			monster* mon = aincrad.monsters[i];
+			monster* mon = aincrad->monsters[i];
 			char* up = (char*) malloc(6);
 			int updist = 0;
-			if(getY((character*)mon) < getY((character*)kirito))
+			if(mon->y < kirito->y)
 			{
 				strcpy(up, "north");
-				updist = getY((character*)kirito) - getY((character*)mon);
+				updist = kirito->y - mon->y;
 			}
 			else
 			{
 				strcpy(up, "south");
-				updist = getY((character*)mon) - getY((character*)kirito);
+				updist = mon->y - kirito->y;
 			}
 			char* left = (char*) malloc(5);
 			int leftdist = 0;
-			if(getX((character*)mon) < getX((character*)kirito))
+			if(mon->x < kirito->x)
 			{
 				strcpy(left, "west");
-				leftdist = getX((character*)kirito) - getX((character*)mon);
+				leftdist = kirito->x - mon->x;
 			}
 			else
 			{
 				strcpy(left, "east");
-				leftdist = getX((character*)mon) - getX((character*)kirito);
+				leftdist = mon->x - kirito->x;
 			}
-			sprintf(str, "%c, %d %s and %d %s", getSymbol((character*)mon), updist, up, leftdist, left);
+			sprintf(str, "%c, %d %s and %d %s", mon->symbol, updist, up, leftdist, left);
 			monList[j++] = str;
 		}
 	}
