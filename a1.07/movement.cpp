@@ -1,10 +1,10 @@
 #include "movement.h"
 #include "routing.h"
 
-int switchBoard(monster* mon, int playerX, int playerY)
+int switchBoard(Monster* mon, int playerX, int playerY)
 {
-	int x = getX((character*)mon) - playerX;
-	int y = getY((character*)mon) - playerY;
+	int x = mon->x - playerX;
+	int y = mon->y - playerY;
 	if(x == y)
 	{
 		if(x < 0)
@@ -50,9 +50,9 @@ int switchBoard(monster* mon, int playerX, int playerY)
 int inRoom(int x, int y)
 {
 	int i = 0;
-	for(; i < aincrad.numRooms; ++i)
+	for(; i < aincrad->numRooms; ++i)
 	{
-		room temp = aincrad.rooms[i];
+		room temp = aincrad->rooms[i];
 		if((x >= temp.x) && (x <= (temp.x + temp.width - 1)))
 		{
 			if((y >= temp.y) && (y <= (temp.y + temp.height - 1)))
@@ -62,31 +62,31 @@ int inRoom(int x, int y)
 	return -1;
 }
 
-void killing(character* entity)
+void killing(Character* entity)
 {
 	// if not kirito
-	if(getId(entity) != 0)
+	if(entity->id != 0)
 	{
-		if((getX(entity) == getX((character*)kirito)) && (getY(entity) == getY((character*)kirito)))
-			setAlive((character*)kirito, 0);
+		if((entity->x == kirito->x) && (entity->y == kirito->y))
+			kirito->alive = 0;
 	}
 	int i = 0;
-	for(; i < aincrad.numMonsters; ++i)
+	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(getId(entity) == getId((character*)aincrad.monsters[i]))
+		if(entity->id == aincrad->monsters[i]->id)
 			continue;
 		else
 		{
-			if((getX(entity) == getX((character*)aincrad.monsters[i])) && (getY(entity) == getY((character*)aincrad.monsters[i])))
-				setAlive((character*)aincrad.monsters[i], 0);
+			if((entity->x == aincrad->monsters[i]->x) && (entity->y == aincrad->monsters[i]->y))
+				aincrad->monsters[i]->alive = 0;
 		}
 	}
 }
 
 void makeTunnel(int x, int y)
 {
-	if(aincrad.map[y][x] == ' ')
-		aincrad.map[y][x] = '#';
+	if(aincrad->map[y][x] == ' ')
+		aincrad->map[y][x] = '#';
 }
 
 // 0 invalid move, 1 invalid move - recalculate distance, 2 valid move, 3 valid move - recalculate distance
@@ -94,31 +94,31 @@ int valid(int x, int y, int tunnel)
 {
 	if(tunnel == 4) // monster
 	{
-		if(aincrad.hardness[y][x] == 255)
+		if(aincrad->hardness[y][x] == 255)
 			return 0;
 		else
 		{
-			if(aincrad.hardness[y][x] == 0) // open space
+			if(aincrad->hardness[y][x] == 0) // open space
 				return 2;
-			else if(aincrad.hardness[y][x] - 85 <= 0) // after digging will be open
+			else if(aincrad->hardness[y][x] - 85 <= 0) // after digging will be open
 				return 3;
 			else // dig
 			{
-				aincrad.hardness[y][x] = aincrad.hardness[y][x] - 85;
+				aincrad->hardness[y][x] = aincrad->hardness[y][x] - 85;
 				return 1;
 			}
 		}
 	}
 	else
 	{
-		if(aincrad.hardness[y][x] == 0)
+		if(aincrad->hardness[y][x] == 0)
 			return 2;
 		else
 			return 0;
 	}
 }
 
-int isMoveValid(character* entity, int dir, int tunnel)
+int isMoveValid(Character* entity, int dir, int tunnel)
 {
 	int x = getX(entity);
 	int y = getY(entity);
@@ -158,74 +158,74 @@ int isMoveValid(character* entity, int dir, int tunnel)
 	}
 }
 
-void doMove(character* entity, int dir)
+void doMove(Character* entity, int dir)
 {
-	makeTunnel(getX(entity), getY(entity));
+	makeTunnel(entity->x, entity->y);
 	switch(dir)
 	{
 		case 0:
-			setX(entity, getX(entity) - 1);
-			setY(entity, getY(entity) - 1);
+			entity->x = entity->x - 1;
+			entity->y = entity->y - 1;
 			break;
 		case 1:
-			setY(entity, getY(entity) - 1);
+			entity->y = entity->y - 1;
 			break;
 		case 2:
-			setX(entity, getX(entity) + 1);
-			setY(entity, getY(entity) - 1);
+			entity->x = entity->x + 1;
+			entity->y = entity->y - 1;
 			break;
 		case 3:
-			setX(entity, getX(entity) + 1);
+			entity->x = entity->x + 1;
 			break;
 		case 4:
-			setX(entity, getX(entity) + 1);
-			setY(entity, getY(entity) + 1);
+			entity->x = entity->x + 1;
+			entity->y = entity->y + 1;
 			break;
 		case 5:
-			setY(entity, getY(entity) + 1);
+			entity->y = entity->y + 1;
 			break;
 		case 6:
-			setX(entity, getX(entity) - 1);
-			setY(entity, getY(entity) + 1);
+			entity->x = entity->x - 1;
+			entity->y = entity->y + 1;
 			break;
 		case 7:
-			setX(entity, getX(entity) - 1);
+			entity->x = entity->x - 1;
 			break;
 		default:
 			break;
 	}
-	aincrad.hardness[(int)getY(entity)][(int)getX(entity)] = 0;
-	killing((character*)entity);
+	aincrad->hardness[entity->y][entity->x] = 0;
+	killing(entity);
 }
 
-void moveRandom(monster* entity, int tunnel)
+void moveRandom(Monster* entity, int tunnel)
 {
 	int valid = 0;
 	int dir = rand() % 8;
-	valid = isMoveValid((character*)entity, dir, tunnel);
+	valid = isMoveValid(entity, dir, tunnel);
 	if(valid > 1)
 	{
-		doMove((character*)entity, dir);
+		doMove(entity, dir);
 		if(valid == 3)
 		{
-			calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
-			calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
+			calculateDistances(kirito->x, kirito->y, 0);
+			calculateDistances(kirito->x, kirito->y, 1);
 		}
 	}
 	if(valid == 1)
 	{
-		calculateDistances(getX((character*)kirito), getY((character*)kirito), 0);
-		calculateDistances(getX((character*)kirito), getY((character*)kirito), 1);
+		calculateDistances(kirito->x, kirito->y, 0);
+		calculateDistances(kirito->x, kirito->y, 1);
 	}
 }
 
-void moveDeliberately(monster* mon)
+void moveDeliberately(Monster* mon)
 {
-	if(getAttributes(mon) & TELEPATHIC) // is telepathic
+	if(mon->attributes & TELEPATHIC) // is telepathic
 	{
-		setPlayerX(mon, getX((character*)kirito));
-		setPlayerY(mon, getY((character*)kirito));
-		if(getAttributes(mon) & INTELLIGENT) // is intelligent
+		mon->playerX = kirito)->x;
+		mon->playerY = kirito->y;
+		if(mon->attributes & INTELLIGENT) // is intelligent
 		{
 			int dir = shortestPath(getX((character*)mon), getY((character*)mon), (getAttributes(mon) & TUNNELING));
 			int valid = isMoveValid((character*)mon, dir, (getAttributes(mon) & TUNNELING));
