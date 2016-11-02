@@ -4,7 +4,7 @@
 
 void createRandomMonsters()
 {
-	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
+	//aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
 	static int id = 1;
 	int i = 0;
 	for(; i < aincrad->numMonsters; ++i)
@@ -47,7 +47,7 @@ void createRandomMonsters()
 		mon->playerY = 0;
 		mon->turn = 0;
 		mon->alive = 1;
-		aincrad->monsters[i] = mon;
+		aincrad->monsters.push_back(mon);
 		++monCount;
 	}
 }

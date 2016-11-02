@@ -44,7 +44,7 @@ typedef struct DICE dice;
 struct DICE
 {
 	int base;
-	int dice;
+	int die;
 	int sides;
 };
 

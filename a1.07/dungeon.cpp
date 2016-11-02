@@ -5,6 +5,7 @@
 #include "routing.h"
 #include "movement.h"
 #include "pControls.h"
+#include "fileParser.h"
 
 Dungeon* aincrad;
 Player* kirito;
@@ -13,14 +14,14 @@ int turn = 0;
 unsigned int version = 0;
 
 // Program version string
-const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
+//const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
 // Program bug address string
-const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
+//const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
 // Program documentation string
-static char doc[] = "A Rouge Like Game developed for ComS 327";
+//static char doc[] = "A Rouge Like Game developed for ComS 327";
 
 // List of options supported
-static struct argp_option options[] =
+/*static struct argp_option options[] =
 {
 	{"verbose", 'v', 0, 0, "Prints some extra information"},
 	{"debug", 'd', 0, 0, "Prints a lot of extra information"},
@@ -30,7 +31,7 @@ static struct argp_option options[] =
 	{"save-path", 'w', "PATH", 0, "Save the dungeon to the specified path"},
 	{"nummon", 'n', "#", 0, "Number of monsters to include in the dungeon"},
 	{0}
-};
+};*/
 
 // Argument structure to store the results of command line parsing
 struct arguments
@@ -98,7 +99,6 @@ void createDungeon()
 	initializeDungeon();
 	createRooms();
 	connectRooms();
-	aincrad->monsters = (Monster**) malloc(sizeof(Monster*) * aincrad->numMonsters);
 }
 
 void placeCharacters()
@@ -158,12 +158,12 @@ void printDungeon()
 	mvaddch(kirito->y + 1, kirito->x, kirito->symbol);
 	for(i = 0; i < aincrad->numMonsters; ++i)
 	{
-		if(aincrad->monsters[i]->alive == 1)
+		if(aincrad->monsters.at(i).alive == 1)
 		{
-			if((aincrad->monsters[i]->x >= (kirito->x - 3)) && (aincrad->monsters[i]->x <= (kirito->x + 3)))
+			if((aincrad->monsters.at(i).x >= (kirito->x - 3)) && (aincrad->monsters.at(i).x <= (kirito->x + 3)))
 			{
-				if((aincrad->monsters[i]->y >= (kirito->y - 3)) && (aincrad->monsters[i]->y <= (kirito->y + 3)))
-					mvaddch(aincrad->monsters[i]->y + 1, aincrad->monsters[i]->x, aincrad->monsters[i]->symbol);
+				if((aincrad->monsters.at(i).y >= (kirito->y - 3)) && (aincrad->monsters.at(i).y <= (kirito->y + 3)))
+					mvaddch(aincrad->monsters.at(i).y + 1, aincrad->monsters.at(i).x, aincrad->monsters.at(i).symbol);
 			}
 		}
 	}
@@ -171,7 +171,7 @@ void printDungeon()
 }
 
 // The arg parser object
-static struct argp argp = {options, parse_opt, 0, doc};
+//static struct argp argp = {options, parse_opt, 0, doc};
 
 int monstersAlive()
 {
@@ -179,7 +179,7 @@ int monstersAlive()
 	int alive = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(aincrad->monsters[i]->alive)
+		if(aincrad->monsters.at(i).alive)
 			++alive;
 	}
 	return alive;
@@ -194,7 +194,9 @@ int main(int argc, char** argv)
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
 
+	loadMonsters(path);
 
+	printf("k\n");
 
 /*
 	// Define defaults for the parser
@@ -320,9 +322,9 @@ int main(int argc, char** argv)
 			int i = 0;
 			for(; i < aincrad->numMonsters; ++i)
 			{
-				if(aincrad->monsters[i]->turn == turn)
+				if(aincrad->monsters.at(i).turn == turn)
 				{
-					moveMonster(aincrad->monsters[i]);
+					moveMonster(aincrad->monsters.at(i));
 					print = 1;
 				}
 			}
