@@ -2,7 +2,7 @@
 #include "character.h"
 #include "monster.h"
 
-void createMonsters()
+void createRandomMonsters()
 {
 	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
 	static int id = 1;

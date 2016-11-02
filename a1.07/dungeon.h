@@ -6,16 +6,19 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-#include <string.h>
 #include <netinet/in.h>
 #include <argp.h>
 #include <limits.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <ncurses.h>
+#include <vector>
+#include <string>
 #include "character.h"
 #include "monster.h"
 #include "player.h"
+
+using namespace std;
 
 #define X 80
 #define Y 21
@@ -36,6 +39,15 @@ struct ROOM
 	int width;
 };
 
+typedef struct DICE dice;
+
+struct DICE
+{
+	int base;
+	int dice;
+	int sides;
+};
+
 class Dungeon
 {
   public:
@@ -44,7 +56,7 @@ class Dungeon
 		int numRooms;
 		room* rooms;
 		int numMonsters;
-		Monster** monsters;
+		vector<Monster> monsters;
 		int level;
 		int stairUpX;
 		int stairUpY;
