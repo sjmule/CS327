@@ -35,21 +35,21 @@ void saveDungeon(char* path, int debug)
 		int k = 0;
 		for(; k < X; ++k)
 		{
-			matrix[i++] = (char) aincrad.hardness[j][k];
+			matrix[i++] = (char) aincrad->hardness[j][k];
 		}
 	}
 
-	unsigned char* locations = (unsigned char*) malloc(4 * aincrad.numRooms);
+	unsigned char* locations = (unsigned char*) malloc(4 * aincrad->numRooms);
 	j = 0;
-	for(i = 0; i < aincrad.numRooms; ++i)
+	for(i = 0; i < aincrad->numRooms; ++i)
 	{
-		locations[j++] = (unsigned char) aincrad.rooms[i].x;
-		locations[j++] = (unsigned char) aincrad.rooms[i].width;
-		locations[j++] = (unsigned char) aincrad.rooms[i].y;
-		locations[j++] = (unsigned char) aincrad.rooms[i].height;
+		locations[j++] = (unsigned char) aincrad->rooms[i].x;
+		locations[j++] = (unsigned char) aincrad->rooms[i].width;
+		locations[j++] = (unsigned char) aincrad->rooms[i].y;
+		locations[j++] = (unsigned char) aincrad->rooms[i].height;
 	}
 
-	unsigned int size = 14 + 1680 + (4 * aincrad.numRooms);
+	unsigned int size = 14 + 1680 + (4 * aincrad->numRooms);
 
 	head[10] = _itos(htonl(size),0);
 	head[11] = _itos(htonl(size),8);
@@ -58,7 +58,7 @@ void saveDungeon(char* path, int debug)
 
 	fwrite(head, 1, 14, file);
 	fwrite(matrix, 1, 1680, file);
-	fwrite(locations, 1, (4 * aincrad.numRooms), file);
+	fwrite(locations, 1, (4 * aincrad->numRooms), file);
 
 	free(head);
 	free(matrix);
@@ -115,7 +115,7 @@ void loadDungeon(char* path, int debug)
 		int k = 0;
 		for(; k < X; ++k)
 		{
-			aincrad.hardness[j][k] = (int) matrix[i++];
+			aincrad->hardness[j][k] = (int) matrix[i++];
 		}
 	}
 
@@ -123,7 +123,7 @@ void loadDungeon(char* path, int debug)
 	char* locations = (char*) malloc(end);
 	fread(locations, 1, end, file);
 	int numRooms = end/4;
-	aincrad.rooms = (room*) malloc(sizeof(room) * numRooms);
+	aincrad->rooms = (room*) malloc(sizeof(room) * numRooms);
 	room room;
 
 	i = 0;
@@ -140,9 +140,9 @@ void loadDungeon(char* path, int debug)
 	{
 		for(j = 0; j < X; ++j)
 		{
-			if(aincrad.hardness[i][j] == 0)
-				if(aincrad.map[i][j] != '.')
-					aincrad.map[i][j] = '#';
+			if(aincrad->hardness[i][j] == 0)
+				if(aincrad->map[i][j] != '.')
+					aincrad->map[i][j] = '#';
 		}
 	}
 

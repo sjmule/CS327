@@ -31,7 +31,7 @@ void createMonsters()
 		{
 			x = (rand() % (X - 2)) + 1;
 			y = (rand() % (Y - 2)) + 1;
-			if(aincrad.hardness[y][x] == 0)
+			if(aincrad->hardness[y][x] == 0)
 			{
 				if((x != kirito->x) && (y != kirito->y))
 					break;

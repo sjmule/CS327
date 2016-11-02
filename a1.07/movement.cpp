@@ -194,7 +194,7 @@ void doMove(Character* entity, int dir)
 		default:
 			break;
 	}
-	aincrad->hardness[entity->y][entity->x] = 0;
+	aincrad->hardness[(int)entity->y][(int)entity->x] = 0;
 	killing(entity);
 }
 

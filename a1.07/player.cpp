@@ -2,35 +2,35 @@
 #include "character.h"
 #include "player.h"
 
-void initializeVisible()
+void Player::initializeVisible()
 {
-	p->visible = new int*[Y];
+	this->visible = new int*[Y];
 	for(int i = 0; i < Y; ++i)
 	{
-		p->visible[i] = new int[X];
+		this->visible[i] = new int[X];
 	}
 	for(int i = 0; i < Y; ++i)
 	{
 		for(int j = 0; j < X; ++j)
 		{
-			p->visible[i][j] = ' ';
+			this->visible[i][j] = ' ';
 		}
 	}
 	for(int i = 0; i < X; ++i)
 	{
-		p->visible[0][i] = '-';
-		p->visible[Y-1][i] = '-';
+		this->visible[0][i] = '-';
+		this->visible[Y-1][i] = '-';
 	}
 	for(int i = 1; i < Y - 1; ++i)
 	{
-		p->visible[i][0] = '|';
-		p->visible[i][X-1] = '|';
+		this->visible[i][0] = '|';
+		this->visible[i][X-1] = '|';
 	}
 }
 
-void setVisible()
+void Player::setVisible()
 {
-	int i = p->y;
+	int i = this->y;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((i - 1) >= 1)
@@ -38,7 +38,7 @@ void setVisible()
 		else
 			break;
 	}
-	int j = p->x;
+	int j = this->x;
 	for(int k = 0; k < 3; ++k)
 	{
 		if((j - 1) >= 1)
@@ -46,32 +46,32 @@ void setVisible()
 		else
 			break;
 	}
-	for(; i <= (p->y + 3) && i < Y; ++i)
+	for(; i <= (this->y + 3) && i < Y; ++i)
 	{
-		for(int k = j; k <= (p->x + 3) && k < X; ++k)
+		for(int k = j; k <= (this->x + 3) && k < X; ++k)
 		{
-			p->visible[i][k] = aincrad->map[i][k];
+			this->visible[i][k] = aincrad->map[i][k];
 		}
 	}
 }
 
-void clearVisible()
+void Player::clearVisible()
 {
 	for(int i = 0; i < Y; ++i)
 	{
 		for(int j = 0; j < X; ++j)
 		{
-			p->visible[i][j] = ' ';
+			this->visible[i][j] = ' ';
 		}
 	}
 	for(int i = 0; i < X; ++i)
 	{
-		p->visible[0][i] = '-';
-		p->visible[Y-1][i] = '-';
+		this->visible[0][i] = '-';
+		this->visible[Y-1][i] = '-';
 	}
 	for(int i = 1; i < Y - 1; ++i)
 	{
-		p->visible[i][0] = '|';
-		p->visible[i][X-1] = '|';
+		this->visible[i][0] = '|';
+		this->visible[i][X-1] = '|';
 	}
 }

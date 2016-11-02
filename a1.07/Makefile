@@ -1,5 +1,5 @@
 EXES = main
-OBJS = dungeon.o generate.o save.o heap.o routing.o movement.o pControls.o character.o player.o monster.o
+OBJS = dungeon.o generate.o save.o heap.o routing.o movement.o pControls.o player.o monster.o
 CFLAGS = -g -Wall -Werror
 LIBS = -lncurses
 

@@ -6,7 +6,7 @@
 #include "movement.h"
 #include "pControls.h"
 
-Dungeon aincrad;
+Dungeon* aincrad;
 Player* kirito;
 int monCount = 0;
 int turn = 0;
@@ -98,7 +98,7 @@ void createDungeon()
 	initializeDungeon();
 	createRooms();
 	connectRooms();
-	aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
+	aincrad->monsters = (Monster**) malloc(sizeof(Monster*) * aincrad->numMonsters);
 }
 
 void placeCharacters()
@@ -126,13 +126,14 @@ void cleanup()
 {
 	free(aincrad->rooms);
 	cleanupMonsters();
+	delete[] aincrad;
 }
 
 void printDungeon()
 {
 	int i = 0;
 	int j = 0;
-	int** map = kirito->getVisible();
+	int** map = kirito->visible;
 	for(; i < X; ++i)
 	{
 		mvaddch(0, i, ' ');
@@ -204,9 +205,10 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	kirito = new Player;
+	aincrad = new Dungeon;
 
-	kiritoi->id = 0;
-	kirito->sybmol = '@';
+	kirito->id = 0;
+	kirito->symbol = '@';
 	kirito->speed = 10;
 	kirito->turn = 0;
 	kirito->alive = 1;
@@ -268,6 +270,7 @@ int main(int argc, char** argv)
 					if((kirito->x == aincrad->stairDownX) && (kirito->y == aincrad->stairDownY))
 					{
 						cleanup();
+						aincrad = new Dungeon;
 						createDungeon();
 						kirito->clearVisible();
 						placeCharacters();
@@ -284,6 +287,7 @@ int main(int argc, char** argv)
 					if((kirito->x == aincrad->stairUpX) && (kirito->y == aincrad->stairUpY))
 					{
 						cleanup();
+						aincrad = new Dungeon;
 						createDungeon();
 						kirito->clearVisible();
 						placeCharacters();
@@ -297,7 +301,7 @@ int main(int argc, char** argv)
 				}
 				else
 				{
-					good = movePlayer(kirito, ch);
+					good = movePlayer(ch);
 					kirito->setVisible();
 				}
 			}

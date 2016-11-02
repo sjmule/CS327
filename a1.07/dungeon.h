@@ -39,18 +39,17 @@ struct ROOM
 class Dungeon
 {
   public:
-	int map[Y][X];
-	int hardness[Y][X];
-	int numRooms;
-	room* rooms;
-	int numMonsters;
-	Monster** monsters;
-	int level;
-	int stairUpX;
-	int stairUpY;
-	int stairDownX;
-	int stairDownY;
-
+		int map[Y][X];
+		int hardness[Y][X];
+		int numRooms;
+		room* rooms;
+		int numMonsters;
+		Monster** monsters;
+		int level;
+		int stairUpX;
+		int stairUpY;
+		int stairDownX;
+		int stairDownY;
 };
 
 extern Dungeon* aincrad;

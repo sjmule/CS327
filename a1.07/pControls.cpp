@@ -77,7 +77,7 @@ void displayMonsters()
 		if(aincrad->monsters[i]->alive)
 		{
 			char *str = (char*) malloc(30);
-			monster* mon = aincrad->monsters[i];
+			Monster* mon = aincrad->monsters[i];
 			char* up = (char*) malloc(6);
 			int updist = 0;
 			if(mon->y < kirito->y)
