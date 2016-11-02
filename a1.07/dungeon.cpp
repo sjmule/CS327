@@ -194,6 +194,9 @@ int main(int argc, char** argv)
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
 
+
+
+/*
 	// Define defaults for the parser
 	struct arguments arguments;
 	arguments.verboseMode = 0;
@@ -352,6 +355,6 @@ int main(int argc, char** argv)
 	delete[] kirito;
 
 	endwin();
-
+*/
 	return 0;
 }
