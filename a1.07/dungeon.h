@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <string.h>
 #include <time.h>
 #include <netinet/in.h>
 #include <argp.h>
@@ -12,6 +13,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <ncurses.h>
+#include <iostream>
 #include <vector>
 #include <string>
 #include "character.h"
@@ -23,10 +25,11 @@ using namespace std;
 #define X 80
 #define Y 21
 
-#define INTELLIGENT 0x1
-#define TELEPATHIC  0x2
-#define TUNNELING   0x4
-#define ERRATIC     0x8
+#define INTELLIGENT 0x01
+#define TELEPATHIC  0x02
+#define TUNNELING   0x04
+#define ERRATIC     0x08
+#define PASS				0x10
 
 typedef struct ROOM room;
 
@@ -37,15 +40,6 @@ struct ROOM
 	int y;
 	int height;
 	int width;
-};
-
-typedef struct DICE dice;
-
-struct DICE
-{
-	int base;
-	int die;
-	int sides;
 };
 
 class Dungeon

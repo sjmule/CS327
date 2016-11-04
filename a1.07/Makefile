@@ -1,9 +1,9 @@
 EXES = main
-OBJS = dungeon.o generate.o save.o heap.o routing.o movement.o pControls.o player.o monster.o
-CFLAGS = -g -Wall -Werror
+OBJS = dungeon.o generate.o save.o heap.o routing.o movement.o pControls.o player.o monster.o fileParser.o
+CFLAGS = -std=gnu++11 -g -Wall -Werror
 LIBS = -lncurses
 
-DEPS = dungeon.h generate.h save.h macros.h heap.h routing.h movement.h pControls.h character.h player.h monster.h
+DEPS = dungeon.h generate.h save.h macros.h heap.h routing.h movement.h pControls.h character.h player.h monster.h fileParser.h
 
 main: $(OBJS)
 	g++ -o $@ $^ $(CFLAGS) $(LIBS)

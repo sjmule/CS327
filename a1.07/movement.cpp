@@ -73,12 +73,12 @@ void killing(Character* entity)
 	int i = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(entity->id == aincrad->monsters[i]->id)
+		if(entity->id == aincrad->monsters.at(i).id)
 			continue;
 		else
 		{
-			if((entity->x == aincrad->monsters[i]->x) && (entity->y == aincrad->monsters[i]->y))
-				aincrad->monsters[i]->alive = 0;
+			if((entity->x == aincrad->monsters.at(i).x) && (entity->y == aincrad->monsters.at(i).y))
+				aincrad->monsters.at(i).alive = 0;
 		}
 	}
 }

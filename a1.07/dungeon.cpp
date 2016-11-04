@@ -119,13 +119,12 @@ void placeCharacters()
 	calculateDistances(kirito->x, kirito->y, 0);
 	calculateDistances(kirito->x, kirito->y, 1);
 
-	createMonsters();
+	createRandomMonsters();
 }
 
 void cleanup()
 {
 	free(aincrad->rooms);
-	cleanupMonsters();
 	delete[] aincrad;
 }
 
@@ -196,7 +195,46 @@ int main(int argc, char** argv)
 
 	loadMonsters(path);
 
-	printf("k\n");
+	for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)
+	{
+		Monster mon = aincrad->monsters.at(i);
+		cout << "Monster: " << mon.name << endl;
+		cout << "Symbol: " << mon.symbol << endl;
+		switch(mon.color)
+		{
+			case 0:
+				cout << "Color: black" << endl;
+				break;
+			case 1:
+				cout << "Color: red" << endl;
+				break;
+			case 2:
+				cout << "Color: green" << endl;
+				break;
+			case 3:
+				cout << "Color: yellow" << endl;
+				break;
+			case 4:
+				cout << "Color: blue" << endl;
+				break;
+			case 5:
+				cout << "Color: magenta" << endl;
+				break;
+			case 6:
+				cout << "Color: cyan" << endl;
+				break;
+			case 7:
+				cout << "Color: white" << endl;
+				break;
+			default:
+				cout << "Color: none" << endl;
+				break;
+		}
+		cout << mon.description << endl;
+		cout << "Speed: " << mon.speedDice.base << "+" << mon.speedDice.die << "d" << mon.speedDice.sides << endl;
+		cout << "Damage: " << mon.damageDice.base << "+" << mon.damageDice.die << "d" << mon.damageDice.sides << endl;
+		cout << "HP: " << mon.hpDice.base << "+" << mon.hpDice.die << "d" << mon.hpDice.sides << endl;
+	}
 
 /*
 	// Define defaults for the parser

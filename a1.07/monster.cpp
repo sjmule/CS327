@@ -4,13 +4,11 @@
 
 void createRandomMonsters()
 {
-	//aincrad->monsters = (Monster**) malloc(sizeof(Monster) * aincrad->numMonsters);
 	static int id = 1;
 	int i = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
-		Monster* mon;
-		mon = new Monster();
+		Monster mon;
 		int attributes = 0;
 		int attr = rand() % 100;
 		if(attr < 50)
@@ -37,26 +35,17 @@ void createRandomMonsters()
 					break;
 			}
 		}
-		mon->x = x;
-		mon->y = y;
-		mon->attributes = attributes;
-		mon->id = id;
-		mon->symbol = (rand() % 25) + 97;
-		mon->speed = (rand() % 15) + 5;
-		mon->playerX = 0;
-		mon->playerY = 0;
-		mon->turn = 0;
-		mon->alive = 1;
+		mon.x = x;
+		mon.y = y;
+		mon.attributes = attributes;
+		mon.id = id;
+		mon.symbol = (rand() % 25) + 97;
+		mon.speed = (rand() % 15) + 5;
+		mon.playerX = 0;
+		mon.playerY = 0;
+		mon.turn = 0;
+		mon.alive = 1;
 		aincrad->monsters.push_back(mon);
 		++monCount;
 	}
-}
-
-void cleanupMonsters()
-{
-  for(int i = 0; i < aincrad->numMonsters; ++i)
-  {
-    delete[] aincrad->monsters[i];
-  }
-  //free(aincrad.monsters);
 }

@@ -4,7 +4,10 @@ FILE* file;
 
 void saveDungeon(char* path, int debug)
 {
-	file = fopen(path, "w");
+	char* location = (char*) malloc(60);
+	strcat(location, path);
+	strcat(location, "/dungeon");
+	file = fopen(location, "w");
 
 	if(file == NULL)
 	{
@@ -60,6 +63,7 @@ void saveDungeon(char* path, int debug)
 	fwrite(matrix, 1, 1680, file);
 	fwrite(locations, 1, (4 * aincrad->numRooms), file);
 
+	free(location);
 	free(head);
 	free(matrix);
 	free(locations);
@@ -68,7 +72,10 @@ void saveDungeon(char* path, int debug)
 
 void loadDungeon(char* path, int debug)
 {
-	file = fopen(path, "r");
+	char* location = (char*) malloc(60);
+	strcat(location, path);
+	strcat(location, "/dungeon");
+	file = fopen(location, "r");
 
 	if(file == NULL)
 	{
@@ -146,6 +153,7 @@ void loadDungeon(char* path, int debug)
 		}
 	}
 
+	free(location);
 	free(head);
 	free(versionC);
 	free(sizeC);

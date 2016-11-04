@@ -1,3 +1,18 @@
+Changelog Assignment 1.07
+
+11/2
+Finished assignment.
+Updated README and Changelog.
+
+11/1
+Worked on parsing file.
+
+10/31
+Finished converting all code to C++.
+
+10/30
+Started assignment.
+
 Changelog Assignment 1.06
 
 10/26

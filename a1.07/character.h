@@ -8,7 +8,6 @@ class Character
   public:
 	  int id;
 	  char symbol;
-	  string name;
 	  char x;
 	  char y;
 	  char speed;

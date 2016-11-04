@@ -74,35 +74,35 @@ void displayMonsters()
 	int j = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(aincrad->monsters[i]->alive)
+		if(aincrad->monsters.at(i).alive)
 		{
 			char *str = (char*) malloc(30);
-			Monster* mon = aincrad->monsters[i];
+			Monster mon = aincrad->monsters[i];
 			char* up = (char*) malloc(6);
 			int updist = 0;
-			if(mon->y < kirito->y)
+			if(mon.y < kirito->y)
 			{
 				strcpy(up, "north");
-				updist = kirito->y - mon->y;
+				updist = kirito->y - mon.y;
 			}
 			else
 			{
 				strcpy(up, "south");
-				updist = mon->y - kirito->y;
+				updist = mon.y - kirito->y;
 			}
 			char* left = (char*) malloc(5);
 			int leftdist = 0;
-			if(mon->x < kirito->x)
+			if(mon.x < kirito->x)
 			{
 				strcpy(left, "west");
-				leftdist = kirito->x - mon->x;
+				leftdist = kirito->x - mon.x;
 			}
 			else
 			{
 				strcpy(left, "east");
-				leftdist = mon->x - kirito->x;
+				leftdist = mon.x - kirito->x;
 			}
-			sprintf(str, "%c, %d %s and %d %s", mon->symbol, updist, up, leftdist, left);
+			sprintf(str, "%c, %d %s and %d %s", mon.symbol, updist, up, leftdist, left);
 			monList[j++] = str;
 		}
 	}
