@@ -1,10 +1,26 @@
 #include "fileParser.h"
 
+static inline void eat_whitespace(ifstream &f)
+{
+  while (isspace(f.peek())) {
+    f.get();
+  }
+}
+
+static inline void eat_blankspace(ifstream &f)
+{
+  while (isblank(f.peek())) {
+    f.get();
+  }
+}
+
 void loadMonsters(char* path)
 {
+	ifstream file;
 	string str(path);
 	str += "/monster_desc.txt";
-	ifstream file(str.c_str(), ifstream::in);
+
+	file.open(str.c_str());
 
 	if(!file)
 	{
@@ -15,7 +31,7 @@ void loadMonsters(char* path)
 	string line;
 	getline(file, line);
 
-	if(line.compare("RLG327 MONSTER DESCRIPTION 1"))
+	if(line != "RLG327 MONSTER DESCRIPTION 1")
 	{
 		printf("File incorrect version, quitting\n");
 		exit(-1);
