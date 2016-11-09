@@ -1,11 +1,10 @@
 #ifndef DUNGEON_H
 #define DUNGEON_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <string.h>
 #include <time.h>
 #include <netinet/in.h>
 #include <argp.h>
@@ -16,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstring>
 #include "character.h"
 #include "monster.h"
 #include "player.h"

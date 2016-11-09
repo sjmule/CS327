@@ -2,13 +2,7 @@
 #define MONSTER_H
 
 #include "dungeon.h"
-
-struct DICE
-{
-	int base;
-	int die;
-	int sides;
-};
+#include "dice.h"
 
 class Monster : public Character
 {
@@ -19,9 +13,9 @@ class Monster : public Character
 	  int attributes;
 	  char playerX;
 	  char playerY;
-	  DICE speedDice;
-		DICE damageDice;
-		DICE hpDice;
+	  dice speedDice;
+		dice damageDice;
+		dice hpDice;
 };
 
 void createRandomMonsters();

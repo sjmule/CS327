@@ -231,9 +231,9 @@ int main(int argc, char** argv)
 				break;
 		}
 		cout << mon.description << endl;
-		cout << "Speed: " << mon.speedDice.base << "+" << mon.speedDice.die << "d" << mon.speedDice.sides << endl;
-		cout << "Damage: " << mon.damageDice.base << "+" << mon.damageDice.die << "d" << mon.damageDice.sides << endl;
-		cout << "HP: " << mon.hpDice.base << "+" << mon.hpDice.die << "d" << mon.hpDice.sides << endl;
+		cout << "Speed: " << mon.speedDice.get_base() << "+" << mon.speedDice.get_number() << "d" << mon.speedDice.get_sides() << endl;
+		cout << "Damage: " << mon.damageDice.get_base() << "+" << mon.damageDice.get_number() << "d" << mon.damageDice.get_sides() << endl;
+		cout << "HP: " << mon.hpDice.get_base() << "+" << mon.hpDice.get_number() << "d" << mon.hpDice.get_sides() << endl;
 	}
 
 /*
