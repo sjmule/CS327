@@ -10,11 +10,10 @@ class Character
 	  char symbol;
 	  char x;
 	  char y;
-	  char speed;
+	  int speed;
 	  int turn;
 	  char alive;
 	  int hp;
-	  int attDam;
 };
 
 #endif

@@ -19,6 +19,8 @@
 #include "character.h"
 #include "monster.h"
 #include "player.h"
+#include "descriptions.h"
+#include "object.h"
 
 using namespace std;
 
@@ -42,6 +44,9 @@ struct ROOM
 	int width;
 };
 
+class monster_description;
+class object_description;
+
 class Dungeon
 {
   public:
@@ -56,6 +61,9 @@ class Dungeon
 		int stairUpY;
 		int stairDownX;
 		int stairDownY;
+		vector<monster_description> monster_descriptions;
+	  vector<object_description> object_descriptions;
+		vector<Object> objects;
 };
 
 extern Dungeon* aincrad;

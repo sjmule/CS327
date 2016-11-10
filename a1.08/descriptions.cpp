@@ -11,7 +11,6 @@
 
 #include "descriptions.h"
 #include "dungeon.h"
-#include "npc.h"
 #include "dice.h"
 #include "character.h"
 #include "utils.h"
@@ -34,32 +33,12 @@ static const struct {
    * stop the search.  Two notes: 1) Performance isn't a big deal    *
    * here, since this is initialization, not gameplay; and           *
    * 2) Alphabetizing these just because.                            */
-  { "ERRATIC", NPC_ERRATIC   },
-  { "PASS",    NPC_PASS_WALL },
-  { "SMART",   NPC_SMART     },
-  { "TELE",    NPC_TELEPATH  },
-  { "TUNNEL",  NPC_TUNNEL    },
+  { "ERRATIC", ERRATIC       },
+  { "PASS",    PASS          },
+  { "SMART",   INTELLIGENT   },
+  { "TELE",    TELEPATHIC    },
+  { "TUNNEL",  TUNNELING     },
   { 0,         0             }
-};
-
-#define color_lu_entry(color) { #color, COLOR_##color }
-static const struct {
-  const char *name;
-  const uint32_t value;
-} colors_lookup[] = {
-  /* Same deal here as above in abilities_lookup definition. */
-  /* We can use this convenient macro here, but we can't use a *
-   * similar macro above because of PASS and TELE.             */
-  /* color_lu_entry(BLACK), Can't display COLOR_BLACK */
-  "BLACK", COLOR_WHITE,
-  color_lu_entry(BLUE),
-  color_lu_entry(CYAN),
-  color_lu_entry(GREEN),
-  color_lu_entry(MAGENTA),
-  color_lu_entry(RED),
-  color_lu_entry(WHITE),
-  color_lu_entry(YELLOW),
-  { 0, 0 }
 };
 
 #define type_lu_entry(type) { #type, objtype_##type }
@@ -116,14 +95,14 @@ static inline void eat_whitespace(std::ifstream &f)
 {
   while (isspace(f.peek())) {
     f.get();
-  }  
+  }
 }
 
 static inline void eat_blankspace(std::ifstream &f)
 {
   while (isblank(f.peek())) {
     f.get();
-  }  
+  }
 }
 
 static uint32_t parse_name(std::ifstream &f,
@@ -411,6 +390,7 @@ static uint32_t parse_monster_description(std::ifstream &f,
   for (f >> *lookahead, count = 0;
        count < NUM_MONSTER_DESCRIPTION_FIELDS;
        count++) {
+
     /* This could definately be more concise. */
     if        (*lookahead == "NAME")  {
       if (read_name || parse_monster_name(f, lookahead, &name)) {
@@ -729,7 +709,7 @@ static uint32_t parse_object_description(std::ifstream &f,
 }
 
 static uint32_t parse_monster_descriptions(std::ifstream &f,
-                                           dungeon_t *d,
+                                           Dungeon *d,
                                            std::vector<monster_description> *v)
 {
   std::string s;
@@ -759,7 +739,7 @@ static uint32_t parse_monster_descriptions(std::ifstream &f,
 }
 
 static uint32_t parse_object_descriptions(std::ifstream &f,
-                                          dungeon_t *d,
+                                          Dungeon *d,
                                           std::vector<object_description> *v)
 {
   std::string s;
@@ -788,7 +768,7 @@ static uint32_t parse_object_descriptions(std::ifstream &f,
   return 0;
 }
 
-uint32_t parse_descriptions(dungeon_t *d)
+uint32_t parse_descriptions(Dungeon *d, char* path)
 {
   std::string file;
   std::ifstream f;
@@ -796,11 +776,7 @@ uint32_t parse_descriptions(dungeon_t *d)
 
   retval = 0;
 
-  file = getenv("HOME");
-  if (file.length() == 0) {
-    file = ".";
-  }
-  file += std::string("/") + SAVE_DIR + "/" + MONSTER_DESC_FILE;
+  file = std::string(path) + "/monster_desc.txt";
 
   f.open(file.c_str());
 
@@ -810,11 +786,7 @@ uint32_t parse_descriptions(dungeon_t *d)
 
   f.close();
 
-  file = getenv("HOME");
-  if (file.length() == 0) {
-    file = ".";
-  }
-  file += std::string("/") + SAVE_DIR + "/" + OBJECT_DESC_FILE;
+  file = std::string(path) + "/object_desc.txt";
 
   f.open(file.c_str());
 
@@ -827,7 +799,7 @@ uint32_t parse_descriptions(dungeon_t *d)
   return retval;
 }
 
-uint32_t print_descriptions(dungeon_t *d)
+uint32_t print_descriptions(Dungeon *d)
 {
   std::vector<monster_description> &m = d->monster_descriptions;
   std::vector<monster_description>::iterator mi;
@@ -903,7 +875,7 @@ std::ostream &operator<<(std::ostream &o, monster_description &m)
   return m.print(o);
 }
 
-uint32_t destroy_descriptions(dungeon_t *d)
+uint32_t destroy_descriptions(Dungeon *d)
 {
   d->monster_descriptions.clear();
   d->object_descriptions.clear();

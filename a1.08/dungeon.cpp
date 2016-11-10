@@ -9,19 +9,18 @@
 
 Dungeon* aincrad;
 Player* kirito;
-int monCount = 0;
 int turn = 0;
 unsigned int version = 0;
 
 // Program version string
-//const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
+const char *argp_program_version = "Rouge Like Game 327 v0.0.1";
 // Program bug address string
-//const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
+const char *argp_program_bug_address = "Scott Mueller <sjmule@comcast.net>";
 // Program documentation string
-//static char doc[] = "A Rouge Like Game developed for ComS 327";
+static char doc[] = "A Rouge Like Game developed for ComS 327";
 
 // List of options supported
-/*static struct argp_option options[] =
+static struct argp_option options[] =
 {
 	{"verbose", 'v', 0, 0, "Prints some extra information"},
 	{"debug", 'd', 0, 0, "Prints a lot of extra information"},
@@ -31,7 +30,7 @@ unsigned int version = 0;
 	{"save-path", 'w', "PATH", 0, "Save the dungeon to the specified path"},
 	{"nummon", 'n', "#", 0, "Number of monsters to include in the dungeon"},
 	{0}
-};*/
+};
 
 // Argument structure to store the results of command line parsing
 struct arguments
@@ -99,6 +98,7 @@ void createDungeon()
 	initializeDungeon();
 	createRooms();
 	connectRooms();
+	loadObjects();
 }
 
 void placeCharacters()
@@ -119,13 +119,7 @@ void placeCharacters()
 	calculateDistances(kirito->x, kirito->y, 0);
 	calculateDistances(kirito->x, kirito->y, 1);
 
-	createRandomMonsters();
-}
-
-void cleanup()
-{
-	free(aincrad->rooms);
-	delete[] aincrad;
+	loadMonsters();
 }
 
 void printDungeon()
@@ -154,6 +148,19 @@ void printDungeon()
 		if((aincrad->stairDownY >= (kirito->y - 3)) && (aincrad->stairDownY <= (kirito->y + 3)))
 			mvaddch(aincrad->stairDownY + 1, aincrad->stairDownX, '>');
 	}
+	unsigned int k;
+	for(k = 0; k < aincrad->objects.size(); ++k)
+	{
+		if((aincrad->objects.at(k).x >= (kirito->x - 3)) && (aincrad->objects.at(k).x <= (kirito->x + 3)))
+		{
+			if((aincrad->objects.at(k).y >= (kirito->y - 3)) && (aincrad->objects.at(k).y <= (kirito->y + 3)))
+			{
+				attron(COLOR_PAIR(aincrad->objects.at(k).color));
+				mvaddch(aincrad->objects.at(k).y + 1, aincrad->objects.at(k).x, aincrad->objects.at(k).symbol);
+				attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+			}
+		}
+	}
 	mvaddch(kirito->y + 1, kirito->x, kirito->symbol);
 	for(i = 0; i < aincrad->numMonsters; ++i)
 	{
@@ -162,7 +169,11 @@ void printDungeon()
 			if((aincrad->monsters.at(i).x >= (kirito->x - 3)) && (aincrad->monsters.at(i).x <= (kirito->x + 3)))
 			{
 				if((aincrad->monsters.at(i).y >= (kirito->y - 3)) && (aincrad->monsters.at(i).y <= (kirito->y + 3)))
+				{
+					attron(COLOR_PAIR(aincrad->monsters.at(i).color));
 					mvaddch(aincrad->monsters.at(i).y + 1, aincrad->monsters.at(i).x, aincrad->monsters.at(i).symbol);
+					attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
+				}
 			}
 		}
 	}
@@ -170,7 +181,7 @@ void printDungeon()
 }
 
 // The arg parser object
-//static struct argp argp = {options, parse_opt, 0, doc};
+static struct argp argp = {options, parse_opt, 0, doc};
 
 int monstersAlive()
 {
@@ -193,50 +204,6 @@ int main(int argc, char** argv)
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
 
-	loadMonsters(path);
-
-	for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)
-	{
-		Monster mon = aincrad->monsters.at(i);
-		cout << "Monster: " << mon.name << endl;
-		cout << "Symbol: " << mon.symbol << endl;
-		switch(mon.color)
-		{
-			case 0:
-				cout << "Color: black" << endl;
-				break;
-			case 1:
-				cout << "Color: red" << endl;
-				break;
-			case 2:
-				cout << "Color: green" << endl;
-				break;
-			case 3:
-				cout << "Color: yellow" << endl;
-				break;
-			case 4:
-				cout << "Color: blue" << endl;
-				break;
-			case 5:
-				cout << "Color: magenta" << endl;
-				break;
-			case 6:
-				cout << "Color: cyan" << endl;
-				break;
-			case 7:
-				cout << "Color: white" << endl;
-				break;
-			default:
-				cout << "Color: none" << endl;
-				break;
-		}
-		cout << mon.description << endl;
-		cout << "Speed: " << mon.speedDice.get_base() << "+" << mon.speedDice.get_number() << "d" << mon.speedDice.get_sides() << endl;
-		cout << "Damage: " << mon.damageDice.get_base() << "+" << mon.damageDice.get_number() << "d" << mon.damageDice.get_sides() << endl;
-		cout << "HP: " << mon.hpDice.get_base() << "+" << mon.hpDice.get_number() << "d" << mon.hpDice.get_sides() << endl;
-	}
-
-/*
 	// Define defaults for the parser
 	struct arguments arguments;
 	arguments.verboseMode = 0;
@@ -249,6 +216,8 @@ int main(int argc, char** argv)
 
 	kirito = new Player;
 	aincrad = new Dungeon;
+
+	parse_descriptions(aincrad, path);
 
 	kirito->id = 0;
 	kirito->symbol = '@';
@@ -284,6 +253,7 @@ int main(int argc, char** argv)
 	cbreak();
 	noecho();
 	curs_set(0);
+	start_color();
 
 	printDungeon();
 
@@ -312,8 +282,9 @@ int main(int argc, char** argv)
 				{
 					if((kirito->x == aincrad->stairDownX) && (kirito->y == aincrad->stairDownY))
 					{
-						cleanup();
-						aincrad = new Dungeon;
+						free(aincrad->rooms);
+						aincrad->monsters.clear();
+						aincrad->objects.clear();
 						createDungeon();
 						kirito->clearVisible();
 						placeCharacters();
@@ -329,8 +300,9 @@ int main(int argc, char** argv)
 				{
 					if((kirito->x == aincrad->stairUpX) && (kirito->y == aincrad->stairUpY))
 					{
-						cleanup();
-						aincrad = new Dungeon;
+						free(aincrad->rooms);
+						aincrad->monsters.clear();
+						aincrad->objects.clear();
 						createDungeon();
 						kirito->clearVisible();
 						placeCharacters();
@@ -362,7 +334,7 @@ int main(int argc, char** argv)
 			{
 				if(aincrad->monsters.at(i).turn == turn)
 				{
-					moveMonster(aincrad->monsters.at(i));
+					moveMonster(&aincrad->monsters.at(i));
 					print = 1;
 				}
 			}
@@ -381,6 +353,7 @@ int main(int argc, char** argv)
 		if(kirito->alive)
 		{
 			mvprintw(0, 0, "You win!");
+			refresh();
 		}
 		else
 		{
@@ -390,11 +363,15 @@ int main(int argc, char** argv)
 		getch();
 	}
 
-	cleanup();
+	free(aincrad->rooms);
+	destroy_descriptions(aincrad);
+	aincrad->objects.clear();
+	aincrad->monsters.clear();
+	delete aincrad;
 
-	delete[] kirito;
+	delete kirito;
 
 	endwin();
-*/
+
 	return 0;
 }

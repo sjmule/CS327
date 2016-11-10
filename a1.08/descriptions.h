@@ -5,12 +5,33 @@
 # include <vector>
 # include <string>
 # include "dice.h"
+# include "dungeon.h"
 
-typedef struct dungeon dungeon_t;
+class Dungeon;
 
-uint32_t parse_descriptions(dungeon_t *d);
-uint32_t print_descriptions(dungeon_t *d);
-uint32_t destroy_descriptions(dungeon_t *d);
+#define color_lu_entry(color) { #color, COLOR_##color }
+static const struct {
+  const char *name;
+  const uint32_t value;
+} colors_lookup[] = {
+  /* Same deal here as above in abilities_lookup definition. */
+  /* We can use this convenient macro here, but we can't use a *
+   * similar macro above because of PASS and TELE.             */
+  /* color_lu_entry(BLACK), Can't display COLOR_BLACK */
+  "BLACK", COLOR_WHITE,
+  color_lu_entry(BLUE),
+  color_lu_entry(CYAN),
+  color_lu_entry(GREEN),
+  color_lu_entry(MAGENTA),
+  color_lu_entry(RED),
+  color_lu_entry(WHITE),
+  color_lu_entry(YELLOW),
+  { 0, 0 }
+};
+
+uint32_t parse_descriptions(Dungeon *d, char* path);
+uint32_t print_descriptions(Dungeon *d);
+uint32_t destroy_descriptions(Dungeon *d);
 
 typedef enum object_type {
   objtype_no_type,
@@ -38,7 +59,7 @@ typedef enum object_type {
 extern const char object_symbol[];
 
 class monster_description {
- private:
+ public:
   std::string name, description;
   char symbol;
   std::vector<uint32_t> color;
@@ -62,7 +83,7 @@ class monster_description {
 };
 
 class object_description {
- private:
+ public:
   std::string name, description;
   object_type_t type;
   uint32_t color;
