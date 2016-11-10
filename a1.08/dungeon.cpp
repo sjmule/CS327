@@ -155,9 +155,9 @@ void printDungeon()
 		{
 			if((aincrad->objects.at(k).y >= (kirito->y - 3)) && (aincrad->objects.at(k).y <= (kirito->y + 3)))
 			{
-				attron(COLOR_PAIR(aincrad->objects.at(k).color));
+				//attron(COLOR_PAIR(aincrad->objects.at(k).color));
 				mvaddch(aincrad->objects.at(k).y + 1, aincrad->objects.at(k).x, aincrad->objects.at(k).symbol);
-				attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+				//attroff(COLOR_PAIR(aincrad->objects.at(k).color));
 			}
 		}
 	}
@@ -170,9 +170,9 @@ void printDungeon()
 			{
 				if((aincrad->monsters.at(i).y >= (kirito->y - 3)) && (aincrad->monsters.at(i).y <= (kirito->y + 3)))
 				{
-					attron(COLOR_PAIR(aincrad->monsters.at(i).color));
+					//attron(COLOR_PAIR(aincrad->monsters.at(i).color));
 					mvaddch(aincrad->monsters.at(i).y + 1, aincrad->monsters.at(i).x, aincrad->monsters.at(i).symbol);
-					attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
+					//attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
 				}
 			}
 		}

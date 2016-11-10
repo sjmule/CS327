@@ -1,3 +1,18 @@
+Changelog Assignment 1.08
+
+10/9
+Finished printing everything.
+Updated README and Changelog.
+
+10/8
+Created Object class and converted object descriptions into Object objects.
+
+10/7
+Converted monster descriptions into Monster objects.
+
+10/6
+Started assignment.
+
 Changelog Assignment 1.07
 
 11/2
