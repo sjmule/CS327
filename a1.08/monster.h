@@ -3,6 +3,7 @@
 
 #include "dungeon.h"
 #include "dice.h"
+#include "descriptions.h"
 
 class Monster : public Character
 {
@@ -10,14 +11,13 @@ class Monster : public Character
 	  std::string name;
 	  std::string description;
 	  int color;
-	  int attributes;
+	  unsigned int attributes;
 	  char playerX;
 	  char playerY;
-	  dice speedDice;
 		dice damageDice;
-		dice hpDice;
 };
 
+void loadMonsters();
 void createRandomMonsters();
 
 #endif
