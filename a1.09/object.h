@@ -9,12 +9,13 @@ class Object
 {
   public:
     std::string name;
-	  std::string description;
-	  int color;
+    std::string description;
+    int color;
     char symbol;
     int hit, dodge, defence, weight, speed, attribute, value;
     dice damage;
     int x, y;
+    object_type_t type;
 };
 
 void loadObjects();

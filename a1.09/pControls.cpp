@@ -145,7 +145,16 @@ void displayMonsters()
 
 void wearItem()
 {
-	
+	mvprintw(1, 0, "Select an item to equip");
+	for(int i = 0; i < kirito->inventory.size(); ++i)
+	{
+		if(kirito->inventory[i] != null)
+			mvprintw(i + 2, 0, "%s", kirito->inventory.name);
+		else
+			mvprintw(i + 2, 0, " ");
+	}
+	int ch = getch();
+
 }
 
 void takeOffItem()
