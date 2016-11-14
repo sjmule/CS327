@@ -2,6 +2,7 @@
 #define CHARACTER_H
 
 #include "dungeon.h"
+#include "dice.h"
 
 class Character
 {
@@ -14,6 +15,7 @@ class Character
 	  int turn;
 	  char alive;
 	  int hp;
+	  dice damage;
 };
 
 #endif

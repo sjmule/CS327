@@ -3,8 +3,6 @@
 
 #include "dungeon.h"
 
-int movePlayer(int ch);
-
-void displayMonsters();
+int doCharacterAction(int ch);
 
 #endif

@@ -14,7 +14,6 @@ class Monster : public Character
 	  unsigned int attributes;
 	  char playerX;
 	  char playerY;
-		dice damageDice;
 };
 
 void loadMonsters();
