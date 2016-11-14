@@ -257,111 +257,49 @@ int main(int argc, char** argv)
 
 	printDungeon();
 
-	int quit = 0;
 	while(kirito->alive && monstersAlive())
 	{
-		int print = 0;
-		int newFloor = 0;
+		int good = 0;
 		if(kirito->turn == turn)
 		{
-			int good = 0;
 			while(!good)
 			{
-				int ch = getch();
-				if(ch == 'Q')
-				{
-					quit = 1;
-					break;
-				}
-				if(ch == 'm')
-				{
-					displayMonsters();
-					printDungeon();
-				}
-				if(ch == '>')
-				{
-					if((kirito->x == aincrad->stairDownX) && (kirito->y == aincrad->stairDownY))
-					{
-						free(aincrad->rooms);
-						aincrad->monsters.clear();
-						aincrad->objects.clear();
-						createDungeon();
-						kirito->clearVisible();
-						placeCharacters();
-						kirito->setVisible();
-						newFloor = 1;
-						turn = 0;
-						good = 1;
-					}
-					else
-						continue;
-				}
-				if(ch == '<')
-				{
-					if((kirito->x == aincrad->stairUpX) && (kirito->y == aincrad->stairUpY))
-					{
-						free(aincrad->rooms);
-						aincrad->monsters.clear();
-						aincrad->objects.clear();
-						createDungeon();
-						kirito->clearVisible();
-						placeCharacters();
-						kirito->setVisible();
-						newFloor = 1;
-						turn = 0;
-						good = 1;
-					}
-					else
-						continue;
-				}
-				else
-				{
-					good = movePlayer(ch);
-					kirito->setVisible();
-				}
+				int ch = getch();	
+				good = doCharacterAction(ch);
 			}
-			print = 1;
-			if(quit)
+			if(good == 1)
 				break;
 			calculateDistances(kirito->x, kirito->y, 0);
 			calculateDistances(kirito->x, kirito->y, 1);
 			kirito->turn = kirito->turn + (100/kirito->speed);
 		}
-		if(!newFloor)
+		if(good != 3)
 		{
 			int i = 0;
 			for(; i < aincrad->numMonsters; ++i)
 			{
 				if(aincrad->monsters.at(i).turn == turn)
-				{
 					moveMonster(&aincrad->monsters.at(i));
-					print = 1;
-				}
 			}
 		}
-		if(print)
-		{
+		if(good >= 2)
 			printDungeon();
-		}
-		if(!newFloor)
+		if(good != 3)
 			++turn;
 	}
-
-	if(!quit)
+	
+	printDungeon();
+	if(kirito->alive)
 	{
-		printDungeon();
-		if(kirito->alive)
-		{
-			mvprintw(0, 0, "You win!");
-			refresh();
-		}
-		else
-		{
-			mvprintw(0, 0, "Game over");
-			refresh();
-		}
-		getch();
+		mvprintw(0, 0, "You win!");
+		refresh();
 	}
+	else
+	{
+		mvprintw(0, 0, "Game over");
+		refresh();
+	}
+	getch();
 
 	free(aincrad->rooms);
 	destroy_descriptions(aincrad);

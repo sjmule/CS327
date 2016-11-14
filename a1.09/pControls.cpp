@@ -57,7 +57,7 @@ int movePlayer(int ch)
 		case '5':
 		case ' ':
 			kirito->turn = kirito->turn + (100/kirito->speed);
-			good = 1;
+			good = 2;
 			break;
 		default:
 			break;
@@ -141,4 +141,102 @@ void displayMonsters()
 		free(monList[j]);
 	}
 	free(monList);
+}
+
+void wearItem()
+{
+	
+}
+
+void takeOffItem()
+{
+
+}
+
+void dropItem()
+{
+
+}
+
+void expungeItem()
+{
+
+}
+
+void listInventory()
+{
+
+}
+
+void listEquipment()
+{
+
+}
+
+void inspectItem()
+{
+
+}
+
+int doCharacterAction(int ch)
+{
+	if(ch == 'Q')
+		return 1;
+	else if(ch == 'm')
+	{
+		displayMonsters();
+		printDungeon();
+	}
+	else if(ch == '>')
+	{
+		if((kirito->x == aincrad->stairDownX) && (kirito->y == aincrad->stairDownY))
+		{
+			free(aincrad->rooms);
+			aincrad->monsters.clear();
+			aincrad->objects.clear();
+			createDungeon();
+			kirito->clearVisible();
+			placeCharacters();
+			kirito->setVisible();
+			return 3;
+		}
+		else
+			continue;
+	}
+	else if(ch == '<')
+	{
+		if((kirito->x == aincrad->stairUpX) && (kirito->y == aincrad->stairUpY))
+		{
+			free(aincrad->rooms);
+			aincrad->monsters.clear();
+			aincrad->objects.clear();
+			createDungeon();
+			kirito->clearVisible();
+			placeCharacters();
+			kirito->setVisible();
+			return 3;
+		}
+		else
+			continue;
+	}
+	else if(ch == 'w')
+		wearItem();
+	else if(ch == 't')
+		takeOffItem();
+	else if(ch == 'd')
+		dropItem();
+	else if(ch == 'x')
+		expungeItem();
+	else if(ch == 'i')
+		listInventory();
+	else if(ch == 'e')
+		listEquipment();
+	else if(ch == 'I')
+		inspectItem();
+	else
+	{
+		int good = movePlayer(ch);
+		kirito->setVisible();
+		return good;
+	}
 }
