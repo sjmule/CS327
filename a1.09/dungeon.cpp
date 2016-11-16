@@ -260,6 +260,7 @@ int main(int argc, char** argv)
 		{
 			while(!good)
 			{
+				printDungeon();
 				int ch = getch();
 				good = doCharacterAction(ch);
 			}

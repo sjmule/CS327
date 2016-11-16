@@ -74,7 +74,7 @@ int movePlayer(int ch)
 					Object* obj = new Object(aincrad->objects[i]);
 					kirito->inventory[k] = obj;
 					delete aincrad->objects[i];
-			//		aincrad->objects[i] = NULL;
+					aincrad->objects[i] = NULL;
 					break;
 				}
 			}
@@ -172,7 +172,7 @@ void wearItem()
 			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-	while(ch < 48 || ch > 57 || ch != 27)
+	while(ch < 48 && ch > 57 && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
@@ -182,7 +182,8 @@ void wearItem()
 	if(!kirito->inventory[ch - 48])
 	{
 		// TODO copy from inventory into equip
-		//Object* obj = new Object(kirito->inventory[ch - 48]);
+		
+//		Object* obj = new Object(kirito->inventory[ch - 48]);
 		delete kirito->inventory[ch - 48];
 		kirito->inventory[ch - 48] = NULL;
 		
@@ -200,7 +201,7 @@ void takeOffItem()
 			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-	while(ch < 97 || ch > 108 || ch != 27)
+	while(ch < 97 && ch > 108 && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot a-l");
 		ch = getch();
@@ -209,7 +210,6 @@ void takeOffItem()
 		return;
 	if(!kirito->equip[ch - 97])
 	{
-		// TODO copy from equip into inventory
 		int i = 0;
 		for(; i < 10; ++i)
 		{
@@ -220,7 +220,10 @@ void takeOffItem()
 			mvprintw(0, 0, "You have no empty inventory slots");
 		else
 		{
-			
+			Object* obj = new Object(kirito->equip[ch - 97]);
+			kirito->inventory[i] = obj;
+			delete kirito->equip[ch - 97];
+			kirito->equip[ch - 97] = NULL;
 		}
 	}
 }
@@ -236,7 +239,7 @@ void dropItem()
 			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-	while(ch < 48 || ch > 57 || ch != 27)
+	while(ch < 48 && ch > 57 && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
@@ -245,7 +248,13 @@ void dropItem()
 		return;
 	if(!kirito->inventory[ch - 48])
 	{
-		// TODO copy item from inventory to dungeon
+		if(kirito->inventory[ch - 48] != NULL)
+		{
+			Object* obj = new Object(kirito->inventory[ch - 48]);
+			aincrad->objects.push_back(obj);
+			delete kirito->inventory[i];
+			kirito->inventory[i] = NULL;
+		}
 	}
 }
 
@@ -260,7 +269,7 @@ void expungeItem()
 			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-	while(ch < 48 || ch > 57 || ch != 27)
+	while(ch < 48 && ch > 57 && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
@@ -311,7 +320,7 @@ void inspectItem()
 			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-	while(ch < 48 || ch > 57 || ch != 27)
+	while(ch < 48 && ch > 57 && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
@@ -320,7 +329,14 @@ void inspectItem()
 		return;
 	if(!kirito->inventory[ch - 48])
 	{
-		// TODO display description
+		if(kirito->inventory[ch - 48] != NULL)
+		{
+			for(int i = 0; i < 12; ++i)
+			{
+				mvprintw(i, 0, "                                              ");
+			}
+			mvprintw(2, 0, "%s", kirito->inventory[ch - 48]->description);
+		}
 	}
 	getch();
 }
