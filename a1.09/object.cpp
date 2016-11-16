@@ -50,6 +50,10 @@ void loadObjects()
   }
 }
 
+Object::Object()
+{
+}
+
 Object::Object(Object* ob)
 {
   this->name = ob->name;

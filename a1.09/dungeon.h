@@ -62,7 +62,7 @@ class Dungeon
 		int stairDownX;
 		int stairDownY;
 		vector<monster_description> monster_descriptions;
-	  vector<object_description> object_descriptions;
+		vector<object_description> object_descriptions;
 		vector<Object*> objects;
 };
 

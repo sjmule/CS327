@@ -19,6 +19,7 @@ class Object
     dice damage;
     int x, y;
     std::string type;
+    Object();
     Object(Object* ob);
 };
 

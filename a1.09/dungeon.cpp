@@ -150,13 +150,16 @@ void printDungeon()
 	unsigned int k;
 	for(k = 0; k < aincrad->objects.size(); ++k)
 	{
-		if((aincrad->objects.at(k)->x >= (kirito->x - 3)) && (aincrad->objects.at(k)->x <= (kirito->x + 3)))
-		{
-			if((aincrad->objects.at(k)->y >= (kirito->y - 3)) && (aincrad->objects.at(k)->y <= (kirito->y + 3)))
+		if(aincrad->objects[k] != NULL)
+		{ 
+			if((aincrad->objects.at(k)->x >= (kirito->x - 3)) && (aincrad->objects.at(k)->x <= (kirito->x + 3)))
 			{
-				// attron(COLOR_PAIR(aincrad->objects.at(k).color));
-				mvaddch(aincrad->objects.at(k)->y + 1, aincrad->objects.at(k)->x, aincrad->objects.at(k)->symbol);
-				// attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+				if((aincrad->objects.at(k)->y >= (kirito->y - 3)) && (aincrad->objects.at(k)->y <= (kirito->y + 3)))
+				{
+					// attron(COLOR_PAIR(aincrad->objects.at(k).color));
+					mvaddch(aincrad->objects.at(k)->y + 1, aincrad->objects.at(k)->x, aincrad->objects.at(k)->symbol);
+					// attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+				}
 			}
 		}
 	}

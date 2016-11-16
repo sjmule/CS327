@@ -62,6 +62,25 @@ int movePlayer(int ch)
 		default:
 			break;
 	}
+	for(unsigned int i = 0; i < aincrad->objects.size(); ++i)
+	{
+		if((aincrad->objects[i]->x == kirito->x) && (aincrad->objects[i]->y == kirito->y))
+		{
+			int k = 0;
+			for(; k < 10; ++k)
+			{
+				if(kirito->inventory[i] == NULL)
+					break;
+			}
+			if(k != 10)
+			{
+				Object* obj = new Object(aincrad->objects[i]);
+				kirito->inventory[k] = obj;
+				delete aincrad->objects[i];
+				aincrad->objects[i] = NULL;
+			}
+		}
+	}
 	return good;
 }
 
@@ -148,7 +167,7 @@ void wearItem()
 	mvprintw(1, 0, "Select an item to equip");
 	for(int i = 0; i < 10; ++i)
 	{
-		if(!kirito->inventory[i])
+		if(kirito->inventory[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -162,6 +181,10 @@ void wearItem()
 	if(!kirito->inventory[ch - 48])
 	{
 		// TODO copy from inventory into equip
+		//Object* obj = new Object(kirito->inventory[ch - 48]);
+		delete kirito->inventory[ch - 48];
+		kirito->inventory[ch - 48] = NULL;
+		
 	}
 }
 
@@ -170,7 +193,7 @@ void takeOffItem()
 	mvprintw(1, 0, "Select an item to take off");
 	for(int i = 0; i < 12; ++i)
 	{
-		if(!kirito->equip[i])
+		if(kirito->equip[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -184,6 +207,18 @@ void takeOffItem()
 	if(!kirito->equip[ch - 97])
 	{
 		// TODO copy from equip into inventory
+		int i = 0;
+		for(; i < 10; ++i)
+		{
+			if(kirito->inventory[i] == NULL)
+				break;
+		}
+		if(i == 10)
+			mvprintw(0, 0, "You have no empty inventory slots");
+		else
+		{
+			
+		}
 	}
 }
 
@@ -192,7 +227,7 @@ void dropItem()
 	mvprintw(1, 0, "Select an item to drop");
 	for(int i = 0; i < 10; ++i)
 	{
-		if(!kirito->inventory[i])
+		if(kirito->inventory[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -214,7 +249,7 @@ void expungeItem()
 	mvprintw(1, 0, "Select an item to remove permanently from the game");
 	for(int i = 0; i < 10; ++i)
 	{
-		if(!kirito->inventory[i])
+		if(kirito->inventory[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -237,7 +272,7 @@ void listInventory()
 	mvprintw(0, 1, "Your inventory");
 	for(int i = 0; i < 10; ++i)
 	{
-		if(!kirito->inventory[i])
+		if(kirito->inventory[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -250,7 +285,7 @@ void listEquipment()
 	mvprintw(1, 0, "Your equipped items");
 	for(int i = 0; i < 12; ++i)
 	{
-		if(!kirito->equip[i])
+		if(kirito->equip[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
@@ -263,7 +298,7 @@ void inspectItem()
 	mvprintw(1, 0, "Select an item to inspect");
 	for(int i = 0; i < 10; ++i)
 	{
-		if(!kirito->inventory[i])
+		if(kirito->inventory[i] != NULL)
 			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
 			mvprintw(i + 2, 0, "                       ");
