@@ -5,7 +5,6 @@
 #include "routing.h"
 #include "movement.h"
 #include "pControls.h"
-#include "fileParser.h"
 
 Dungeon* aincrad;
 Player* kirito;
@@ -151,13 +150,13 @@ void printDungeon()
 	unsigned int k;
 	for(k = 0; k < aincrad->objects.size(); ++k)
 	{
-		if((aincrad->objects.at(k).x >= (kirito->x - 3)) && (aincrad->objects.at(k).x <= (kirito->x + 3)))
+		if((aincrad->objects.at(k)->x >= (kirito->x - 3)) && (aincrad->objects.at(k)->x <= (kirito->x + 3)))
 		{
-			if((aincrad->objects.at(k).y >= (kirito->y - 3)) && (aincrad->objects.at(k).y <= (kirito->y + 3)))
+			if((aincrad->objects.at(k)->y >= (kirito->y - 3)) && (aincrad->objects.at(k)->y <= (kirito->y + 3)))
 			{
-				//attron(COLOR_PAIR(aincrad->objects.at(k).color));
-				mvaddch(aincrad->objects.at(k).y + 1, aincrad->objects.at(k).x, aincrad->objects.at(k).symbol);
-				//attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+				// attron(COLOR_PAIR(aincrad->objects.at(k).color));
+				mvaddch(aincrad->objects.at(k)->y + 1, aincrad->objects.at(k)->x, aincrad->objects.at(k)->symbol);
+				// attroff(COLOR_PAIR(aincrad->objects.at(k).color));
 			}
 		}
 	}
@@ -170,18 +169,15 @@ void printDungeon()
 			{
 				if((aincrad->monsters.at(i).y >= (kirito->y - 3)) && (aincrad->monsters.at(i).y <= (kirito->y + 3)))
 				{
-					//attron(COLOR_PAIR(aincrad->monsters.at(i).color));
+					// attron(COLOR_PAIR(aincrad->monsters.at(i).color));
 					mvaddch(aincrad->monsters.at(i).y + 1, aincrad->monsters.at(i).x, aincrad->monsters.at(i).symbol);
-					//attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
+					// attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
 				}
 			}
 		}
 	}
 	refresh();
 }
-
-// The arg parser object
-static struct argp argp = {options, parse_opt, 0, doc};
 
 int monstersAlive()
 {
@@ -194,6 +190,9 @@ int monstersAlive()
 	}
 	return alive;
 }
+
+// The arg parser object
+static struct argp argp = {options, parse_opt, 0, doc};
 
 int main(int argc, char** argv)
 {
@@ -214,17 +213,10 @@ int main(int argc, char** argv)
 	arguments.numMonsters = 10;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-	kirito = new Player;
+	kirito = new Player();
 	aincrad = new Dungeon;
 
 	parse_descriptions(aincrad, path);
-
-	kirito->id = 0;
-	kirito->symbol = '@';
-	kirito->speed = 10;
-	kirito->turn = 0;
-	kirito->alive = 1;
-	kirito->initializeVisible();
 
 	if(arguments.load)
 		loadDungeon(arguments.loadPath, arguments.verboseMode);
@@ -257,15 +249,26 @@ int main(int argc, char** argv)
 
 	printDungeon();
 
+	int good;
 	while(kirito->alive && monstersAlive())
 	{
-		int good = 0;
+		good = 0;
 		if(kirito->turn == turn)
 		{
 			while(!good)
 			{
-				int ch = getch();	
+				int ch = getch();
 				good = doCharacterAction(ch);
+			}
+			if(good == 3)
+			{
+				free(aincrad->rooms);
+				aincrad->monsters.clear();
+				aincrad->objects.clear();
+				createDungeon();
+				kirito->clearVisible();
+				placeCharacters();
+				kirito->setVisible();
 			}
 			if(good == 1)
 				break;
@@ -287,19 +290,22 @@ int main(int argc, char** argv)
 		if(good != 3)
 			++turn;
 	}
-	
-	printDungeon();
-	if(kirito->alive)
+
+	if(good != 1)
 	{
-		mvprintw(0, 0, "You win!");
-		refresh();
+		printDungeon();
+		if(kirito->alive)
+		{
+			mvprintw(0, 0, "You win!");
+			refresh();
+		}
+		else
+		{
+			mvprintw(0, 0, "Game over");
+			refresh();
+		}
+		getch();
 	}
-	else
-	{
-		mvprintw(0, 0, "Game over");
-		refresh();
-	}
-	getch();
 
 	free(aincrad->rooms);
 	destroy_descriptions(aincrad);

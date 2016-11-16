@@ -14,9 +14,9 @@ void loadMonsters()
 		mon.name = monDesc.name;
 		mon.description = monDesc.description;
 		mon.symbol = monDesc.symbol;
-		unsigned int color = monDesc.color.at(0);
-		init_pair(colors_lookup[color].value, colors_lookup[color].value, COLOR_BLACK);
-		mon.color = colors_lookup[color].value;
+		// unsigned int color = monDesc.color.at(0);
+		// init_pair(colors_lookup[color].value, colors_lookup[color].value, COLOR_BLACK);
+		mon.color = monDesc.color.at(0);
 		mon.attributes = monDesc.abilities;
 		mon.speed = monDesc.speed.roll();
 		mon.hp = monDesc.hitpoints.roll();

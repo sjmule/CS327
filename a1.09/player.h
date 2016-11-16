@@ -2,16 +2,20 @@
 #define PLAYER_H
 
 #include "dungeon.h"
+#include "object.h"
+#include "dice.h"
 
 class Player : public Character
 {
 	public:
-		vector<Object> inventory;
-		Object* inventory = new Object[10];
+		std::vector<Object*> inventory;
+		std::vector<Object*> equip;
 		int** visible;
 		void initializeVisible();
 		void setVisible();
 		void clearVisible();
+		Player();
+		~Player();
 };
 
 #endif

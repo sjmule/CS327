@@ -75,3 +75,44 @@ void Player::clearVisible()
 		this->visible[i][X-1] = '|';
 	}
 }
+
+Player::Player()
+{
+	this->id = 0;
+	this->symbol = '@';
+	this->speed = 10;
+	this->turn = 0;
+	this->alive = 1;
+	this->initializeVisible();
+	this->hp = 100;
+	dice damage;
+	damage.set(0, 1, 4);
+	this->damageDice = damage;
+	this->inventory.reserve(10);
+	this->equip.reserve(12);
+	for(int i = 0; i < 10; ++i)
+	{
+		this->inventory[i] = NULL;
+		this->equip[i] = NULL;
+	}
+	this->equip[10] = NULL;
+	this->equip[11] = NULL;
+}
+
+Player::~Player()
+{
+	for(int i = 0; i < Y; ++i)
+	{
+		delete[] this->visible[i];
+	}
+	delete[] this->visible;
+	for(int i = 0; i < 10; ++i)
+	{
+		delete this->inventory[i];
+		delete this->equip[i];
+	}
+	delete this->equip[10];
+	delete this->equip[11];
+	this->inventory.clear();
+	this->equip.clear();
+}

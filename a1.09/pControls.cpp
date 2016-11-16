@@ -146,45 +146,139 @@ void displayMonsters()
 void wearItem()
 {
 	mvprintw(1, 0, "Select an item to equip");
-	for(int i = 0; i < kirito->inventory.size(); ++i)
+	for(int i = 0; i < 10; ++i)
 	{
-		if(kirito->inventory[i] != null)
-			mvprintw(i + 2, 0, "%s", kirito->inventory.name);
+		if(!kirito->inventory[i])
+			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, " ");
+			mvprintw(i + 2, 0, "                       ");
 	}
 	int ch = getch();
-
+	while(ch < 48 || ch > 57)
+	{
+		mvprintw(0, 0, "Please select a slot 0-9");
+		ch = getch();
+	}
+	if(!kirito->inventory[ch - 48])
+	{
+		// TODO copy from inventory into equip
+	}
 }
 
 void takeOffItem()
 {
-
+	mvprintw(1, 0, "Select an item to take off");
+	for(int i = 0; i < 12; ++i)
+	{
+		if(!kirito->equip[i])
+			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	int ch = getch();
+	while(ch < 97 || ch > 108)
+	{
+		mvprintw(0, 0, "Please select a slot a-l");
+		ch = getch();
+	}
+	if(!kirito->equip[ch - 97])
+	{
+		// TODO copy from equip into inventory
+	}
 }
 
 void dropItem()
 {
-
+	mvprintw(1, 0, "Select an item to drop");
+	for(int i = 0; i < 10; ++i)
+	{
+		if(!kirito->inventory[i])
+			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	int ch = getch();
+	while(ch < 48 || ch > 57)
+	{
+		mvprintw(0, 0, "Please select a slot 0-9");
+		ch = getch();
+	}
+	if(!kirito->inventory[ch - 48])
+	{
+		// TODO copy item from inventory to dungeon
+	}
 }
 
 void expungeItem()
 {
-
+	mvprintw(1, 0, "Select an item to remove permanently from the game");
+	for(int i = 0; i < 10; ++i)
+	{
+		if(!kirito->inventory[i])
+			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	int ch = getch();
+	while(ch < 48 || ch > 57)
+	{
+		mvprintw(0, 0, "Please select a slot 0-9");
+		ch = getch();
+	}
+	if(!kirito->inventory[ch - 48])
+	{
+		delete kirito->inventory[ch - 48];
+		kirito->inventory[ch - 48] = NULL;
+	}
 }
 
 void listInventory()
 {
-
+	mvprintw(0, 1, "Your inventory");
+	for(int i = 0; i < 10; ++i)
+	{
+		if(!kirito->inventory[i])
+			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	getch();
 }
 
 void listEquipment()
 {
-
+	mvprintw(1, 0, "Your equipped items");
+	for(int i = 0; i < 12; ++i)
+	{
+		if(!kirito->equip[i])
+			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	getch();
 }
 
 void inspectItem()
 {
-
+	mvprintw(1, 0, "Select an item to inspect");
+	for(int i = 0; i < 10; ++i)
+	{
+		if(!kirito->inventory[i])
+			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+		else
+			mvprintw(i + 2, 0, "                       ");
+	}
+	int ch = getch();
+	while(ch < 48 || ch > 57)
+	{
+		mvprintw(0, 0, "Please select a slot 0-9");
+		ch = getch();
+	}
+	if(!kirito->inventory[ch - 48])
+	{
+		// TODO display description
+	}
+	getch();
 }
 
 int doCharacterAction(int ch)
@@ -200,52 +294,60 @@ int doCharacterAction(int ch)
 	{
 		if((kirito->x == aincrad->stairDownX) && (kirito->y == aincrad->stairDownY))
 		{
-			free(aincrad->rooms);
-			aincrad->monsters.clear();
-			aincrad->objects.clear();
-			createDungeon();
-			kirito->clearVisible();
-			placeCharacters();
-			kirito->setVisible();
 			return 3;
 		}
 		else
-			continue;
+			return 0;
 	}
 	else if(ch == '<')
 	{
 		if((kirito->x == aincrad->stairUpX) && (kirito->y == aincrad->stairUpY))
 		{
-			free(aincrad->rooms);
-			aincrad->monsters.clear();
-			aincrad->objects.clear();
-			createDungeon();
-			kirito->clearVisible();
-			placeCharacters();
-			kirito->setVisible();
 			return 3;
 		}
 		else
-			continue;
+			return 0;
 	}
 	else if(ch == 'w')
+	{
 		wearItem();
+		printDungeon();
+	}
 	else if(ch == 't')
+	{
 		takeOffItem();
+		printDungeon();
+	}
 	else if(ch == 'd')
+	{
 		dropItem();
+		printDungeon();
+	}
 	else if(ch == 'x')
+	{
 		expungeItem();
+		printDungeon();
+	}
 	else if(ch == 'i')
+	{
 		listInventory();
+		printDungeon();
+	}
 	else if(ch == 'e')
+	{
 		listEquipment();
+		printDungeon();
+	}
 	else if(ch == 'I')
+	{
 		inspectItem();
+		printDungeon();
+	}
 	else
 	{
 		int good = movePlayer(ch);
 		kirito->setVisible();
 		return good;
 	}
+	return 0;
 }

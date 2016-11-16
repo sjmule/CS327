@@ -63,13 +63,15 @@ class Dungeon
 		int stairDownY;
 		vector<monster_description> monster_descriptions;
 	  vector<object_description> object_descriptions;
-		vector<Object> objects;
+		vector<Object*> objects;
 };
 
 extern Dungeon* aincrad;
 extern Player* kirito;
 extern int monCount;
 extern int turn;
+
+void printDungeon();
 
 int monstersAlive();
 

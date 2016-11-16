@@ -15,7 +15,7 @@ class Character
 	  int turn;
 	  char alive;
 	  int hp;
-	  dice damage;
+	  dice damageDice;
 };
 
 #endif

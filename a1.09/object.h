@@ -5,17 +5,21 @@
 #include "dice.h"
 #include "descriptions.h"
 
+static const std::string objectStrings[] = {"NOTYPE", "WEAPON", "OFFHAND", "RANGED", "LIGHT", "ARMOR", "HELMET", "CLOAK", "GLOVES", "BOOTS",
+                              "AMULET", "RING", "SCROLL", "BOOK", "FLASK", "GOLD", "AMMUNITION", "FOOD", "WAND", "CONTAINER"};
+
 class Object
 {
   public:
     std::string name;
     std::string description;
-    int color;
+    unsigned int color;
     char symbol;
     int hit, dodge, defence, weight, speed, attribute, value;
     dice damage;
     int x, y;
-    object_type_t type;
+    std::string type;
+    Object(Object* ob);
 };
 
 void loadObjects();
