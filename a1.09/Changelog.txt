@@ -1,3 +1,19 @@
+Changelog Assignment 1.09
+
+11/17
+Finished logic for attacking.
+Updated README and Changelog.
+
+11/16
+Finished logic for new controls. Started on logic for attacking.
+
+10/15
+Worked on filling in logic for new controls.
+
+10/14
+Started assignment. Copied previous assignment into new folder.
+Defined method stubs for new controls.
+
 Changelog Assignment 1.08
 
 10/9
