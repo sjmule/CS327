@@ -8,64 +8,66 @@ The dungeon executable can be run by itself to generate a new dungeon, or the fl
 The file is saved in a file name "dungeon".
 
 To specify a save or load location the arguments --save-path PATH and --load-path PATH may be used.
-The code for this assignment is split into 3 C files and 2 corresponding header files. The file dungeon.c contains the main method and a method to print the dungeon.
-The file generate.c contains all functions used to create the different parts of the dungeon. The file save.c contains the functions responsible for saving and loading the dungeon.
-
-This implementation of our Rouge Like Game implements Dijkstra's algorithm to find the cost of traveling from 1) open spaces, rooms and corridors, and 2) all spaces, to the location of the player character denoted by a @.
-The player is randomly placed in an open space in the dungeon, then the distances are calculated. Distances are printed after the basic map as the cost of traveling across open spaces only first, then all spaces.
-Distances are displayed on the map as 0-9,a-z,A-Z. For distances greater than the number of characters provided, 61(Z), the dungeon renders normally. All functions used to complete these operations are contained within
-routing.c and rely on heap.c for a heap.
-
-This dungeon is initialized with a player character @ and by default 10 monsters. You may specify the number of monsters you wish to initialize the dungeon with by using the flags -n or --nummon followed by a number.
-The monsters will be initialized with random attributes and assigned random characters to represent them on the map.
-
-Once initialized, the player and monsters are placed randomly through the dungeon. The dungeon is printed using ncurses and the player may be controlled using the numpad or y,u,h,j,k,l,b,n keys.
-The monster list can be printed at any time using the m key and can be scrolled through using the up and down arrow keys. You can exit this display with the escape key.
-
-Stairs are designated on the map with < for stairs up and > for stairs down and can be used by pressing the corresponding key while standing on the icon.
-Moving to a new floor will generate a completely new dungeon with new monsters.
-
-Pressing shift+q quits the game when not displaying the monster list.
-
-This iteration of the game mixes C++ with C code. While most of the logic is done with C, the player, monster, and entity structs have been converted into Player, Monster, and Character classes.
-The related header files provide and interface for the C code to access the member variables within the C++ classes.
 
 Fog-of-war was introduced in this version. The logic for determining this is contained within the file Player.cpp. The player character now has a line of sign equivalent to 3 spaces in all directions.
 The map displayed is what the player has seen and is only updated when the space falls within the player's range of vision.
 
-This program uses the files descriptions.cpp and descriptions.h with utils.cpp and utils.h for file parsing. This code was provided by Professor Sheaffer.
+Combat has now been added. Instead of characters dying when another moves into a space occupied by another, the monster who was in the space moves to an empty space.
+If the character attempts to move into the player's space, or the player attempts to move into a monster's space, combat takes place and the characters suffer damage to their HP based on the attacker's damage.
+The player character starts with 100 HP.
+
+This game implements several keyboard keys for use of controlling the gameplay.
+The keys 7,8,9,6,3,2,1,4 and y,k,u,l,n,j,b,h may be used to control moving the player to the cell in the upper left, up, upper right, right, lower right, down, lower left, and left respectively.
+Moving up and down stairs may be accomplished by using > or < when standing on the corresponding symbol on the map.
+The player may skip his turn by pressing either 5 or the space bar.
+Pressing m will display a list of monsters in the dungeon. The up and down arrow keys may be used to navigate through this menu if all monsters are not displayed. The escape key will exit this display.
+The game may be exited at anytime using shift+q when a menu is not displayed.
+
+Moving onto an item will add it to the player's inventory.
+The following commands may be used to interact with items the player picks up.
+To wear an item, press w.  This will display a list of items in the player's inventory and will ask the player for the index of the item to equip.
+To take off an item, press t. This will display a list of items equipped to the player and will ask the player for the index of the item to remove.
+To drop an item, press d. This will display a list of items in the player's inventory and will ask the player for the index of the item to drop.
+To expunge an item from the game, press x. This will display a list of items in the player's inventory and will ask the player for the index of the item to expunge.
+To list the player's current inventory, press i.
+To list the player's currently equipped items, press e.
+To inspect an item, press shift+i. This will display a list of items in the player's inventory and will ask the player for the index of the item to display the description for.
+Selections may be exited out of by pressing the escape key.
+
+*This program uses the files descriptions.cpp and descriptions.h with utils.cpp and utils.h for file parsing. This code was provided by Professor Sheaffer and modified slightly to work with the existing code.
 The monster and object descriptions are parsed from files located in the user's home directory in the folder .rlg327. The files are monster_desc.txt and object_desc.txt respectively.
 Once these files are parsed, they are converted into Monster and Object objects and rendered onto the map.
 
+*This program uses the files dice.cpp and dice.h which were provided by Professor Sheaffer to consturct dice objects.
+
 Contained within this archive is a README, Changelog, Makefile, and the following source files:
-dungeon.c
-dungeon.h
-generate.c
-generate.h
-save.c
-save.h
-routing.c
-routing.h
-move.c
-move.h
-heap.c
-heap.h
-macros.h
-pControls.c
-pControls.h
-character.cpp
 character.h
-player.cpp
-player.h
-monster.cpp
-monster.h
 descriptions.cpp
 descriptions.h
-utils.cpp
-utils.h
 dice.cpp
 dice.h
+dungeon.cpp
+dungeon.h
+generate.cpp
+generate.h
+heap.cpp
+heap.h
+macros.h
+monster.cpp
+monster.h
+movement.cpp
+movement.h
 object.cpp
 object.h
+pControls.cpp
+pControls.h
+player.cpp
+player.h
+routing.cpp
+routing.h
+save.cpp
+save.h
+utils.cpp
+utils.h
 
 Running make will compile the source files using the C++ compiler into the executable main.  This project is compiled to the C++11 standard.

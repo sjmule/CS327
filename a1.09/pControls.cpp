@@ -1,6 +1,23 @@
 #include "pControls.h"
 #include "movement.h"
 
+int move(int dir)
+{
+	int valid = isMoveValid(kirito, dir, 0);
+	if(valid)
+	{
+		Character* def = checkForOthers(kirito, dir);
+		if(def != NULL)
+			combat(kirito, def);
+		else
+		{
+			doMove(kirito, dir);
+			valid += 2;
+		}
+	}
+	return valid;
+}
+
 int movePlayer(int ch)
 {
 	int good = 0;
@@ -8,74 +25,61 @@ int movePlayer(int ch)
 	{
 		case '7':
 		case 'y':
-			good = isMoveValid(kirito, 0, 0);
-			if(good)
-				doMove(kirito, 0);
+			good = move(0);
 			break;
 		case '8':
 		case 'k':
-			good = isMoveValid(kirito, 1, 0);
-			if(good)
-				doMove(kirito, 1);
+			good = move(1);
 			break;
 		case '9':
 		case 'u':
-			good = isMoveValid(kirito, 2, 0);
-			if(good)
-				doMove(kirito, 2);
+			good = move(2);
 			break;
 		case '6':
 		case 'l':
-			good = isMoveValid(kirito, 3, 0);
-			if(good)
-				doMove(kirito, 3);
+			good = move(3);
 			break;
 		case '3':
 		case 'n':
-			good = isMoveValid(kirito, 4, 0);
-			if(good)
-				doMove(kirito, 4);
+			good = move(4);
 			break;
 		case '2':
 		case 'j':
-			good = isMoveValid(kirito, 5, 0);
-			if(good)
-				doMove(kirito, 5);
+			good = move(5);
 			break;
 		case '1':
 		case 'b':
-			good = isMoveValid(kirito, 6, 0);
-			if(good)
-				doMove(kirito, 6);
+			good = move(6);
 			break;
 		case '4':
 		case 'h':
-			good = isMoveValid(kirito, 7, 0);
-			if(good)
-				doMove(kirito, 7);
+			good = move(7);
 			break;
 		case '5':
 		case ' ':
-			kirito->turn = kirito->turn + (100/kirito->speed);
 			good = 2;
 			break;
 		default:
 			break;
 	}
-	for(unsigned int i = 0; i < aincrad->objects.size(); ++i)
+	if(good == 4)
 	{
-		if((aincrad->objects[i]->x == kirito->x) && (aincrad->objects[i]->y == kirito->y))
+		good -= 2;
+		for(unsigned int i = 0; i < aincrad->objects.size(); ++i)
 		{
-			int k = 0;
-			for(; k < 10; ++k)
+			if((aincrad->objects[i]->x == kirito->x) && (aincrad->objects[i]->y == kirito->y))
 			{
-				if(kirito->inventory[i] == NULL)
+				int k = 0;
+				for(; k < 10; ++k)
 				{
-					Object* obj = new Object(aincrad->objects[i]);
-					kirito->inventory[k] = obj;
-					delete aincrad->objects[i];
-					aincrad->objects[i] = NULL;
-					break;
+					if(kirito->inventory[i] == NULL)
+					{
+						Object* obj = new Object(aincrad->objects[i]);
+						kirito->inventory[k] = obj;
+						delete aincrad->objects[i];
+						aincrad->objects.erase(aincrad->objects.begin() + i);
+						break;
+					}
 				}
 			}
 		}
@@ -167,26 +171,179 @@ void wearItem()
 	for(int i = 0; i < 10; ++i)
 	{
 		if(kirito->inventory[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+			mvprintw(i + 2, 0, "%d: %s", i, kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%d:                       ", i);
 	}
 	int ch = getch();
-	while(ch < 48 && ch > 57 && ch != 27)
+	while((ch < 48 || ch > 57) && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
 	}
 	if(ch == 27)
 		return;
-	if(!kirito->inventory[ch - 48])
+	if(kirito->inventory[ch - 48] != NULL)
 	{
-		// TODO copy from inventory into equip
-		
-//		Object* obj = new Object(kirito->inventory[ch - 48]);
-		delete kirito->inventory[ch - 48];
-		kirito->inventory[ch - 48] = NULL;
-		
+		if(kirito->inventory[ch - 48]->type == "WEAPON")
+		{
+			if(kirito->equip[0] != NULL)
+			{
+				Object* obj = kirito->equip[0];
+				kirito->equip[0] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[0] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "OFFHAND")
+		{
+			if(kirito->equip[1] != NULL)
+			{
+				Object* obj = kirito->equip[1];
+				kirito->equip[1] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[1] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "RANGED")
+		{
+			if(kirito->equip[2] != NULL)
+			{
+				Object* obj = kirito->equip[2];
+				kirito->equip[2] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[2] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "ARMOR")
+		{
+			if(kirito->equip[3] != NULL)
+			{
+				Object* obj = kirito->equip[3];
+				kirito->equip[3] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[3] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "HELMET")
+		{
+			if(kirito->equip[4] != NULL)
+			{
+				Object* obj = kirito->equip[4];
+				kirito->equip[4] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[4] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "CLOAK")
+		{
+			if(kirito->equip[5] != NULL)
+			{
+				Object* obj = kirito->equip[5];
+				kirito->equip[5] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[5] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "GLOVES")
+		{
+			if(kirito->equip[6] != NULL)
+			{
+				Object* obj = kirito->equip[6];
+				kirito->equip[6] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[6] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "BOOTS")
+		{
+			if(kirito->equip[7] != NULL)
+			{
+				Object* obj = kirito->equip[7];
+				kirito->equip[7] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[7] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "AMULET")
+		{
+			if(kirito->equip[8] != NULL)
+			{
+				Object* obj = kirito->equip[8];
+				kirito->equip[8] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[8] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "LIGHT")
+		{
+			if(kirito->equip[9] != NULL)
+			{
+				Object* obj = kirito->equip[9];
+				kirito->equip[9] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else
+			{
+				kirito->equip[9] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
+		else if(kirito->inventory[ch - 48]->type == "RING")
+		{
+			if((kirito->equip[10] != NULL) && (kirito->equip[11] != NULL))
+			{
+				Object* obj = kirito->equip[10];
+				kirito->equip[10] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = obj;
+			}
+			else if(kirito->equip[10] == NULL)
+			{
+				kirito->equip[10] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+			else
+			{
+				kirito->equip[11] = kirito->inventory[ch - 48];
+				kirito->inventory[ch - 48] = NULL;
+			}
+		}
 	}
 }
 
@@ -196,19 +353,19 @@ void takeOffItem()
 	for(int i = 0; i < 12; ++i)
 	{
 		if(kirito->equip[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
+			mvprintw(i + 2, 0, "%c: %s", 97 + i, kirito->equip[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%c:                       ", 97 + i);
 	}
 	int ch = getch();
-	while(ch < 97 && ch > 108 && ch != 27)
+	while((ch < 97 || ch > 108) && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot a-l");
 		ch = getch();
 	}
 	if(ch == 27)
 		return;
-	if(!kirito->equip[ch - 97])
+	if(kirito->equip[ch - 97] != NULL)
 	{
 		int i = 0;
 		for(; i < 10; ++i)
@@ -220,9 +377,7 @@ void takeOffItem()
 			mvprintw(0, 0, "You have no empty inventory slots");
 		else
 		{
-			Object* obj = new Object(kirito->equip[ch - 97]);
-			kirito->inventory[i] = obj;
-			delete kirito->equip[ch - 97];
+			kirito->inventory[i] = kirito->equip[ch - 97];
 			kirito->equip[ch - 97] = NULL;
 		}
 	}
@@ -234,27 +389,26 @@ void dropItem()
 	for(int i = 0; i < 10; ++i)
 	{
 		if(kirito->inventory[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+			mvprintw(i + 2, 0, "%d: %s", i, kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%d:                       ", i);
 	}
 	int ch = getch();
-	while(ch < 48 && ch > 57 && ch != 27)
+	while((ch < 48 || ch > 57) && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
 	}
 	if(ch == 27)
 		return;
-	if(!kirito->inventory[ch - 48])
+	if(kirito->inventory[ch - 48] != NULL)
 	{
-		if(kirito->inventory[ch - 48] != NULL)
-		{
-			Object* obj = new Object(kirito->inventory[ch - 48]);
-			aincrad->objects.push_back(obj);
-			delete kirito->inventory[i];
-			kirito->inventory[i] = NULL;
-		}
+		Object* obj = new Object(kirito->inventory[ch - 48]);
+		obj->x = kirito->x;
+		obj->y = kirito->y;
+		aincrad->objects.push_back(obj);
+		delete kirito->inventory[ch - 48];
+		kirito->inventory[ch - 48] = NULL;
 	}
 }
 
@@ -264,19 +418,19 @@ void expungeItem()
 	for(int i = 0; i < 10; ++i)
 	{
 		if(kirito->inventory[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+			mvprintw(i + 2, 0, "%d: %s", i, kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%d:                       ", i);
 	}
 	int ch = getch();
-	while(ch < 48 && ch > 57 && ch != 27)
+	while((ch < 48 || ch > 57) && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
 	}
 	if(ch == 27)
 		return;
-	if(!kirito->inventory[ch - 48])
+	if(kirito->inventory[ch - 48] != NULL)
 	{
 		delete kirito->inventory[ch - 48];
 		kirito->inventory[ch - 48] = NULL;
@@ -289,9 +443,9 @@ void listInventory()
 	for(int i = 0; i < 10; ++i)
 	{
 		if(kirito->inventory[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+			mvprintw(i + 2, 0, "%d: %s", i, kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%d:                       ", i);
 	}
 	getch();
 }
@@ -302,9 +456,9 @@ void listEquipment()
 	for(int i = 0; i < 12; ++i)
 	{
 		if(kirito->equip[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->equip[i]->name.c_str());
+			mvprintw(i + 2, 0, "%c: %s", i + 97, kirito->equip[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%c:                       ", i + 97);
 	}
 	getch();
 }
@@ -315,28 +469,25 @@ void inspectItem()
 	for(int i = 0; i < 10; ++i)
 	{
 		if(kirito->inventory[i] != NULL)
-			mvprintw(i + 2, 0, "%s", kirito->inventory[i]->name.c_str());
+			mvprintw(i + 2, 0, "%d: %s", i, kirito->inventory[i]->name.c_str());
 		else
-			mvprintw(i + 2, 0, "                       ");
+			mvprintw(i + 2, 0, "%d                       ", i);
 	}
 	int ch = getch();
-	while(ch < 48 && ch > 57 && ch != 27)
+	while((ch < 48 || ch > 57) && ch != 27)
 	{
 		mvprintw(0, 0, "Please select a slot 0-9");
 		ch = getch();
 	}
 	if(ch == 27)
 		return;
-	if(!kirito->inventory[ch - 48])
+	if(kirito->inventory[ch - 48] != NULL)
 	{
-		if(kirito->inventory[ch - 48] != NULL)
+		for(int i = 0; i < 12; ++i)
 		{
-			for(int i = 0; i < 12; ++i)
-			{
-				mvprintw(i, 0, "                                              ");
-			}
-			mvprintw(2, 0, "%s", kirito->inventory[ch - 48]->description);
+			mvprintw(i, 0, "                                              ");
 		}
+		mvprintw(2, 0, "%s", kirito->inventory[ch - 48]->description.c_str());
 	}
 	getch();
 }
@@ -403,19 +554,9 @@ int doCharacterAction(int ch)
 		inspectItem();
 		printDungeon();
 	}
-	else if(ch == 'D')
-	{
-		for(unsigned int i = 0; i < aincrad->objects.size(); ++i)
-		{
-			if(aincrad->objects[i] != NULL)
-				mvprintw(i, 0, "%s", aincrad->objects[i]->name.c_str());
-		}
-		getch();
-	}
 	else
 	{
 		int good = movePlayer(ch);
-		kirito->setVisible();
 		return good;
 	}
 	return 0;
