@@ -79,7 +79,7 @@ void loadDungeon(char* path, int debug)
 	unsigned char* head = malloc(6);
 	fread(head, 1, 6, file);
 
-	if(strcmp(head, "RLG327") != 0)
+	if(strcmp((char*) head, "RLG327") != 0)
 	{
 		printf("Incompatable file type\n");
 		exit(-1);

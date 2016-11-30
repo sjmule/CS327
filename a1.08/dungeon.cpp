@@ -5,7 +5,6 @@
 #include "routing.h"
 #include "movement.h"
 #include "pControls.h"
-#include "fileParser.h"
 
 Dungeon* aincrad;
 Player* kirito;
@@ -155,9 +154,9 @@ void printDungeon()
 		{
 			if((aincrad->objects.at(k).y >= (kirito->y - 3)) && (aincrad->objects.at(k).y <= (kirito->y + 3)))
 			{
-				//attron(COLOR_PAIR(aincrad->objects.at(k).color));
+				attron(COLOR_PAIR(aincrad->objects.at(k).color));
 				mvaddch(aincrad->objects.at(k).y + 1, aincrad->objects.at(k).x, aincrad->objects.at(k).symbol);
-				//attroff(COLOR_PAIR(aincrad->objects.at(k).color));
+				attroff(COLOR_PAIR(aincrad->objects.at(k).color));
 			}
 		}
 	}

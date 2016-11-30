@@ -10,7 +10,7 @@ class Object
   public:
     std::string name;
 	  std::string description;
-	  int color;
+	  unsigned int color;
     char symbol;
     int hit, dodge, defence, weight, speed, attribute, value;
     dice damage;

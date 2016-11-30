@@ -10,7 +10,7 @@ class Monster : public Character
   public:
 	  std::string name;
 	  std::string description;
-	  int color;
+	  unsigned int color;
 	  unsigned int attributes;
 	  char playerX;
 	  char playerY;

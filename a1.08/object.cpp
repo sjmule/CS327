@@ -11,9 +11,9 @@ void loadObjects()
     obj.name = objDesc.name;
     obj.description = objDesc.description;
     obj.symbol = object_symbol[objDesc.type];
-    unsigned int color = objDesc.color;
-		init_pair(colors_lookup[color].value, colors_lookup[color].value, COLOR_BLACK);
-    obj.color = colors_lookup[color].value;
+    // unsigned int color = objDesc.color;
+		// init_pair(colors_lookup[color].value, colors_lookup[color].value, COLOR_BLACK);
+    obj.color = objDesc.color;
     obj.hit = objDesc.hit.roll();
     obj.dodge = objDesc.dodge.roll();
     obj.defence = objDesc.defence.roll();

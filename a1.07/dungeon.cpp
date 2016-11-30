@@ -193,6 +193,8 @@ int main(int argc, char** argv)
 	strcat(path, "/.rlg327");
 	mkdir(path, 0777);
 
+	aincrad = new Dungeon;
+
 	loadMonsters(path);
 
 	for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)

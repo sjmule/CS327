@@ -9,6 +9,8 @@
 #include <string.h>
 #include <netinet/in.h>
 #include <argp.h>
+#include <limits.h>
+#include <stdint.h>
 
 #define X 80
 #define Y 21
