@@ -1,4 +1,4 @@
-#include "movement.h"
+	#include "movement.h"
 #include "routing.h"
 
 int switchBoard(Monster* mon, int playerX, int playerY)
@@ -291,7 +291,9 @@ void combat(Character* attack, Character* defence)
 				if(((Player*)defence)->equip[i] != NULL)
 					block += ((Player*)defence)->equip[i]->defence;
 			}
-			defence->hp -= (attack->damageDice.roll() - defence);
+			int damage = attack->damageDice.roll() - block;
+			if(damage > 0)
+				defence->hp -= damage;
 			if(defence->hp <= 0)
 				defence->alive = 0;
 		}

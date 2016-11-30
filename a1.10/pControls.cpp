@@ -494,7 +494,7 @@ void inspectItem()
 
 void rangedAttack(int dir)
 {
-
+	
 }
 
 void attackRanged()
@@ -546,7 +546,7 @@ void attackRanged()
 	}
 	else
 	{
-		mvprintw(1, 0, "No ranged weapon equiped");
+		mvprintw(0, 0, "No ranged weapon equiped");
 		getch();
 	}
 }

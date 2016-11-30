@@ -176,6 +176,7 @@ void printDungeon()
 			}
 		}
 	}
+	mvprintw(Y + 1, 0, "Player health: %d/100", kirito->hp);
 	refresh();
 }
 
@@ -284,6 +285,9 @@ int main(int argc, char** argv)
 					speed += kirito->equip[i]->speed;
 					weight += kirito->equip[i]->weight;
 				}
+			}
+			for(int i = 0; i < 10; ++i)
+			{
 				if(kirito->inventory[i] != NULL)
 					weight += kirito->inventory[i]->weight;
 			}
