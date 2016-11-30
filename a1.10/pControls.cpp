@@ -57,6 +57,10 @@ int movePlayer(int ch)
 			break;
 		case '5':
 		case ' ':
+			if(kirito->hp < 100)
+				kirito->hp += 4;
+			if(kirito->hp > 100)
+				kirito->hp = 100;
 			good = 2;
 			break;
 		default:

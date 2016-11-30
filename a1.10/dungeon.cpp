@@ -261,6 +261,8 @@ int main(int argc, char** argv)
 				printDungeon();
 				int ch = getch();
 				good = doCharacterAction(ch);
+				if(kirito->hp < 100)
+					kirito->hp++;
 			}
 			if(good == 3)
 			{
