@@ -150,31 +150,28 @@ void printDungeon()
 	unsigned int k;
 	for(k = 0; k < aincrad->objects.size(); ++k)
 	{
-		if(aincrad->objects[k] != NULL)
-		{ 
-			if((aincrad->objects.at(k)->x >= (kirito->x - 3)) && (aincrad->objects.at(k)->x <= (kirito->x + 3)))
+		if((aincrad->objects.at(k)->x >= (kirito->x - 3)) && (aincrad->objects.at(k)->x <= (kirito->x + 3)))
+		{
+			if((aincrad->objects.at(k)->y >= (kirito->y - 3)) && (aincrad->objects.at(k)->y <= (kirito->y + 3)))
 			{
-				if((aincrad->objects.at(k)->y >= (kirito->y - 3)) && (aincrad->objects.at(k)->y <= (kirito->y + 3)))
-				{
-					// attron(COLOR_PAIR(aincrad->objects.at(k).color));
-					mvaddch(aincrad->objects.at(k)->y + 1, aincrad->objects.at(k)->x, aincrad->objects.at(k)->symbol);
-					// attroff(COLOR_PAIR(aincrad->objects.at(k).color));
-				}
+				// attron(COLOR_PAIR(aincrad->objects.at(k).color));
+				mvaddch(aincrad->objects.at(k)->y + 1, aincrad->objects.at(k)->x, aincrad->objects.at(k)->symbol);
+				// attroff(COLOR_PAIR(aincrad->objects.at(k).color));
 			}
 		}
 	}
 	mvaddch(kirito->y + 1, kirito->x, kirito->symbol);
 	for(i = 0; i < aincrad->numMonsters; ++i)
 	{
-		if(aincrad->monsters.at(i).alive == 1)
+		if(aincrad->monsters[i].alive == 1)
 		{
-			if((aincrad->monsters.at(i).x >= (kirito->x - 3)) && (aincrad->monsters.at(i).x <= (kirito->x + 3)))
+			if((aincrad->monsters[i].x >= (kirito->x - 3)) && (aincrad->monsters[i].x <= (kirito->x + 3)))
 			{
-				if((aincrad->monsters.at(i).y >= (kirito->y - 3)) && (aincrad->monsters.at(i).y <= (kirito->y + 3)))
+				if((aincrad->monsters[i].y >= (kirito->y - 3)) && (aincrad->monsters[i].y <= (kirito->y + 3)))
 				{
-					// attron(COLOR_PAIR(aincrad->monsters.at(i).color));
-					mvaddch(aincrad->monsters.at(i).y + 1, aincrad->monsters.at(i).x, aincrad->monsters.at(i).symbol);
-					// attroff(COLOR_PAIR(aincrad->monsters.at(i).color));
+					// attron(COLOR_PAIR(aincrad->monsters[i].color));
+					mvaddch(aincrad->monsters[i].y + 1, aincrad->monsters[i].x, aincrad->monsters[i].symbol);
+					// attroff(COLOR_PAIR(aincrad->monsters[i].color));
 				}
 			}
 		}
@@ -188,7 +185,7 @@ int monstersAlive()
 	int alive = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
-		if(aincrad->monsters.at(i).alive)
+		if(aincrad->monsters[i].alive)
 			++alive;
 	}
 	return alive;
@@ -278,17 +275,37 @@ int main(int argc, char** argv)
 				break;
 			calculateDistances(kirito->x, kirito->y, 0);
 			calculateDistances(kirito->x, kirito->y, 1);
-			kirito->turn = kirito->turn + (100/kirito->speed);
+			int speed = kirito->speed;
+			int weight = 0;
+			for(int i = 0; i < 12; ++i)
+			{
+				if(kirito->equip[i] != NULL)
+				{
+					speed += kirito->equip[i]->speed;
+					weight += kirito->equip[i]->weight;
+				}
+				if(kirito->inventory[i] != NULL)
+					weight += kirito->inventory[i]->weight;
+			}
+			if(weight >= 25 && weight <= 40)
+				speed -= 2;
+			else if(weight >= 41 && weight <= 55)
+				speed -= 4;
+			else if(weight >= 56)
+				speed -= 6;
+			if(speed <= 0)
+				speed = 1;
+			kirito->turn = kirito->turn + (100/speed);
 		}
 		if(good != 3)
 		{
-			int i = 0;
-			for(; i < aincrad->numMonsters; ++i)
+			for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)
 			{
-				if(aincrad->monsters.at(i).turn == turn)
-					moveMonster(&aincrad->monsters.at(i));
+				if((aincrad->monsters[i].alive == 1) && (aincrad->monsters[i].turn == turn))
+					moveMonster(&aincrad->monsters[i]);
 			}
 		}
+		kirito->setVisible();
 		if(good >= 2)
 			printDungeon();
 		if(good != 3)
