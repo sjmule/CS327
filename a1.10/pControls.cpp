@@ -8,7 +8,7 @@ int move(int dir)
 	{
 		Character* def = checkForOthers(kirito, dir);
 		if(def != NULL)
-			combat(kirito, def);
+			combat(kirito, def, 0);
 		else
 		{
 			doMove(kirito, dir);
@@ -58,7 +58,7 @@ int movePlayer(int ch)
 		case '5':
 		case ' ':
 			if(kirito->hp < 100)
-				kirito->hp += 4;
+				kirito->hp += 5;
 			if(kirito->hp > 100)
 				kirito->hp = 100;
 			good = 2;
@@ -76,7 +76,7 @@ int movePlayer(int ch)
 				int k = 0;
 				for(; k < 10; ++k)
 				{
-					if(kirito->inventory[i] == NULL)
+					if(kirito->inventory[k] == NULL)
 					{
 						Object* obj = new Object(aincrad->objects[i]);
 						kirito->inventory[k] = obj;
@@ -88,6 +88,11 @@ int movePlayer(int ch)
 			}
 		}
 	}
+	if(good == 2)
+	{
+		if(kirito->hp < 100)
+			kirito->hp++;
+	}
 	return good;
 }
 
@@ -96,7 +101,7 @@ void displayMonsters()
 	int offset = 0;
 	int i = 0;
 	int alive = monstersAlive();
-	char **monList = (char**) malloc(alive * sizeof(char*));
+	char** monList = (char**) malloc(alive * sizeof(char*));
 	int j = 0;
 	for(; i < aincrad->numMonsters; ++i)
 	{
@@ -496,13 +501,109 @@ void inspectItem()
 	getch();
 }
 
-void rangedAttack(int dir)
+int hit(int x, int y)
 {
-	
+	if(aincrad->hardness[y][x] != 0)
+		return -1;
+	for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)
+	{
+		if((aincrad->monsters[i].x == x) && (aincrad->monsters[i].y == y) && (aincrad->monsters[i].alive == 1))
+		{
+
+			combat(kirito, &aincrad->monsters[i], 1);
+			return aincrad->monsters[i].id;
+		}
+	}
+	return 0;
 }
 
-void attackRanged()
+void rangedAttack(int dir)
 {
+	int x = kirito->x;
+	int y = kirito->y;
+	int contact = 0;
+	switch(dir)
+	{
+		case 0:
+			--x;
+			--y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			--x;
+			--y;
+			contact = hit(x, y);
+			break;
+		case 1:
+			--y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			--y;
+			contact = hit(x, y);
+			break;
+		case 2:
+			++x;
+			--y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			++x;
+			--y;
+			contact = hit(x, y);
+			break;
+		case 3:
+			++x;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			++x;
+			contact = hit(x, y);
+			break;
+		case 4:
+			++x;
+			++y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			++x;
+			++y;
+			contact = hit(x, y);
+			break;
+		case 5:
+			++y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			++y;
+			contact = hit(x, y);
+			break;
+		case 6:
+			--x;
+			++y;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			--x;
+			++y;
+			contact = hit(x, y);
+			break;
+		case 7:
+			--x;
+			contact = hit(x, y);
+			if(contact != 0)
+				break;
+			--x;
+			contact = hit(x, y);
+			break;
+		default:
+			break;
+	}
+}
+
+int attackRanged()
+{
+	int r = 0;
 	if(kirito->equip[2] != NULL)
 	{
 		mvprintw(0, 0, "Please select a direction");
@@ -512,34 +613,42 @@ void attackRanged()
 			case '7':
 			case 'y':
 				rangedAttack(0);
+				r = 2;
 				break;
 			case '8':
 			case 'k':
 				rangedAttack(1);
+				r = 2;
 				break;
 			case '9':
 			case 'u':
 				rangedAttack(2);
+				r = 2;
 				break;
 			case '6':
 			case 'l':
 				rangedAttack(3);
+				r = 2;
 				break;
 			case '3':
 			case 'n':
 				rangedAttack(4);
+				r = 2;
 				break;
 			case '2':
 			case 'j':
 				rangedAttack(5);
+				r = 2;
 				break;
 			case '1':
 			case 'b':
 				rangedAttack(6);
+				r = 2;
 				break;
 			case '4':
 			case 'h':
 				rangedAttack(7);
+				r = 2;
 				break;
 			case '5':
 			case ' ':
@@ -549,10 +658,8 @@ void attackRanged()
 		}
 	}
 	else
-	{
 		mvprintw(0, 0, "No ranged weapon equiped");
-		getch();
-	}
+	return r;
 }
 
 int doCharacterAction(int ch)
@@ -619,8 +726,9 @@ int doCharacterAction(int ch)
 	}
 	else if(ch == 'r')
 	{
-		attackRanged();
+		int r = attackRanged();
 		printDungeon();
+		return r;
 	}
 	else
 	{

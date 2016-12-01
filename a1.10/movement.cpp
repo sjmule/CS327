@@ -1,4 +1,4 @@
-	#include "movement.h"
+#include "movement.h"
 #include "routing.h"
 
 int switchBoard(Monster* mon, int playerX, int playerY)
@@ -77,7 +77,7 @@ Character* check(int id, int x, int y)
 					continue;
 				else
 				{
-					if((aincrad->monsters[i].x == x) && (aincrad->monsters[i].y == y))
+					if((aincrad->monsters[i].x == x) && (aincrad->monsters[i].y == y) && (aincrad->monsters[i].alive == 1))
 						return &aincrad->monsters[i];
 				}
 			}
@@ -88,7 +88,7 @@ Character* check(int id, int x, int y)
 	{
 		for(unsigned int i = 0; i < aincrad->monsters.size(); ++i)
 		{
-			if((aincrad->monsters[i].x == x) && (aincrad->monsters[i].y == y))
+			if((aincrad->monsters[i].x == x) && (aincrad->monsters[i].y == y) && (aincrad->monsters[i].alive == 1))
 				return &aincrad->monsters[i];
 		}
 	}
@@ -249,22 +249,31 @@ void doMove(Character* entity, int dir)
 	aincrad->hardness[(int)entity->y][(int)entity->x] = 0;
 }
 
-void combat(Character* attack, Character* defence)
+void combat(Character* attack, Character* defence, int ranged)
 {
 	// if kirito attacking
 	if(attack->id == 0)
 	{
 		int damage = 0;
-		if(((Player*)attack)->equip[0] != NULL)
-			damage += ((Player*)attack)->equip[0]->damage.roll();
+		if(ranged)
+			damage += ((Player*)attack)->equip[2]->damage.roll();
 		else
-			damage += attack->damageDice.roll();
-		for(int i = 1; i < 12; ++i)
+		{
+			if(((Player*)attack)->equip[0] != NULL)
+				damage += ((Player*)attack)->equip[0]->damage.roll();
+			else
+				damage += attack->damageDice.roll();
+		}
+		if(((Player*)attack)->equip[1] != NULL)
+			damage += ((Player*)attack)->equip[1]->damage.roll();
+		for(int i = 3; i < 12; ++i)
 		{
 			if(((Player*)attack)->equip[i] != NULL)
 				damage += ((Player*)attack)->equip[i]->damage.roll();
 		}
 		defence->hp -= damage;
+		mvprintw(Y+3, 0, "%c's health: %d", defence->symbol, defence->hp);
+		refresh();
 		if(defence->hp <= 0)
 			defence->alive = 0;
 	}
@@ -295,22 +304,18 @@ void combat(Character* attack, Character* defence)
 			if(damage > 0)
 				defence->hp -= damage;
 			if(defence->hp <= 0)
-				defence->alive = 0;
-		}
-		else
-		{
-			for(int i = 0; i < 8; ++i)
 			{
-				int valid = isMoveValid(defence, i, (((Monster*)defence)->attributes & TUNNELING));
-				Character* entity = checkForOthers(defence, i);
-				if((valid >= 2) && (entity == NULL))
-				{
-					doMove(defence, i);
-					break;
-				}
+				defence->hp = 0;
+				defence->alive = 0;
 			}
 		}
 	}
+}
+
+void relocate(Character* ch, int x, int y)
+{
+	ch->x = x;
+	ch->y = y;
 }
 
 void moveRandom(Monster* entity, int tunnel)
@@ -323,12 +328,14 @@ void moveRandom(Monster* entity, int tunnel)
 		Character* def = checkForOthers(entity, dir);
 		if(def == kirito)
 		{
-			combat(entity, def);
+			combat(entity, def, 0);
 		}
 		else
 		{
 			if(def != NULL)
-				combat(entity, def);
+			{
+				relocate(def, entity->x, entity->y);
+			}
 			doMove(entity, dir);
 			if(valid == 3)
 			{
@@ -359,12 +366,14 @@ void moveDeliberately(Monster* mon)
 				Character* def = checkForOthers(mon, dir);
 				if(def == kirito)
 				{
-					combat(mon, def);
+					combat(mon, def, 0);
 				}
 				else
 				{
 					if(def != NULL)
-						combat(mon, def);
+					{
+						relocate(def, mon->x, mon->y);
+					}
 					doMove(mon, dir);
 					if(valid == 3)
 					{
@@ -388,12 +397,14 @@ void moveDeliberately(Monster* mon)
 				Character* def = checkForOthers(mon, dir);
 				if(def == kirito)
 				{
-					combat(mon, def);
+					combat(mon, def, 0);
 				}
 				else
 				{
 					if(def != NULL)
-						combat(mon, def);
+					{
+						relocate(def, mon->x, mon->y);
+					}
 					doMove(mon, dir);
 					if(valid == 3)
 					{
@@ -420,12 +431,14 @@ void moveDeliberately(Monster* mon)
 				Character* def = checkForOthers(mon, dir);
 				if(def == kirito)
 				{
-					combat(mon, def);
+					combat(mon, def, 0);
 				}
 				else
 				{
 					if(def != NULL)
-						combat(mon, def);
+					{
+						relocate(def, mon->x, mon->y);
+					}
 					doMove(mon, dir);
 					if(valid == 3)
 					{
@@ -466,12 +479,14 @@ void moveMonster(Monster* mon)
 			Character* def = checkForOthers(mon, dir);
 			if(def == kirito)
 			{
-				combat(mon, def);
+				combat(mon, def, 0);
 			}
 			else
 			{
 				if(def != NULL)
-					combat(mon, def);
+				{
+					relocate(def, mon->x, mon->y);
+				}
 				doMove(mon, dir);
 				if(valid == 3)
 				{
@@ -513,12 +528,14 @@ void moveMonster(Monster* mon)
 					Character* def = checkForOthers(mon, 5);
 					if(def == kirito)
 					{
-						combat(mon, def);
+						combat(mon, def, 0);
 					}
 					else
 					{
 						if(def != NULL)
-							combat(mon, def);
+						{
+							relocate(def, mon->x, mon->y);
+						}
 						doMove(mon, 5);
 					}
 					if(mon->attributes & INTELLIGENT)
@@ -546,12 +563,14 @@ void moveMonster(Monster* mon)
 					Character* def = checkForOthers(mon, 1);
 					if(def == kirito)
 					{
-						combat(mon, def);
+						combat(mon, def, 0);
 					}
 					else
 					{
 						if(def != NULL)
-							combat(mon, def);
+						{
+							relocate(def, mon->x, mon->y);
+						}
 						doMove(mon, 1);
 					}
 					if(mon->attributes & INTELLIGENT)
@@ -582,12 +601,14 @@ void moveMonster(Monster* mon)
 					Character* def = checkForOthers(mon, 3);
 					if(def == kirito)
 					{
-						combat(mon, def);
+						combat(mon, def, 0);
 					}
 					else
 					{
 						if(def != NULL)
-							combat(mon, def);
+						{
+							relocate(def, mon->x, mon->y);
+						}
 						doMove(mon, 3);
 					}
 					if(mon->attributes & INTELLIGENT)
@@ -615,12 +636,14 @@ void moveMonster(Monster* mon)
 					Character* def = checkForOthers(mon, 7);
 					if(def == kirito)
 					{
-						combat(mon, def);
+						combat(mon, def, 0);
 					}
 					else
 					{
 						if(def != NULL)
-							combat(mon, def);
+						{
+							relocate(def, mon->x, mon->y);
+						}
 						doMove(mon, 7);
 					}
 					if(mon->attributes & INTELLIGENT)

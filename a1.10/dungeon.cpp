@@ -176,7 +176,7 @@ void printDungeon()
 			}
 		}
 	}
-	mvprintw(Y + 1, 0, "Player health: %d/100", kirito->hp);
+	mvprintw(Y + 1, 0, "Player health: %d/100  ", kirito->hp);
 	refresh();
 }
 
@@ -261,8 +261,6 @@ int main(int argc, char** argv)
 				printDungeon();
 				int ch = getch();
 				good = doCharacterAction(ch);
-				if(kirito->hp < 100)
-					kirito->hp++;
 			}
 			if(good == 3)
 			{
@@ -310,6 +308,7 @@ int main(int argc, char** argv)
 				if((aincrad->monsters[i].alive == 1) && (aincrad->monsters[i].turn == turn))
 					moveMonster(&aincrad->monsters[i]);
 			}
+			printDungeon();
 		}
 		kirito->setVisible();
 		if(good >= 2)

@@ -1,3 +1,19 @@
+Changelog Assignment 1.10
+
+11/30
+Finished logic for ranged weapons. Added health regen.
+Updated README and Changelog.
+
+11/29
+Started logic for ranged weapons.
+
+11/28
+Added in logic to handle defence.
+
+11/27
+Started assignment. Copied previous assignment into new folder.
+Added in logic to handle dodging.
+
 Changelog Assignment 1.09
 
 11/17

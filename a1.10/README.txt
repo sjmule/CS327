@@ -34,6 +34,17 @@ To list the player's currently equipped items, press e.
 To inspect an item, press shift+i. This will display a list of items in the player's inventory and will ask the player for the index of the item to display the description for.
 Selections may be exited out of by pressing the escape key.
 
+
+**As part of Assignment 1.10, some new logic has been added to the game.
+The item dodge stat has now been accounted for.  Equipped items will add their dodge to the player's base dodge of 0.  Every time a monster attacks the player, a random integer between 0 and 100 is generated.
+If the value is lower than the player's dodge, the attack misses.
+The item defence stat has now been accounted for.  Equipped items will add their defence to the player's base defence of 0.  Defence is subtracted from the damage a monster would do to the player.
+Player's can now regenerate health by walking around.  One hp is gained for every valid move on the floor.  Five hp is granted for resting or skipping a turn.
+Ranged attacks can now be performed provided the player has a valid ranged weapon equipped.  By pressing r, the player is either told if there is not a weapon equipped, and if there is, the player is prompted
+for a direction to attack.  Ranged attacks can hit up to 2 squares away and do not work through walls.  These attacks count as the player's turn.
+For testing simply change one or more of the item types to RANGED.
+
+
 *This program uses the files descriptions.cpp and descriptions.h with utils.cpp and utils.h for file parsing. This code was provided by Professor Sheaffer and modified slightly to work with the existing code.
 The monster and object descriptions are parsed from files located in the user's home directory in the folder .rlg327. The files are monster_desc.txt and object_desc.txt respectively.
 Once these files are parsed, they are converted into Monster and Object objects and rendered onto the map.
